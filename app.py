@@ -5,6 +5,10 @@ from datetime import date, datetime
 import locale
 
 app = Flask(__name__)
+app.config['SESSION_COOKIE_DOMAIN'] = 'alembro.com'  # Use seu domínio real
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'  # Para evitar bloqueios entre domínios
 app.config['ENV'] = 'production'  # Define o ambiente como produção
 app.jinja_env.add_extension('jinja2.ext.do')  # Adicionando a extensão do Jinja
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
