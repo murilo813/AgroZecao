@@ -278,7 +278,7 @@ h7 {
     margin-top: auto; /* Empurra a terceira mensagem para o final da caixa */
     color: #000000;
     position: relative; /* Permite ajuste com 'top' */
-    top: -28px; /* Move o título ligeiramente para cima */
+    top: -20px; /* Move o título ligeiramente para cima */
 }
 
 
