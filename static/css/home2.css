@@ -204,6 +204,82 @@ html, body {
     background-color: #f0f8ff; /* Cor de fundo para a linha selecionada */
     outline: 2px solid #007bff; /* Borda ao redor da linha */
 }
+/* Estilo do título */
+h7 {
+    font-size: 1.8em;
+    margin: 0; /* Remove completamente a margem */
+    padding-bottom: 10px; /* Reduz o espaçamento para aproximar o conteúdo */
+    color: #000000; 
+    position: relative; /* Permite ajuste com 'top' */
+    top: -50px; /* Move o título ligeiramente para cima */
+    font-weight: bold; /* Deixa a letra mais espessa */
+}
+
+
+
+
+/* Estilos da alerta */
+.alert {
+    background-color: #858585; /* Verde bem clarinho */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 80%;  /* Ajuste a largura conforme necessário */
+    max-width: 900px; /* Aumento da largura máxima */
+    text-align: center;
+    color: #000000;
+    margin: -40px auto 45px auto;
+    display: flex;
+    flex-direction: column;  /* Organiza o conteúdo na vertical */
+    align-items: center; /* Centraliza o conteúdo da caixa */
+    justify-content: flex-start; /* Garante que o conteúdo começa no topo */
+}
+
+
+
+/* Estilo das mensagens */
+.alert p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 5px 0;
+    color: #000000;
+}
+
+/* Adicionar um estilo para destacar a área de mensagens */
+.alert p:nth-child(n+2) {
+    border-top: 1px solid #ffffff;
+    padding-top: 1px;
+}
+
+/* Estilo especial para a primeira mensagem */
+.alert p:first-child {
+    margin-top: 0; /* Remove margem acima da primeira mensagem */
+    padding-top: 0; /* Garante que não há preenchimento extra no topo */
+    position: relative; /* Permite ajuste com 'top' */
+    top: -20px; /* Move o título ligeiramente para cima */
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Estilo especial para a terceira mensagem */
+.alert p:nth-child(3) {
+    font-size: 1.2em;
+    line-height: 1.9;
+    margin-top: auto; /* Empurra a terceira mensagem para o final da caixa */
+    color: #000000;
+    position: relative; /* Permite ajuste com 'top' */
+    top: 30px; /* Move o título ligeiramente para cima */
+}
+
+/* Estilo especial para a terceira mensagem */
+.alert p:nth-child(2) {
+    font-size: 1.2em;
+    line-height: 1.9;
+    margin-top: auto; /* Empurra a terceira mensagem para o final da caixa */
+    color: #000000;
+    position: relative; /* Permite ajuste com 'top' */
+    top: -28px; /* Move o título ligeiramente para cima */
+}
 
 
 
@@ -306,7 +382,10 @@ body {
     text-align: center;
     width: 1150px; /* Define uma largura fixa */
     height: 470px;
-    overflow: hidden; /* Evita que conteúdo saia */
+    overflow: hidden; /* Impede que o conteúdo saia da caixa */
+    display: flex;
+    flex-direction: column; /* Permite que os itens dentro da caixa se alinhem em coluna */
+    overflow-y: auto;
 }
 
 h1 {
@@ -463,7 +542,7 @@ h4 {
     position: relative;
     top: -20px;
     bottom: 10px;
-    right: -480px; /* Ajuste para o canto inferior direito da caixinha */
+    right: -470px; /* Ajuste para o canto inferior direito da caixinha */
     width: 30px; /* Tamanho do botão */
     height: 30px;
     border-radius: 50%; /* Botão circular */
@@ -486,7 +565,7 @@ h4 {
 /* Formulário de adicionar observação */
 #observationForm {
     position: fixed; /* Mantém a posição fora da caixa de atendimentos */
-    bottom: 270px; /* Ajuste de posição vertical */
+    bottom: 190px; /* Ajuste de posição vertical */
     right: 60px;
     background-color: white;
     border: 1px solid #ccc;
@@ -596,5 +675,3 @@ h4 {
 #tabela-atendimentos th {
     background-color: #f2f2f2;
 }
-
-
