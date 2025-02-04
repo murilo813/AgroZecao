@@ -1,14 +1,12 @@
 from flask import Flask, render_template, request, redirect, flash, session, jsonify, send_from_directory
 import os
 import psycopg2
+from psycopg2.extras import RealDictCursor  
 from datetime import date, datetime
 import locale
+import unicodedata
 
 app = Flask(__name__)
-app.config['SESSION_COOKIE_DOMAIN'] = 'alembro.com'  # Use seu domínio real
-app.config['SESSION_COOKIE_SECURE'] = True
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'None'  # Para evitar bloqueios entre domínios
 app.config['ENV'] = 'production'  # Define o ambiente como produção
 app.jinja_env.add_extension('jinja2.ext.do')  # Adicionando a extensão do Jinja
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
@@ -98,12 +96,54 @@ def login():
 def logout():
     session.clear()  # Limpa os dados da sessão ao fazer logout
     return render_template('index.html')
+    
 
 @app.route('/consulta', methods=['GET', 'POST'])
 def consulta():
     if 'usuario' not in session:  # Verifica se o usuário não está logado
         flash("Você precisa estar logado para acessar a consulta.")
         return redirect('/login')  # Redireciona para a página de login se não estiver logado
+
+    if request.method == 'GET':
+        data_hoje = date.today().strftime('%Y-%m-%d')
+        try:
+            conexao = criar_conexao()
+            cursor = conexao.cursor(cursor_factory=RealDictCursor)
+
+            cursor.execute("""
+                SELECT nome_cliente, cpf_cnpj, data_agendamento, observacao, usuario
+                FROM atendimentos
+                WHERE usuario = %s AND data_agendamento = %s
+            """, (session['usuario'], data_hoje))
+            atendimentos_filtrados = cursor.fetchall()
+
+            if atendimentos_filtrados:
+                for atendimento in atendimentos_filtrados:
+                    data_agendamento = atendimento['data_agendamento'].strftime('%Y-%m-%d')
+                    if data_agendamento == data_hoje:
+                        # Adiciona um flash para cada atendimento
+                        flash(
+                            f"{atendimento['nome_cliente']}\n"
+                            f"{atendimento['observacao']}\n"
+                            f"{data_agendamento}",
+                            category='success'
+                        )
+
+                        cursor.execute("""
+                            UPDATE atendimentos
+                            SET data_agendamento = NULL
+                            WHERE cpf_cnpj = %s AND data_agendamento = %s
+                        """, (atendimento['cpf_cnpj'], data_hoje))
+                        conexao.commit()
+
+        except Exception as e:
+            flash(f"Erro ao verificar atendimentos agendados: {e}", category='error')
+        finally:
+            if 'conexao' in locals():
+                conexao.close()
+
+
+    
         
     if request.method == 'POST':
         nome = request.form.get('nome', '').strip()  # Obtém o nome do formulário
@@ -121,7 +161,7 @@ def consulta():
                 query_cliente = """
                     SELECT cpf_cnpj, nome_cliente, responsavel, bairro
                     FROM clientes 
-                    WHERE cpf_cnpj = %s AND ativo = 'S'
+                    WHERE cpf_cnpj = %s AND ativo = 'S' 
                 """
                 cursor.execute(query_cliente, (cpf_selecionado,))
                 cliente = cursor.fetchone()
@@ -356,7 +396,6 @@ def consulta():
             if clientes_unicos:
                 return render_template('consulta.html', data_hoje=data_hoje, clientes=clientes_unicos, atendimentos=atendimentos)
 
-            flash("Cliente não encontrado.")
             return render_template('consulta.html')
 
         except Exception as e:
@@ -384,8 +423,9 @@ def adicionar_observacao():
             
         observacao = request.form.get('observation')
         data_atendimento = request.form.get('date')
+        data_agendamento = request.form.get('agendamento')
 
-        print(f"Observação: {observacao}, Data: {data_atendimento}, Nome: {nome_cliente}, CPF/CNPJ: {cpf_cnpj}")
+        print(f"Observação: {observacao}, Data: {data_atendimento}, Nome: {nome_cliente}, CPF/CNPJ: {cpf_cnpj}, Agendamento: {data_agendamento}")
 
         # Verifica se todos os dados necessários estão presentes
         if not observacao or not data_atendimento or not nome_cliente or not cpf_cnpj:
@@ -404,10 +444,10 @@ def adicionar_observacao():
 
         # Insere os dados na tabela "atendimentos"
         query = """
-        INSERT INTO atendimentos (nome_cliente, cpf_cnpj, data_atendimento, observacao, usuario)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO atendimentos (nome_cliente, cpf_cnpj, data_atendimento, observacao, usuario, data_agendamento)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """
-        valores = (nome_cliente.strip(), cpf_cnpj.strip(), data_atendimento.strip(), observacao.strip(), usuario_logado.strip())
+        valores = (nome_cliente.strip(), cpf_cnpj.strip(), data_atendimento.strip(), observacao.strip(), usuario_logado.strip(), data_agendamento.strip() if data_agendamento else None)
         
         with conexao.cursor() as cursor:
             cursor.execute(query, valores)
