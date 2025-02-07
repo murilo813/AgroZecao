@@ -105,7 +105,7 @@ def consulta():
         return redirect('/login')  # Redireciona para a página de login se não estiver logado
 
     if request.method == 'GET':
-        data_hoje = date.today().strftime('%Y-%m-%d')
+        data_hoje = date.today().strftime('%d/%m/%Y')
         try:
             conexao = criar_conexao()
             cursor = conexao.cursor(cursor_factory=RealDictCursor)
@@ -113,27 +113,36 @@ def consulta():
             cursor.execute("""
                 SELECT nome_cliente, cpf_cnpj, data_agendamento, observacao, usuario
                 FROM atendimentos
-                WHERE usuario = %s AND data_agendamento = %s
+                WHERE usuario = %s AND data_agendamento <= %s
             """, (session['usuario'], data_hoje))
             atendimentos_filtrados = cursor.fetchall()
 
             if atendimentos_filtrados:
                 for atendimento in atendimentos_filtrados:
-                    data_agendamento = atendimento['data_agendamento'].strftime('%Y-%m-%d')
+                    data_atendimento = atendimento['data_atendimento'].strftime('%d/%m/%Y') if atendimento['data_atendimento'] else None
+                    data_agendamento = atendimento['data_agendamento'].strftime('%d/%m/%Y')
+                    print(f"{data_agendamento}")
+
                     if data_agendamento == data_hoje:
-                        # Adiciona um flash para cada atendimento
                         flash(
                             f"{atendimento['nome_cliente']}\n"
                             f"{atendimento['observacao']}\n"
-                            f"{data_agendamento}",
+                            f"{data_atendimento}",
                             category='success'
+                        )
+                    elif data_agendamento < data_hoje:
+                        flash(
+                            f"{atendimento['nome_cliente']}\n"
+                            f"{atendimento['observacao']}\n"
+                            f"{data_atendimento}\n"
+                            category='warning'
                         )
 
                         cursor.execute("""
                             UPDATE atendimentos
                             SET data_agendamento = NULL
                             WHERE cpf_cnpj = %s AND data_agendamento = %s
-                        """, (atendimento['cpf_cnpj'], data_hoje))
+                        """, (atendimento['cpf_cnpj'], data_agendamento))
                         conexao.commit()
 
         except Exception as e:
