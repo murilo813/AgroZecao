@@ -111,7 +111,7 @@ def consulta():
             cursor = conexao.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("""
-                SELECT nome_cliente, cpf_cnpj, data_agendamento, observacao, usuario
+                SELECT nome_cliente, cpf_cnpj, data_agendamento, observacao, usuario, data_atendimento
                 FROM atendimentos
                 WHERE usuario = %s AND data_agendamento <= %s
             """, (session['usuario'], data_hoje))
