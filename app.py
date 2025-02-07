@@ -134,7 +134,7 @@ def consulta():
                         flash(
                             f"{atendimento['nome_cliente']}\n"
                             f"{atendimento['observacao']}\n"
-                            f"{data_atendimento}\n"
+                            f"{data_atendimento}",
                             category='warning'
                         )
 
