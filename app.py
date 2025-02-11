@@ -138,12 +138,12 @@ def consulta():
                             category='warning'
                         )
 
-                        cursor.execute("""
-                            UPDATE atendimentos
-                            SET data_agendamento = NULL
-                            WHERE cpf_cnpj = %s AND data_agendamento = %s
-                        """, (atendimento['cpf_cnpj'], data_agendamento))
-                        conexao.commit()
+                    cursor.execute("""
+                        UPDATE atendimentos
+                        SET data_agendamento = NULL
+                        WHERE cpf_cnpj = %s AND data_agendamento = %s
+                    """, (atendimento['cpf_cnpj'], data_agendamento))
+                    conexao.commit()
 
         except Exception as e:
             flash(f"Erro ao verificar atendimentos agendados: {e}", category='error')
