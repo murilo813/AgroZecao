@@ -3,13 +3,13 @@ from config import Config
 from datetime import date
 
 app = Flask(__name__)
-app.config.from_object(Config)  # Carrega as configurações do arquivo config.py
+app.config.from_object(Config)  
 
 def register_blueprints():
-    from routes.login import login_bp  # Agora importa diretamente o objeto login_bp
-    from routes.home import home_bp    # Agora importa diretamente o objeto home_bp
-    from routes.gerencia import gerencia_bp  # Agora importa diretamente o objeto gerencia_bp
-    from routes.consulta import consulta_bp  # Agora importa diretamente o objeto consulta_bp
+    from routes.login import login_bp  
+    from routes.home import home_bp    
+    from routes.gerencia import gerencia_bp  
+    from routes.consulta import consulta_bp  
 
     app.register_blueprint(login_bp) 
     app.register_blueprint(home_bp)  
