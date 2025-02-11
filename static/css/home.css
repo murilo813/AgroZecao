@@ -4,62 +4,213 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #333333;
+  overflow:hidden;
 }
 
 .container {
-  display: flex;
-  justify-content: center; /* Centraliza horizontalmente */
-  align-items: center; /* Centraliza verticalmente */
-  height: 100vh; /* Faz o container ocupar 100% da altura da tela */
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    height: 100vh; /* Faz o container ocupar 100% da altura da tela */
 }
 
 .box {
-  background-color: white;
-  padding: 40px; /* Espaçamento interno para o conteúdo */
-  border-radius: 10px; /* Bordas arredondadas para o retângulo */
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra */
-  text-align: center;
-  width: 350px; /* Define uma largura fixa */
-}
+    background-color: white;
+    padding: 4px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: calc(100% - 40px); /* Ocupa quase toda a largura com bordas */
+    height: calc(100% - 40px); /* Ocupa quase toda a altura com bordas */
+    display: flex;
+    flex-direction: column; /* Organiza o conteúdo verticalmente */
+    justify-content: flex-start; /* O conteúdo começa do topo */
+    box-sizing: border-box; /* Garante que padding seja incluso nas dimensões */
+    padding-bottom: 10px; /* Adiciona espaço fixo na parte inferior da caixa */
+  }
 
 h1 {
-  color: #117011; /* Cor do texto */
-  text-align: center; /* Alinhamento central do texto */
-  font-weight: 900; /* Espessura mais forte */
-  font-size: 50px; /* Tamanho da fonte */
-  -webkit-text-stroke: 3px black; /* Adiciona borda preta com 1px de espessura */
-  text-shadow: none; /* Remove sombras para manter o foco na borda */
-
+    color: #117011; /* Cor do texto */
+    text-align: center; /* Alinhamento central do texto */
+    font-weight: 900; /* Espessura mais forte */
+    font-size: 50px; /* Tamanho da fonte */
+    -webkit-text-stroke: 3px black; /* Adiciona borda preta com 1px de espessura */
+    text-shadow: none; /* Remove sombras para manter o foco na borda */
 }
 
-h2 {
-  color: #333;
-  text-align: center;
-  text-shadow: #333;
+footer {
+    margin-top: auto; /* Faz com que o rodapé vá para a parte inferior */
+    margin-bottom: 0; /* Não há margem extra na parte inferior do rodapé */
+    color: #666;
+    font-size: 12px;
+    text-align: center;
 }
 
-form {
+/* Botões com ícones */
+.buttons-container {
+    display: flex;
+    flex-direction: column; /* Coloca os botões em uma coluna */
+    align-items: center;
+    justify-content: center; /* Centraliza verticalmente */
+    height: 100vh; /* Faz o container ocupar toda a altura da tela */
+    gap: 20px; /* Espaço entre os botões */
+    margin-top: 30px;
+  }
+  
+  .button {
+    display: flex;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 200px; /* Largura fixa para os botões */
+  }
+  
+  .button i {
+    margin-right: 10px; /* Espaçamento entre o ícone e o texto */
+  }
+  
+  .button:hover {
+    background-color: #45a049;
+    transform: translateY(-5px);
+  }
+
+  
+  
+/* Classe de erro para o botão */
+.button.error {
+  background-color: red;  /* Muda para vermelho */
+  animation: shake 0.5s ease-in-out;  /* Aplica a animação */
+}
+
+/* Animação de shake para o botão */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* Container da notificação */
+.alert-container {
+  position: fixed;
+  top: 80px;
+  right: 10px;
+  z-index: 1000;
+  width: 350px;
+  max-width: 100%;
+  transform: scale(0.75); /* Reduz o tamanho para 80% do original */
+  
+}
+
+.alert-box {
+  background-color: #f9f9f9; /* Fundo claro */
+  border: 1px solid #000000; /* Borda sutil */
+  border-radius: 7px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  text-align: left;
+  position: relative;
   display: flex;
-  flex-direction: column; /* Coloca os elementos do formulário em uma coluna, um abaixo do outro */
-  width: 300px; /* Define uma largura fixa para o formulário */
-  margin: 0 auto; /* Centraliza o formulário horizontalmente */
+  flex-direction: column;
+  align-items: flex-start;
+  max-height: 80vh; /* Limita a altura máxima da área dos alertas */
+  overflow-y: auto; /* Permite rolagem vertical quando o conteúdo ultrapassar */
 }
 
-input, button {
-  margin-bottom: 15px; /* Espaçamento entre os campos */
-  padding: 10px; /* Adiciona preenchimento interno para os campos */
-  border-radius: 5px; /* Bordas arredondadas */
-  border: 1px solid #ccc; /* Borda ao redor dos campos */
-  font-size: 16px; /* Tamanho da fonte dos campos */
+html ::-webkit-scrollbar {
+  width: 10px;
 }
 
-button {
-  background-color: #5cb85c;
-  color: white;
-  border: none;
-  cursor: pointer;
+html ::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #555555;
 }
 
-button:hover {
-  background-color: #4cae4c;
+html ::-webkit-scrollbar-track {
+  background: #ededed;
+}
+
+.alert-header {
+  display: flex;
+  align-items: center; /* Alinha o ícone e o título verticalmente */
+  margin-bottom: 15px;
+}
+
+/* Ícone da notificação */
+.alert-header i {
+  font-size: 24px;
+  color: #05640d; /* Azul para o ícone */
+  margin-right: 10px; /* Espaçamento entre o ícone e o título */
+}
+
+/* Título da notificação */
+.alert-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Cada mensagem na notificação */
+.alert {
+  background-color: #e9ecef; /* Fundo sutil para mensagens */
+  border-radius: 8px;
+  padding-left: 15px;
+  padding-top: 0px;
+  margin-bottom: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #495057;
+  display: flex;
+  flex-direction: column;
+}
+
+.alert p:first-child {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #000000;
+}
+
+.alert p:nth-child(1) {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #000000;
+}
+
+.alert p:nth-child(2) {
+  font-size: 14px;
+  color: #555;
+}
+
+.alert p:nth-child(3) {
+  font-size: 14px;
+  color: #333333;
+}
+
+.alert p:nth-child(4) {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #ff1e00;
+}
+
+.alert-container {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.9); /* Começa sem escala */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(0.75); /* Fica com a escala final */
+  }
 }
