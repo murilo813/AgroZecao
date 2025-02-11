@@ -1,11 +1,9 @@
-version: "3.8"
-
 services:
   app:
-    image: testeestrutura-web:latest
+    build: .
     volumes:
-      - /c/Users/muril/OneDrive/Área\ de\ Trabalho/teste\ estrutura:/app
+      - ./:/app  
     ports:
-      - "5000:5000"
+      - "5000:5000"  
     env_file:
-      - .env
+      - .env 
