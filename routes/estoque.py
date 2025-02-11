@@ -3,7 +3,6 @@ from functions import criar_conexao
 
 estoque_bp = Blueprint('estoque', __name__)
 
-
 @estoque_bp.route('/estoque')
 def estoque():
     if 'usuario' not in session:  
