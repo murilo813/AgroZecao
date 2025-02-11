@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #333333;
+  overflow:hidden;
+}
+
+.container {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    height: 100vh; /* Faz o container ocupar 100% da altura da tela */
+}
+
+.box {
+    background-color: white;
+    padding: 4px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: calc(100% - 40px); /* Ocupa quase toda a largura com bordas */
+    height: calc(100% - 40px); /* Ocupa quase toda a altura com bordas */
+    display: flex;
+    flex-direction: column; /* Organiza o conteúdo verticalmente */
+    justify-content: flex-start; /* O conteúdo começa do topo */
+    box-sizing: border-box; /* Garante que padding seja incluso nas dimensões */
+    padding-bottom: 10px; /* Adiciona espaço fixo na parte inferior da caixa */
+  }

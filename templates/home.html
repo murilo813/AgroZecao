@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agropecuária Zecão Web</title>
+    <link href="static/css/home.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            <h1>Bem Vindo(a) {{ session['nomeclatura'] }}!</h1>
+            <div class="buttons-container">
+                <button id="financeiroButton" class="button {% if erro_financeiro %}error{% endif %}" onclick="window.location.href='{{ url_for('consulta.consulta') }}'">
+                    <i class="fas fa-dollar-sign"></i>Financeiro
+                </button>
+                <button id="financeiroButton" class="button {% if erro_gerencia %}error{% endif %}" onclick="window.location.href='{{ url_for('gerencia.gerencia') }}'">
+                    <i class="fas fa-cogs"></i>Gerência
+                </button>
+                <button class="button"><i class="fas fa-chart-line"></i>Comercial</button>
+                <button class="button"><i class="fas fa-box"></i>Estoque</button>
+            </div>
+            <div class="alert-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert-box">
+                            <div class="alert-header">
+                                <i class="fa fa-bell"></i>
+                                <h3>Avisos Agendados</h3>
+                            </div>
+                            {% for category, message in messages %}
+                                <div class="alert">
+                                    <p>{{ message.split("\n")[0] }}</p>
+                                    <p>{{ message.split("\n")[1] }}</p>
+                                    <p>{{ message.split("\n")[2] }}</p>
+                                    <p>{{ message.split("\n")[3] }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </div>          
+            <footer>
+                © 2025 Agropecuária Zecão LTDA. Todos os direitos reservados.
+            </footer>
+
+        </div>
+    </div>
+    <script>
+        if (document.getElementById('financeiroButton').classList.contains('error')) {
+            setTimeout(function() {
+                var button = document.getElementById('financeiroButton');
+                button.classList.remove('error');
+            }, 1000); 
+        }
+    
+        if (document.getElementById('gerenciaButton').classList.contains('error')) {
+            setTimeout(function() {
+                var button = document.getElementById('gerenciaButton');
+                button.classList.remove('error'); 
+            }, 1000); 
+        }
+    </script>
+</body>
+</html>
