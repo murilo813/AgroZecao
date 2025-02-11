@@ -255,7 +255,6 @@
     
             const formData = new FormData(this);
     
-            // Desabilitar botão de envio para evitar múltiplos envios
             submitButton.disabled = true;
     
             try {
@@ -265,14 +264,13 @@
                 });
     
                 if (response.ok) {
-                    await response.json(); // Apenas consome a resposta sem exibi-la
-                    window.location.reload(); // Recarrega a página após o sucesso
+                    await response.json(); 
+                    window.location.reload(); 
                 } else {
                     const error = await response.json();
                     alert(`Erro: ${error.error || 'Erro desconhecido'}`);
                 }
     
-                // Fecha apenas o modal sem redirecionar
                 toggleObservationForm();
             } catch (error) {
                 console.error('Erro inesperado:', error);
@@ -280,7 +278,6 @@
             }
         });
     
-        // Reativar o botão de envio caso algum campo seja alterado
         inputsToWatch.forEach(id => {
             const input = document.getElementById(id);
             input.addEventListener('input', () => {
@@ -288,7 +285,6 @@
             });
         });
     
-        // Carrega os atendimentos ao inicializar a página
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM totalmente carregado, iniciando carregamento dos atendimentos...');
             carregarAtendimentos();
@@ -297,19 +293,17 @@
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM totalmente carregado, iniciando navegação e seleção...');
             const tabela = document.querySelector('.contas_a_receber tbody');
-            let selectedRow = null; // Variável para armazenar a linha selecionada
-            let currentScrollTop = tabela.scrollTop; // Armazena a posição atual de scroll
+            let selectedRow = null; 
+            let currentScrollTop = tabela.scrollTop; 
 
-            // Adicionar evento de teclado para navegação
             document.addEventListener('keydown', function (event) {
                 const rows = Array.from(tabela.querySelectorAll('tr'));
 
-                if (!rows.length) return; // Não faz nada se não houver linhas
+                if (!rows.length) return; 
 
                 if (event.key === 'ArrowDown') {
-                    // Navegar para baixo
                     if (selectedRow === null) {
-                        selectedRow = rows[0]; // Seleciona a primeira linha
+                        selectedRow = rows[0]; 
                     } else {
                         const currentIndex = rows.indexOf(selectedRow);
                         if (currentIndex < rows.length - 1) {
@@ -317,7 +311,6 @@
                         }
                     }
                 } else if (event.key === 'ArrowUp') {
-                    // Navegar para cima
                     if (selectedRow !== null) {
                         const currentIndex = rows.indexOf(selectedRow);
                         if (currentIndex > 0) {
@@ -326,31 +319,26 @@
                     }
                 }
 
-                // Atualizar a classe de seleção
                 rows.forEach(row => row.classList.remove('selected-row'));
                 if (selectedRow) {
                     selectedRow.classList.add('selected-row');
-                    tabela.scrollTop = currentScrollTop; // Manter a mesma posição de scroll
+                    tabela.scrollTop = currentScrollTop; 
                 }
             });
 
-            // Clique em uma linha para selecioná-la
             tabela.addEventListener('click', function (event) {
                 const clickedRow = event.target.closest('tr');
                 if (!clickedRow) return;
 
                 selectedRow = clickedRow;
 
-                // Atualizar a classe de seleção
                 const rows = Array.from(tabela.querySelectorAll('tr'));
                 rows.forEach(row => row.classList.remove('selected-row'));
                 selectedRow.classList.add('selected-row');
 
-                // Manter o scroll na mesma posição vertical
                 tabela.scrollTop = currentScrollTop;
             });
 
-            // Ajustar scroll quando a seleção é alterada
             tabela.addEventListener('scroll', function () {
                 currentScrollTop = tabela.scrollTop;
             });

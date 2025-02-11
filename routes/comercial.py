@@ -3,7 +3,6 @@ from functions import criar_conexao
 
 comercial_bp = Blueprint('comercial', __name__)
 
-
 @comercial_bp.route('/comercial')
 def comercial():
     if 'usuario' not in session:  

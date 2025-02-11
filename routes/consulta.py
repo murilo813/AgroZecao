@@ -5,7 +5,6 @@ from psycopg2.extras import RealDictCursor
 import psycopg2
 from functions import carregar_atendimentos, criar_conexao
 
-
 consulta_bp = Blueprint('consulta', __name__)
 
 @consulta_bp.route('/consulta', methods=['GET', 'POST'])
@@ -73,7 +72,6 @@ def consulta():
     if request.method == 'POST':
         nome = request.form.get('nome', '').strip()  
         cpf_selecionado = request.form.get('cpf_selecionado', '').strip() 
-        print(f"CPF Selecionado: {cpf_selecionado}")  
         data_hoje = date.today().strftime('%Y-%m-%d')
         
         try:
@@ -143,7 +141,6 @@ def consulta():
                         clientes_relacionados = cursor.fetchall()
 
                     atendimentos_filtrados = carregar_atendimentos(cpf_selecionado, [cliente[0] for cliente in clientes_relacionados])
-
 
                 if cliente:  
                     query_notas = """
