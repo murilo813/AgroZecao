@@ -372,6 +372,7 @@ body {
     justify-content: center; /* Centraliza horizontalmente */
     align-items: center; /* Centraliza verticalmente */
     height: 100vh; /* Faz o container ocupar 100% da altura da tela */
+    overflow: hidden;
 }
 
 .box {
