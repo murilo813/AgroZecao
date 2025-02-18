@@ -14,7 +14,7 @@
             <form method="POST" action="/consulta">
                 <label for="nome">NOME:</label>
                 <input type="text" id="nome" name="nome" required>
-                <button type="submit">Pesquisar</button>
+                <button type="submit" class="botao-pesquisar">Pesquisar</button>
             </form>            
             <div>    
                 {% if clientes and not cliente_detalhes %}
@@ -30,7 +30,6 @@
                         </table>
                     </thead>
                     <div class="lista-clientes-container">
-                        <h2>Clientes Encontrados</h2>
                         <ul>
                             {% for cliente in clientes %}
                                 <li>
@@ -203,13 +202,11 @@
                 </div>
             {% endif %}                  
             </div>
-            <div class="buttons-container"></div>
-                <button class="button voltar-button" onclick="window.location.href='{{ url_for('home.home') }}'">
-                    <i class="fas fa-arrow-left"></i> Voltar
-                </button>     
-            </div> 
-        </div>
+        </div>    
     </div>
+<button class="button voltar-button" onclick="window.location.href='{{ url_for('home.home') }}'">
+    <i class="fas fa-arrow-left"></i> Voltar
+</button> 
     <script>
         function toggleObservationForm() {
             const form = document.getElementById('observationForm');
