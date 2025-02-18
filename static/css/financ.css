@@ -5,7 +5,7 @@ html, body {
     overflow: hidden;  
 }
 .lista-clientes-container {
-    max-height: 300px;
+    max-height: 50vh;
     overflow-y: auto;
     border: 1px solid #ccc;
     padding: 10px;
@@ -372,10 +372,9 @@ h4 {
     padding: 10px;
 }
 .add-button {
-    position: relative;
-    top: -20px;
-    bottom: 10px;
-    right: -470px;
+    position: absolute;
+    top: 2vh;
+    right: 2vh;
     width: 30px; 
     height: 30px;
     border-radius: 50%; 
@@ -393,14 +392,14 @@ h4 {
     background-color: #218838; 
 }
 #observationForm {
-    position: fixed; 
-    bottom: 190px; 
-    right: 60px;
+    position: absolute; 
+    top: 5%; 
+    right: 2.3%;
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 20px;
-    width: 400px; 
+    width: 435px; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     z-index: 1000; 
 }
