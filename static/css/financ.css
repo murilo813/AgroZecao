@@ -1,0 +1,518 @@
+@charset "UTF-8";
+html, body {
+    height: 100%;  
+    margin: 0;     
+    overflow: hidden;  
+}
+footer {
+    position: absolute;
+    bottom: 4%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #666;
+    font-size: 12px;
+  }
+.lista-clientes-container {
+    max-height: 50vh;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    padding-right: 10px;
+    margin-top: 0;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.lista-clientes-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.lista-clientes-container li {
+    display: block; 
+    justify-content: space-between;
+    margin-bottom: 10px;
+    width: 100%; 
+}
+.lista-clientes-container li div {
+    flex-grow: 1; 
+    text-align: left;
+    padding: 0 5px; 
+}
+.cliente-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.cliente-info span:nth-child(1) { 
+    flex-basis: 45%; 
+}
+.cliente-info span:nth-child(2) { 
+    font-size: 15px;
+    flex-basis: 13%; 
+}
+.cliente-info span:nth-child(3) { 
+    flex-basis: 42%; 
+}
+.lista-clientes-container button {
+    background-color: #323538;
+    color: white;
+    border: none;
+    padding: 10px; 
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%; 
+    text-align: center; 
+    box-sizing: border-box; 
+}
+.lista-clientes-container button:hover {
+    background-color: #888a8b;
+}
+.notas-container {
+    position: absolute;
+    top: 52%;
+    right: 40px;
+    left: 40px;
+    margin-top: 0; 
+    border: 1px solid #ccc;
+    border-radius: 5px; 
+    padding: 0px; 
+    background-color: #f9f9f9; 
+    max-height: 35vh; 
+    overflow-y: auto; 
+    box-sizing: border-box; 
+}
+.notas-container::-webkit-scrollbar {
+    width: 10px;
+}
+.notas-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.notas-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+.notas-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.contas_a_receber {
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 10px;
+}
+.contas_a_receber thead th {
+    position: sticky; 
+    top: 0; 
+    margin-top: 0px;
+    background-color: #4e5255;
+    color: #fff; 
+    text-align: left; 
+    padding: 12px; 
+    border-bottom: 2px solid #ddd; 
+    z-index: 2; 
+}
+.contas_a_receber tbody td {
+    padding: 8px; 
+    border-bottom: 1px solid #ddd; 
+}
+.contas_a_receber tbody tr:nth-child(odd) {
+    background-color: #f2f2f2; 
+}
+.contas_a_receber tbody tr:hover {
+    background-color: #e6f7ff; 
+}
+.contas_a_receber td, .contas_a_receber th {
+    word-wrap: break-word; 
+}
+.notas-container::-webkit-scrollbar {
+    width: 10px; 
+}
+.notas-container::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+.notas-container::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 5px;
+}
+.notas-container::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+.tabela-notas {
+    width: 100%; 
+    border-collapse: collapse; 
+    margin: 0; 
+}
+.tabela-notas th, .tabela-notas td {
+    padding: 8px; 
+    border: 1px solid #ddd; 
+    text-align: center; 
+    word-wrap: break-word; 
+}
+.tabela-notas tr:nth-child(even) {
+    background-color: #f9f9f9; 
+}
+.tabela-notas tr:hover {
+    background-color: #ddd; 
+}
+.contas_a_receber tr[style] {
+    color: red;
+}
+.contas_a_receber td, .contas_a_receber th {
+    word-wrap: break-word; 
+}
+.selected-row {
+    background-color: #f0f8ff; 
+    outline: 2px solid #007bff; 
+}
+h7 {
+    font-size: 1.8em;
+    margin: 0; 
+    padding-bottom: 10px; 
+    color: #000000; 
+    position: relative; 
+    top: -50px; 
+    font-weight: bold; 
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #333333;
+    overflow:hidden;
+}
+.titulo {
+    font-size: 3,6rem;
+    text-align: center;
+    margin-top: 10px; 
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: green;
+    text-shadow: 2px 2px black;
+}
+h2 {
+    position: absolute;
+    left: 15%;
+    top: 10%;
+}
+.detalhes-cliente {
+    display: flex;
+    justify-content: flex-start; 
+    gap: 3%; 
+    margin-top: 67px; 
+    margin-left: -20px; 
+}
+.detalhes {
+    width: 46%; 
+}
+.caixa-atendimentos {
+    width: 46%;
+    height: 23vh;
+    position: absolute;
+    top: 134px;
+    right: 40px;
+    border: 1px solid #ccc; 
+    padding: 10px; 
+    padding-top: 1px;
+    background-color: #f9f9f9;
+    border-radius: 5px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; 
+}
+.caixa-atendimentos ul {
+    list-style: none; 
+    padding: 0;
+    margin: 0;
+}
+.caixa-atendimentos li {
+    padding: 5px 0; 
+    border-bottom: 1px solid #ddd; 
+    position: relative;
+    top: -38px; 
+}
+.caixa-atendimentos h3 {
+    color: #000000; 
+    font-size: 1.2em; 
+    margin-bottom: 1px; 
+}
+.resultado-container {
+    width: 100%;
+    max-height: 100px; 
+    overflow-y: auto; 
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f9f9f9;
+}
+.resultado-item {
+    margin: 5px 0;
+}
+.container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh;
+    overflow: hidden;
+}
+.box {
+    background-color: white;
+    padding: 20px;
+    padding-top: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: calc(100% - 40px); 
+    height: calc(100% - 40px); 
+    display: flex;
+    flex-direction: column; 
+    justify-content: flex-start; 
+    box-sizing: border-box; 
+    padding-bottom: 10px; 
+  }
+h1 {
+    position: relative;
+    top: -45px; 
+    margin-top: 0; 
+    margin-bottom: 10px;
+    color: #117011; 
+    text-align: center; 
+    font-weight: 900; 
+    font-size: 50px; 
+    -webkit-text-stroke: 3px black; 
+    text-shadow: none;
+}
+label {
+    margin-top: 0; 
+    position: relative;
+    top: -55px; 
+}
+input {
+    margin-top: 0; 
+    position: relative;
+    top: -55px; 
+}
+button.botao-pesquisar {
+    margin-top: 26; 
+    position: relative;
+    top: -55px; 
+}
+h3 {
+    position: relative;
+    top: -33px; 
+    margin-top: 0; 
+}
+h4 {
+    position: absolute;
+    bottom: 48vh; 
+    left: 43%;
+    margin: 0 auto; 
+    font-size: 20px; 
+}
+.total-a-receber {
+    position: absolute;
+    right: 40px; 
+    bottom: 29px; 
+    font-weight: bold;
+    color: #333;
+    padding: 10px;
+}
+.linha {
+    display: flex; 
+    justify-content: space-between;
+    align-items: center; 
+    gap: 20px; 
+}
+.linha p {
+    margin: 0; 
+}
+.tabela-detalhes {
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-left: 20px; 
+    text-align: left; 
+    position: relative;
+    top: -100px; 
+    margin-top: 0;
+}
+.tabela-detalhes th, .tabela-detalhes td {
+    border: 1px solid #ddd; 
+    padding: 2px; 
+}
+.tabela-detalhes th {
+    background-color: #f2f2f2; 
+    font-weight: bold; 
+    text-align: left; 
+}
+.tabela-detalhes tr:nth-child(even) {
+    background-color: #f9f9f9; 
+}
+.tabela-detalhes tr:hover {
+    background-color: #f1f1f1; 
+}
+.tabela-detalhes td {
+    font-size: 14px;
+}
+.cabeçalho {
+    position: relative;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1px;
+}
+.cabeçalho th:nth-child(1), 
+.cabeçalho td:nth-child(1) {
+    width: 200px; 
+}
+.cabeçalho th:nth-child(2), 
+.cabeçalho td:nth-child(2) {
+    width: 40px; 
+}
+.cabeçalho th:nth-child(3), 
+.cabeçalho td:nth-child(3) {
+    width: 200px;
+}
+.cabeçalho thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    z-index: 2; 
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+.cabeçalho tbody td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+.add-button {
+    position: absolute;
+    top: 2vh;
+    right: 2vh;
+    width: 30px; 
+    height: 30px;
+    border-radius: 50%; 
+    background-color: #28a745; 
+    color: #fff; 
+    font-size: 18px; 
+    border: none; 
+    cursor: pointer; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+}
+.add-button:hover {
+    background-color: #218838; 
+}
+#observationForm {
+    position: absolute; 
+    top: 5%; 
+    right: 2.3%;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    width: 435px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000; 
+}
+.hidden {
+    display: none;
+}
+#observationForm select {
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+#observationForm textarea {
+    width: 100%;
+    height: 100px; 
+    margin-bottom: 10px;
+}
+#observationForm input {
+    position: relative;
+    top: 10px;
+    width: 100%;
+    height: 20px;
+    margin-bottom: 10px;
+}
+#observationForm button {
+    position: relative;
+    top: 10px;
+    margin-top: 10px;
+    margin: 3px;
+    width: 90px;
+    height: 30px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#observationForm button:hover {
+    background-color: #0056b3;
+}
+#observationForm label {
+    position:relative;
+    top: 1px;
+    font-weight: bold;
+    color: #333;
+}
+#tabela-atendimentos {
+    position: relative;
+    top: -30px;
+    width: 100%;  
+    table-layout: fixed;  
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+#tabela-atendimentos, #tabela-atendimentos th, #tabela-atendimentos td {
+    border: 1px solid #ddd;
+}
+#tabela-atendimentos th, #tabela-atendimentos td {
+    font-size: 12px;
+    padding: 4px; 
+    height: 20px;  
+    text-align: left;
+    word-wrap: break-word; 
+}
+#tabela-atendimentos th:nth-child(1),
+#tabela-atendimentos td:nth-child(1) {
+    width: 16%; 
+}
+#tabela-atendimentos th:nth-child(2),
+#tabela-atendimentos td:nth-child(2) {
+    width: 30%;  
+}
+#tabela-atendimentos th:nth-child(3),
+#tabela-atendimentos td:nth-child(3) {
+    width: 14%;  
+}
+#tabela-atendimentos th:nth-child(4),
+#tabela-atendimentos td:nth-child(4) {
+    width: 40%;  
+}
+#tabela-atendimentos th {
+    background-color: #f2f2f2;
+}
+.voltar-button {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100px;
+    position: absolute;
+    left: 23px; 
+    bottom: 23px;
+}
+.voltar-button i {
+    margin-right: 10px; 
+}
+.voltar-button:hover {
+    background-color: #2c6e30;
+    transform: translateY(-5px);
+}

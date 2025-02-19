@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta de Cliente</title>
-    <link href="static/css/home2.css" rel="stylesheet" />
+    <link href="static/css/financ.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -13,26 +14,8 @@
             <form method="POST" action="/consulta">
                 <label for="nome">NOME:</label>
                 <input type="text" id="nome" name="nome" required>
-                <button type="submit">Pesquisar</button>
-            </form>
-            
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <!-- Exibe o título apenas uma vez, caso haja mensagens -->
-                    <h7>Você tem um atendimento agendado para hoje!</h7>
-            
-                    <!-- Exibe todas as mensagens -->
-                    {% for category, message in messages %}
-                        <div class="alert">
-                            <p>{{ message.split("\n")[0] }}</p>
-                            <p>{{ message.split("\n")[1] }}</p>
-                            <p>{{ message.split("\n")[2] }}</p>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-
-                    
+                <button type="submit" class="botao-pesquisar">Pesquisar</button>
+            </form>            
             <div>    
                 {% if clientes and not cliente_detalhes %}
                     <thead>
@@ -47,7 +30,6 @@
                         </table>
                     </thead>
                     <div class="lista-clientes-container">
-                        <h2>Clientes Encontrados</h2>
                         <ul>
                             {% for cliente in clientes %}
                                 <li>
@@ -55,21 +37,18 @@
                                         <input type="hidden" name="cpf_selecionado" value="{{ cliente[0] }}">
                                         <button type="submit">
                                             <div class="cliente-info">
-                                                <span>{{ cliente[1] }}</span> <!-- Nome -->
-                                                <span>{{ cliente[0] }}</span> <!-- CPF -->
-                                                <span>{{ cliente[2] }}</span> <!-- Responsável -->
+                                                <span>{{ cliente[1] }}</span> 
+                                                <span>{{ cliente[0] }}</span>
+                                                <span>{{ cliente[2] }}</span> 
                                             </div>
                                         </button>
                                     </form>
                                 </li>
                             {% endfor %}
-                        </ul>
-                    </div>
-                    
+                        </ul> 
+                    </div>                 
                 {% endif %}
-                
                 {% if cliente_detalhes %} 
-                    <!-- Detalhes do Cliente Selecionado -->
                     <div>
                         <h2>Detalhes do Cliente</h2>
                         <div class="detalhes-cliente">
@@ -86,8 +65,6 @@
                                             <td>{{ cliente_detalhes['nome'] }}</td>
                                             <td>{{ cliente_detalhes['cpf'] }}</td>
                                         </tr>
-
-                                        <!-- Clientes relacionados -->
                                         {% for cliente_relacionado in clientes_relacionados_detalhes %}
                                             {% if cliente_relacionado['nome'] != cliente_detalhes['nome'] %}
                                                 <tr>
@@ -98,13 +75,9 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                            </div>
-                            
-
-                            <!-- Caixa de Atendimentos -->
+                            </div>                       
                             <div class="caixa-atendimentos">
-                                <h3>Atendimentos Realizados</h3>
-                                
+                                <h3>Atendimentos Realizados</h3>                               
                                 {% if atendimentos and atendimentos|length > 0 %}
                                     <table id="tabela-atendimentos">
                                         <thead>
@@ -130,10 +103,7 @@
                                     <p>Nenhum atendimento encontrado.</p>
                                 {% endif %}
                                 <button class="add-button" onclick="toggleObservationForm()">+</button>
-                            </div>
-
-                            
-
+                            </div>                          
                             <div id="observationForm" class="hidden">
                                 <form id="formObservation" method="POST" action="/add_observation">
                                     <label for="cliente">Selecionar Cliente:</label>
@@ -158,8 +128,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Exibe as Notas do Cliente -->
                     <h4>Notas em Aberto</h4>
                     <div class="notas-container">
                         <table class="contas_a_receber">
@@ -191,7 +159,6 @@
                                         "saldo_devedor": nota.saldo_devedor
                                     }) %}
                                 {% endfor %}
-
                                 {% for cliente_relacionado in clientes_relacionados_detalhes %}
                                     {% for nota in cliente_relacionado["notas"] %}
                                         {% set _ = todas_notas.append({
@@ -207,7 +174,6 @@
                                         }) %}
                                     {% endfor %}
                                 {% endfor %}
-
                                 {% for nota in todas_notas|sort(attribute="data_vencimento") %}
                                     <tr>
                                         <td>{{ nota.empresa }}</td>
@@ -228,20 +194,23 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Exibe o total a receber -->
                     {% if cliente_detalhes['notas'] %}
                         <div class="total-a-receber">
                             <h5>Total a Receber: R$ {{ cliente_detalhes['total_a_receber'] }}</h5>
                         </div>
                     {% endif %}
                 </div>
-            {% endif %}
-            </div>    
-        </div>
+            {% endif %}                  
+            </div>
+            <footer>
+                © 2025 Agropecuária Zecão LTDA. Todos os direitos reservados.
+            </footer>
+        </div>    
     </div>
+<button class="button voltar-button" onclick="window.location.href='{{ url_for('home.home') }}'">
+    <i class="fas fa-arrow-left"></i> Voltar
+</button> 
     <script>
-        // Função para alternar a exibição do modal
         function toggleObservationForm() {
             const form = document.getElementById('observationForm');
             form.classList.toggle('hidden');
@@ -250,15 +219,14 @@
                 const formObservation = document.getElementById('formObservation');
                 formObservation.reset();
             }
-        }
-        
+        }       
         async function carregarAtendimentos() {
             try {
                 const response = await fetch('/get_atendimentos', { method: 'GET' });
                 if (response.ok) {
                     const data = await response.json();
                     const tabelaAtendimentos = document.getElementById('tabela-atendimentos').getElementsByTagName('tbody')[0];
-                    tabelaAtendimentos.innerHTML = ''; // Limpar a tabela antes de preencher novamente
+                    tabelaAtendimentos.innerHTML = ''; 
                     
                     data.atendimentos.forEach(atendimento => {
                         const novaLinha = document.createElement('tr');
@@ -278,19 +246,15 @@
                 console.error('Erro inesperado ao carregar atendimentos:', error);
             }
         }
-    
-    
-        // Evento de envio do formulário
         const formObservation = document.getElementById('formObservation');
         const submitButton = formObservation.querySelector('button[type="submit"]');
         const inputsToWatch = ['cliente', 'observation', 'date'];
     
         formObservation.addEventListener('submit', async function (e) {
-            e.preventDefault(); // Previne envio padrão do formulário
+            e.preventDefault();
     
             const formData = new FormData(this);
     
-            // Desabilitar botão de envio para evitar múltiplos envios
             submitButton.disabled = true;
     
             try {
@@ -300,14 +264,13 @@
                 });
     
                 if (response.ok) {
-                    await response.json(); // Apenas consome a resposta sem exibi-la
-                    window.location.reload(); // Recarrega a página após o sucesso
+                    await response.json(); 
+                    window.location.reload(); 
                 } else {
                     const error = await response.json();
                     alert(`Erro: ${error.error || 'Erro desconhecido'}`);
                 }
     
-                // Fecha apenas o modal sem redirecionar
                 toggleObservationForm();
             } catch (error) {
                 console.error('Erro inesperado:', error);
@@ -315,7 +278,6 @@
             }
         });
     
-        // Reativar o botão de envio caso algum campo seja alterado
         inputsToWatch.forEach(id => {
             const input = document.getElementById(id);
             input.addEventListener('input', () => {
@@ -323,7 +285,6 @@
             });
         });
     
-        // Carrega os atendimentos ao inicializar a página
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM totalmente carregado, iniciando carregamento dos atendimentos...');
             carregarAtendimentos();
@@ -332,19 +293,17 @@
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM totalmente carregado, iniciando navegação e seleção...');
             const tabela = document.querySelector('.contas_a_receber tbody');
-            let selectedRow = null; // Variável para armazenar a linha selecionada
-            let currentScrollTop = tabela.scrollTop; // Armazena a posição atual de scroll
+            let selectedRow = null; 
+            let currentScrollTop = tabela.scrollTop; 
 
-            // Adicionar evento de teclado para navegação
             document.addEventListener('keydown', function (event) {
                 const rows = Array.from(tabela.querySelectorAll('tr'));
 
-                if (!rows.length) return; // Não faz nada se não houver linhas
+                if (!rows.length) return; 
 
                 if (event.key === 'ArrowDown') {
-                    // Navegar para baixo
                     if (selectedRow === null) {
-                        selectedRow = rows[0]; // Seleciona a primeira linha
+                        selectedRow = rows[0]; 
                     } else {
                         const currentIndex = rows.indexOf(selectedRow);
                         if (currentIndex < rows.length - 1) {
@@ -352,7 +311,6 @@
                         }
                     }
                 } else if (event.key === 'ArrowUp') {
-                    // Navegar para cima
                     if (selectedRow !== null) {
                         const currentIndex = rows.indexOf(selectedRow);
                         if (currentIndex > 0) {
@@ -361,31 +319,26 @@
                     }
                 }
 
-                // Atualizar a classe de seleção
                 rows.forEach(row => row.classList.remove('selected-row'));
                 if (selectedRow) {
                     selectedRow.classList.add('selected-row');
-                    tabela.scrollTop = currentScrollTop; // Manter a mesma posição de scroll
+                    tabela.scrollTop = currentScrollTop; 
                 }
             });
 
-            // Clique em uma linha para selecioná-la
             tabela.addEventListener('click', function (event) {
                 const clickedRow = event.target.closest('tr');
                 if (!clickedRow) return;
 
                 selectedRow = clickedRow;
 
-                // Atualizar a classe de seleção
                 const rows = Array.from(tabela.querySelectorAll('tr'));
                 rows.forEach(row => row.classList.remove('selected-row'));
                 selectedRow.classList.add('selected-row');
 
-                // Manter o scroll na mesma posição vertical
                 tabela.scrollTop = currentScrollTop;
             });
 
-            // Ajustar scroll quando a seleção é alterada
             tabela.addEventListener('scroll', function () {
                 currentScrollTop = tabela.scrollTop;
             });
