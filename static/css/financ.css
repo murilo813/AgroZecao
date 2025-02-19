@@ -4,6 +4,14 @@ html, body {
     margin: 0;     
     overflow: hidden;  
 }
+footer {
+    position: absolute;
+    bottom: 4%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #666;
+    font-size: 12px;
+  }
 .lista-clientes-container {
     max-height: 50vh;
     overflow-y: auto;
