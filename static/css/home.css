@@ -94,6 +94,7 @@ footer {
   width: 320px;
   max-width: 100%;
   transform: scale(0.75); 
+  margin-bottom: 20vh;
 }
 .alert-box {
   background-color: #f9f9f9; 
@@ -183,15 +184,15 @@ html ::-webkit-scrollbar-track {
     transform: translateY(0) scale(0.75); 
   }
 }
-.releases-container {
+/*.releases-container {
   position: absolute;
   right: 0.2%;
   bottom: 0.2%;
   text-align: center;
-  z-index: 1000;
   width: 320px;
   max-width: 100%;
   transform: scale(0.75); 
+  margin-top: 100px;
 }
 .box-releases {
   background-color: #f9f9f9; 
@@ -234,4 +235,4 @@ html ::-webkit-scrollbar-track {
 .box-releases ul li {
   font-size: 20px;
   margin-bottom: 10px;  
-}
+}*/

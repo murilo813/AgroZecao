@@ -70,7 +70,7 @@ footer {
 }
 .notas-container {
     position: absolute;
-    bottom: 80px;
+    top: 52%;
     right: 40px;
     left: 40px;
     margin-top: 0; 

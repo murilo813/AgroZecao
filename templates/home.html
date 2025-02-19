@@ -24,9 +24,9 @@
                     <i class="fas fa-box"></i>Estoque
                 </button>
             </div>
-            <div class="releases-container">
+<!--        <div class="releases-container">
                 <div class="box-releases">
-                    <div class="release-header">
+                    <div class="release-header"> 
                         <i class="fa fa-cogs"></i>                       
                         <h2>Atualizações</h2>
                         <i class="fa fa-cogs"></i> 
@@ -38,7 +38,7 @@
                         <li>Adicionado o agendamento de atendimentos.</li>
                     </ul>
                 </div>
-            </div>
+            </div>  irei implementar isto mais tarde.-->
             <div class="alert-container">
                 {% if session['notificacoes'] %}
                     <div class="alert-box">
@@ -48,11 +48,11 @@
                         </div>
                         {% for notificacao in session['notificacoes'] %}
                             <div class="alert">
-                                <p>{{ notificacao[0] }}</p>  <!-- Nome do cliente -->
-                                <p>{{ notificacao[1] }}</p>  <!-- Observação -->
-                                <p>{{ notificacao[2] }}</p>  <!-- Data de atendimento -->
+                                <p>{{ notificacao[0] }}</p>  
+                                <p>{{ notificacao[1] }}</p>  
+                                <p>{{ notificacao[2] }}</p>  
                                 {% if notificacao|length > 3 %}
-                                    <p>{{ notificacao[3] }}</p>  <!-- Aviso perdido, se existir -->
+                                    <p>{{ notificacao[3] }}</p>  
                                 {% endif %}
                             </div>
                         {% endfor %}
