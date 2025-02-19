@@ -1,34 +1,72 @@
 @charset "UTF-8";
+html, body {
+  height: 100%;  
+  margin: 0;     
+  overflow: hidden;  
+}
 body {
   font-family: Arial, sans-serif;
   background-color: #333333;
   overflow:hidden;
 }
 .container {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    height: 100vh;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  height: 100vh;
+  overflow: hidden;
 }
 .box {
-    background-color: white;
-    padding: 4px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: calc(100% - 40px);
-    height: calc(100% - 40px); 
-    display: flex;
-    flex-direction: column; 
-    justify-content: flex-start; 
-    box-sizing: border-box; 
-    padding-bottom: 10px; 
-  }
+  background-color: white;
+  padding: 20px;
+  padding-top: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: calc(100% - 40px); 
+  height: calc(100% - 40px); 
+  display: flex;
+  flex-direction: column; 
+  justify-content: flex-start; 
+  box-sizing: border-box; 
+  padding-bottom: 10px; 
+}
 h1 {
-    color: #117011;
-    text-align: center; 
-    font-weight: 900; 
-    font-size: 60px;
-    -webkit-text-stroke: 3px black; 
-    text-shadow: none; 
+  color: #117011;
+  text-align: center; 
+  font-weight: 900; 
+  font-size: 60px;
+  -webkit-text-stroke: 3px black; 
+  text-shadow: none; 
+}
+.voltar-button {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 100px;
+  position: absolute;
+  left: 23px; 
+  bottom: 23px;
+}
+.voltar-button i {
+  margin-right: 10px; 
+}
+.voltar-button:hover {
+  background-color: #2c6e30;
+  transform: translateY(-5px);
+}
+footer {
+  position: absolute;
+  bottom: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #666;
+  font-size: 12px;
 }
