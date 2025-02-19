@@ -12,6 +12,7 @@ def home():
         return redirect ('/login')
 
     usuario_logado = session['usuario']
+    notificacoes = []
 
     try:
         conexao = criar_conexao()
@@ -53,27 +54,18 @@ def home():
                     data_agendamento = atendimento['data_agendamento'].strftime('%d/%m/%Y')
 
                     if data_agendamento == data_hoje:
-                        flash(
-                            f"{atendimento['nome_cliente']}\n"
-                            f"{atendimento['observacao']}\n"
-                            f"{data_atendimento}",
-                            category='success'
-                        )
+                        notificacoes.append([
+                            atendimento['nome_cliente'],
+                            atendimento['observacao'],
+                            data_atendimento
+                        ])
                     elif data_agendamento < data_hoje:
-                        flash(
-                            f"{atendimento['nome_cliente']}\n"
-                            f"{atendimento['observacao']}\n"
-                            f"{data_atendimento}\n"
-                            f"Aviso perdido {data_agendamento}",
-                            category='warning'
-                        )
-
-                    cursor.execute("""
-                        UPDATE atendimentos
-                        SET data_agendamento = NULL
-                        WHERE cpf_cnpj = %s AND data_agendamento = %s
-                    """, (atendimento['cpf_cnpj'], data_agendamento))
-                    conexao.commit()
+                        notificacoes.append([
+                            atendimento['nome_cliente'],
+                            atendimento['observacao'],
+                            data_atendimento,
+                            f"Aviso perdido {data_agendamento}"
+                        ])
 
         except Exception as e:
             flash(f"Erro ao verificar atendimentos agendados: {e}", category='error')
@@ -81,4 +73,7 @@ def home():
             if 'conexao' in locals():
                 conexao.close()
 
-    return render_template('home.html', nomeclatura=nomeclatura)
+        session['notificacoes'] = notificacoes
+
+
+    return render_template('home.html', nomeclatura=nomeclatura, notificacoes=notificacoes)
