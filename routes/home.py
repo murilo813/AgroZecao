@@ -1,4 +1,4 @@
-from flask import Blueprint, session, flash, redirect, render_template, request
+from flask import Blueprint, session, flash, redirect, render_template, request, jsonify
 from functions import criar_conexao
 from datetime import date
 from psycopg2.extras import RealDictCursor
@@ -77,3 +77,38 @@ def home():
 
 
     return render_template('home.html', nomeclatura=nomeclatura, notificacoes=notificacoes)
+
+@home_bp.route('/remover_notificacao', methods=['POST'])
+def remover_notificacao():
+    data = request.json
+    nome_cliente = data.get('nome_cliente')
+
+    if 'usuario' not in session:
+        return jsonify({"success": False, "error": "Usuário não autenticado."}), 403
+
+    usuario_logado = session['usuario']
+
+    if not nome_cliente:
+        return jsonify({"success": False, "error": "Nome do cliente não informado."}), 400
+
+    try:
+        conexao = criar_conexao()
+        cursor = conexao.cursor()
+
+        query = """
+            UPDATE atendimentos
+            SET data_agendamento = NULL
+            WHERE nome_cliente = %s AND usuario = %s
+        """
+        cursor.execute(query, (nome_cliente, usuario_logado))
+        conexao.commit()
+
+        return jsonify({"success": True})
+
+    except Exception as e:
+        print(f"Erro ao remover notificação: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+    finally:
+        if 'conexao' in locals():
+            conexao.close()
