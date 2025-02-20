@@ -184,6 +184,27 @@ html ::-webkit-scrollbar-track {
     transform: translateY(0) scale(0.75); 
   }
 }
+.close-btn {
+  background-color: transparent;
+  border: none;
+  color: #ff1e00;
+  font: ;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s ease-in-out;
+  align-self: flex-end;
+}
+.close-btn:hover {
+  color: #b30000;
+}
+.no-notifications {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 10px;
+}
 /*.releases-container {
   position: absolute;
   right: 0.2%;
