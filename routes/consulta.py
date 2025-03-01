@@ -104,6 +104,8 @@ def consulta():
 
                     if len(clientes_duplicados) > 1:  
                         bairro_selecionado = cliente[3]  
+                    
+                    #Esses "relacionados" são clientes que tem relação um ao outro, não exatamente por parentesco mas sim pelas compras e notas, há clientes que compram no nome de outros por conta de financimantos.
 
                         clientes_com_duplicata = []
                         for rel_cliente in clientes_duplicados:
@@ -191,7 +193,7 @@ def consulta():
                     cliente_detalhes = {
                         "cpf": cpf_cliente,
                         "nome": nome_cliente,
-                        "notas": sorted(
+                        "notas": sorted( #Coloca na ordem da data vencimento
                             [
                                 {
                                     "empresa": nota[0],
@@ -207,7 +209,7 @@ def consulta():
                             key=lambda x: (
                                 x["data_vencimento"].year if x["data_vencimento"] else 9999,  
                                 x["data_vencimento"].month if x["data_vencimento"] else 12,   
-                                x["data_vencimento"].day if x["data_vencimento"] else 31      
+                                x["data_vencimento"].day if x["data_vencimento"] else 31      #Os valores são considerados assim para garantir que as notas sem data de vencimento fiquem por último.
                             )
                         ),
                     }
@@ -236,7 +238,7 @@ def consulta():
                                 for nota in notas_relacionadas
                             ],
                         })
-
+                    #É usado o saldo_devedor pois é com ele que é feito o cálculo de quanto o cliente ainda deve.
                     total_a_receber = sum(
                         nota["saldo_devedor"] for nota in cliente_detalhes["notas"] if nota["saldo_devedor"]
                     )
