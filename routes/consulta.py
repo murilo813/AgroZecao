@@ -98,8 +98,7 @@ def consulta():
                     cliente = cursor.fetchone()
 
                     if cliente:
-                        cpf_selecionado = cliente[0]  # Agora usa o cpf_cnpj, não o ID
-                        print(f"CPF selecionado após consulta: {cpf_selecionado}")  # Verifique no log se o CPF está correto
+                        cpf_selecionado = cliente[0]  
 
             elif nome:  
                 query_cliente = """
@@ -207,8 +206,6 @@ def consulta():
 
                     cliente_detalhes["atendimentos"] = atendimentos_deduplicados
 
-                    print(f"CPF Selecionado para consultar as notas: {cpf_selecionado}")
-
                     cursor.execute(query_notas, (cpf_selecionado, data_hoje))
                     notas = cursor.fetchall()
 
@@ -282,7 +279,6 @@ def consulta():
                     cliente_detalhes['total_a_receber'] = f"R$ {total_a_receber:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
 
                     clientes = [(cpf_cliente, nome_cliente)] + clientes_relacionados
-                    print(f"Notas em aberto para {cpf_cliente}: {notas}")  # Debugging
 
                     return render_template(
                         'consulta.html',
