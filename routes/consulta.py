@@ -80,59 +80,72 @@ def consulta():
             atendimentos = []
 
             if cpf_selecionado:
+                if len(cpf_selecionado) == 11 and cpf_selecionado.isdigit():  
+                    query_cliente = """
+                        SELECT cpf_cnpj, nome_cliente, responsavel, bairro
+                        FROM clientes 
+                        WHERE cpf_cnpj = %s AND ativo = 'S' 
+                    """
+                    cursor.execute(query_cliente, (cpf_selecionado,))
+                    cliente = cursor.fetchone()
+                else:  
+                    query_cliente = """
+                        SELECT cpf_cnpj, nome_cliente, responsavel, bairro
+                        FROM clientes
+                        WHERE id_cliente = %s AND ativo = 'S'
+                    """
+                    cursor.execute(query_cliente, (cpf_selecionado,))
+                    cliente = cursor.fetchone()
+
+                    if cliente:
+                        cpf_selecionado = cliente[0]  # Agora usa o cpf_cnpj, não o ID
+                        print(f"CPF selecionado após consulta: {cpf_selecionado}")  # Verifique no log se o CPF está correto
+
+            elif nome:  
                 query_cliente = """
                     SELECT cpf_cnpj, nome_cliente, responsavel, bairro
-                    FROM clientes 
-                    WHERE cpf_cnpj = %s AND ativo = 'S' 
+                    FROM clientes
+                    WHERE cpf_cnpj = %s AND ativo = 'S'
                 """
-                cursor.execute(query_cliente, (cpf_selecionado,))
+                cursor.execute(query_cliente, (nome,))
                 cliente = cursor.fetchone()
+            if cpf_selecionado and not cpf_selecionado.isdigit():
+                cpf_selecionado = cliente[0]  
 
-                cpfs_relacionados = []
-                clientes_relacionados = []  
+            cpfs_relacionados = [cpf_selecionado] if cpf_selecionado else []
+            clientes_relacionados = []
 
-                if cliente:  
-                    cpfs_relacionados = [cliente[0]]  
+            if cliente:  
+                cpfs_relacionados = [cliente[0]] 
 
-                    query_dublos = """
-                        SELECT cpf_cnpj, nome_cliente, bairro
-                        FROM clientes
-                        WHERE nome_cliente = %s AND ativo = 'S' 
-                    """
-                    cursor.execute(query_dublos, (cliente[1],))
-                    clientes_duplicados = cursor.fetchall()
+                query_dublos = """
+                    SELECT cpf_cnpj, nome_cliente, bairro
+                    FROM clientes
+                    WHERE nome_cliente = %s AND ativo = 'S' 
+                """
+                cursor.execute(query_dublos, (cliente[1],))
+                clientes_duplicados = cursor.fetchall()
 
-                    if len(clientes_duplicados) > 1:  
-                        bairro_selecionado = cliente[3]  
+                if len(clientes_duplicados) > 1:  
+                    bairro_selecionado = cliente[3]  
                     
-                    #Esses "relacionados" são clientes que tem relação um ao outro, não exatamente por parentesco mas sim pelas compras e notas, há clientes que compram no nome de outros por conta de financimantos.
-
-                        clientes_com_duplicata = []
-                        for rel_cliente in clientes_duplicados:
-                            if rel_cliente[0] != cliente[0]:  
-                                query_relacionados = """
-                                    SELECT cpf_cnpj, nome_cliente, bairro
-                                    FROM clientes
-                                    WHERE responsavel = %s AND ativo = 'S'
-                                """
-                                cursor.execute(query_relacionados, (rel_cliente[0],))
-                                relacionados = cursor.fetchall()
-
-                                for relacionado in relacionados:
-                                    if relacionado[1] in [cliente[1] for cliente in clientes_duplicados if cliente[0] != cliente[0]]:
-                                        clientes_com_duplicata.append(relacionado)
-
-                        if clientes_com_duplicata:
-                            clientes_relacionados = clientes_com_duplicata
-                        else:
+                    clientes_com_duplicata = []
+                    for rel_cliente in clientes_duplicados:
+                        if rel_cliente[0] != cliente[0]:  
                             query_relacionados = """
                                 SELECT cpf_cnpj, nome_cliente, bairro
                                 FROM clientes
                                 WHERE responsavel = %s AND ativo = 'S'
                             """
-                            cursor.execute(query_relacionados, (cliente[2],))
-                            clientes_relacionados = cursor.fetchall()
+                            cursor.execute(query_relacionados, (rel_cliente[0],))
+                            relacionados = cursor.fetchall()
 
+                            for relacionado in relacionados:
+                                if relacionado[1] in [cliente[1] for cliente in clientes_duplicados if cliente[0] != cliente[0]]:
+                                    clientes_com_duplicata.append(relacionado)
+
+                    if clientes_com_duplicata:
+                        clientes_relacionados = clientes_com_duplicata
                     else:
                         query_relacionados = """
                             SELECT cpf_cnpj, nome_cliente, bairro
@@ -142,7 +155,16 @@ def consulta():
                         cursor.execute(query_relacionados, (cliente[2],))
                         clientes_relacionados = cursor.fetchall()
 
-                    atendimentos_filtrados = carregar_atendimentos(cpf_selecionado, [cliente[0] for cliente in clientes_relacionados])
+                else:
+                    query_relacionados = """
+                        SELECT cpf_cnpj, nome_cliente, bairro
+                        FROM clientes
+                        WHERE responsavel = %s AND ativo = 'S'
+                    """
+                    cursor.execute(query_relacionados, (cliente[2],))
+                    clientes_relacionados = cursor.fetchall()
+
+                atendimentos_filtrados = carregar_atendimentos(cpf_selecionado, [cliente[0] for cliente in clientes_relacionados])
 
                 if cliente:  
                     query_notas = """
@@ -172,7 +194,7 @@ def consulta():
                         "notas": [],
                         "atendimentos": atendimentos_filtrados 
                     }
-                    
+            
                     atendimentos_combinados = []
                     for cpf in cpfs_relacionados:
                         atendimentos_cliente = [atendimento for atendimento in atendimentos if atendimento['cpf_cnpj'] == cpf]
@@ -184,6 +206,8 @@ def consulta():
                     atendimentos_deduplicados = list({f"{atd['cpf_cnpj']}_{atd['data_atendimento']}": atd for atd in atendimentos_combinados}.values())
 
                     cliente_detalhes["atendimentos"] = atendimentos_deduplicados
+
+                    print(f"CPF Selecionado para consultar as notas: {cpf_selecionado}")
 
                     cursor.execute(query_notas, (cpf_selecionado, data_hoje))
                     notas = cursor.fetchall()
@@ -258,6 +282,7 @@ def consulta():
                     cliente_detalhes['total_a_receber'] = f"R$ {total_a_receber:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
 
                     clientes = [(cpf_cliente, nome_cliente)] + clientes_relacionados
+                    print(f"Notas em aberto para {cpf_cliente}: {notas}")  # Debugging
 
                     return render_template(
                         'consulta.html',
