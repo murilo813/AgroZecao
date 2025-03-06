@@ -36,7 +36,7 @@ def home():
             conexao.close()
 
     if request.method == 'GET':
-        data_hoje = date.today().strftime('%d/%m/%Y')
+        data_hoje = date.today()
         try:
             conexao = criar_conexao()
             cursor = conexao.cursor(cursor_factory=RealDictCursor)
@@ -50,8 +50,8 @@ def home():
 
             if atendimentos_filtrados:
                 for atendimento in atendimentos_filtrados:
-                    data_atendimento = atendimento['data_atendimento'].strftime('%d/%m/%Y') if atendimento['data_atendimento'] else None
-                    data_agendamento = atendimento['data_agendamento'].strftime('%d/%m/%Y')
+                    data_atendimento = atendimento['data_atendimento']
+                    data_agendamento = atendimento['data_agendamento']
 
                     if data_agendamento == data_hoje:
                         notificacoes.append([
@@ -64,7 +64,7 @@ def home():
                             atendimento['nome_cliente'],
                             atendimento['observacao'],
                             data_atendimento,
-                            f"Aviso perdido {data_agendamento}"
+                            f"Aviso perdido {data_agendamento.strftime('%d/%m/%Y')}"
                         ])
 
         except Exception as e:
