@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerencimanto de Atividades</title>
+    <title>Gerencimento de Atividades</title>
     <link href="static/css/gerencia.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
         <div class="box">
-            <h1>Nova Atividade</h1>
-            <button calss="ver-atividades" onclick="window.location.href='/gerencia2'">Visualizar atividades</button>
-            <div>
+            <h1>Gerencimento</h1>
+                <div class="buttons-container">
+                    <button class="button" onclick="togleForm()">Agendamento financeiro</button>
+                </div>
+            <div id="togleForm">
+                <form id="formTogle" method="POST" action="/add_notificacao">
+                    <label for="usuario">Usuario:</label>
+                    <select id="usuario" name="usuario" required>
+                        <option value=""></option>
+                    </select>
 
+                    <label for="anotacao">Anotação</label>
+                    <textarea id="anotacao" name="anotacao" required></textarea>
+
+                    <button type="submit">Enviar</button>
+                </form>
             </div>
         </div>
         <footer>
