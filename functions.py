@@ -29,6 +29,7 @@ def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
             SELECT nome_cliente, cpf_cnpj, data_atendimento, observacao, usuario
             FROM atendimentos
             WHERE cpf_cnpj = %s OR cpf_cnpj = ANY(%s)
+            ORDER BY data_atendimento ASC
         """
         cursor.execute(query_atendimentos, (cpf_cliente, cpfs_relacionados))
         atendimentos = cursor.fetchall()
