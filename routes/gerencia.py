@@ -42,3 +42,37 @@ def gerencia():
     finally:
         if conexao:
             conexao.close()
+
+@gerencia_bp.route('/add_notificacao', methods=['POST'])
+def adicionar_notificacao():
+    try:
+        usuario = request.form.get('usuario')
+        anotacao = request.form.get('anotacao')
+
+        if not usuario or not anotacao:
+            return jsonify({"error": "Dados incompletos"}), 400
+        
+        usuario_logado = session.get('usuario')
+        if not usuario_logado:
+            return jsonify({"error":"Usuário não logado"}), 400
+
+        conexao = criar_conexao()
+
+        query = """
+        INSERT INTO AINDA IREI FAZER
+        VALUES (%s, %s, %s)
+        """
+        valores = (usuario.strip(), anotacao.strip(), usuario_logado.strip())
+
+        with conexao.cursor() as cursor:
+            cursor.execute(query, valores)
+            conexao.commit()
+
+        return jsonify({"sucess": "Notificação enviada com sucesso!"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        if 'conexao' in locals() and conexao:
+            conexao.close()
