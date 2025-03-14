@@ -1,5 +1,7 @@
 import psycopg2
+from psycopg2.extras import RealDictCursor
 import os
+from datetime import date
 
 def criar_conexao():
     return psycopg2.connect(
@@ -49,3 +51,58 @@ def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
     except Exception as e:
         print(f"Erro ao carregar atendimentos: {e}")
         return []
+
+def obter_notificacoes(usuario):
+    notificacoes = []
+    data_hoje = date.today()
+
+    try:
+        conexao = criar_conexao()
+        cursor = conexao.cursor(cursor_factory=RealDictCursor)
+
+        # atendimentos
+        cursor.execute("""
+            SELECT nome_cliente, anotacao, data_agendamento, data, criador, id_not
+            FROM not_gerencia
+            WHERE criador = %s AND data_agendamento <= %s AND estado = 'ativa'
+        """, (usuario, data_hoje))
+        atendimentos = cursor.fetchall()
+
+        for atendimento in atendimentos:
+            data_atendimento = atendimento['data']
+            data_agendamento = atendimento['data_agendamento']
+
+            notificacao = [
+                atendimento['nome_cliente'],
+                atendimento['anotacao'],
+                data_atendimento.strftime('%d/%m/%Y'),
+            ]
+            if data_agendamento < data_hoje:
+                notificacao.append(f"Aviso perdido {data_agendamento.strftime('%d/%m/%Y')}")
+
+            notificacao.append(atendimento['id_not'])  
+            notificacoes.append(notificacao)
+
+        # not gerencia
+        cursor.execute("""
+            SELECT criador, anotacao, id_not
+            FROM not_gerencia
+            WHERE usuario = %s AND estado = 'ativa'
+        """, (usuario,))
+        novas_notificacoes = cursor.fetchall()
+
+        for noti in novas_notificacoes:
+            print(f"🔍 Criador: {noti['criador']}, Anotação: {noti['anotacao']}, ID_NOT: {noti['id_not']}")  # 🟥 Debug
+            notificacoes.append([
+                F"De: {noti['criador']}",  
+                noti['anotacao'],
+                noti['id_not']
+            ])
+
+    except Exception as e:
+        print(f"Erro ao buscar notificações: {e}")
+    finally:
+        if 'conexao' in locals():
+            conexao.close()
+
+    return notificacoes
