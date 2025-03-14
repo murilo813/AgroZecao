@@ -1,5 +1,5 @@
 from flask import Blueprint, session, flash, redirect, render_template, request, jsonify
-from functions import criar_conexao
+from functions import criar_conexao, obter_notificacoes
 from datetime import date
 from psycopg2.extras import RealDictCursor
 
@@ -12,7 +12,6 @@ def home():
         return redirect ('/login')
 
     usuario_logado = session['usuario']
-    notificacoes = []
 
     try:
         conexao = criar_conexao()
@@ -35,80 +34,50 @@ def home():
         if conexao:
             conexao.close()
 
-    if request.method == 'GET':
-        data_hoje = date.today()
-        try:
-            conexao = criar_conexao()
-            cursor = conexao.cursor(cursor_factory=RealDictCursor)
+    session['notificacoes'] = obter_notificacoes(usuario_logado)
 
-            cursor.execute("""
-                SELECT nome_cliente, cpf_cnpj, data_agendamento, data_atendimento, observacao, usuario
-                FROM atendimentos
-                WHERE usuario = %s AND data_agendamento <= %s
-            """, (session['usuario'], data_hoje))
-            atendimentos_filtrados = cursor.fetchall()
-
-            if atendimentos_filtrados:
-                for atendimento in atendimentos_filtrados:
-                    data_atendimento = atendimento['data_atendimento']
-                    data_agendamento = atendimento['data_agendamento']
-
-                    if data_agendamento == data_hoje:
-                        notificacoes.append([
-                            atendimento['nome_cliente'],
-                            atendimento['observacao'],
-                            data_atendimento
-                        ])
-                    elif data_agendamento < data_hoje:
-                        notificacoes.append([
-                            atendimento['nome_cliente'],
-                            atendimento['observacao'],
-                            data_atendimento,
-                            f"Aviso perdido {data_agendamento.strftime('%d/%m/%Y')}"
-                        ])
-
-        except Exception as e:
-            flash(f"Erro ao verificar atendimentos agendados: {e}", category='error')
-        finally:
-            if 'conexao' in locals():
-                conexao.close()
-
-        session['notificacoes'] = notificacoes
-
-
-    return render_template('home.html', nomeclatura=nomeclatura, notificacoes=notificacoes)
+    return render_template('home.html', nomeclatura=nomeclatura, notificacoes=session['notificacoes'])
 
 @home_bp.route('/remover_notificacao', methods=['POST'])
 def remover_notificacao():
     data = request.json
-    nome_cliente = data.get('nome_cliente')
 
     if 'usuario' not in session:
         return jsonify({"success": False, "error": "Usuário não autenticado."}), 403
 
+    print("JSON recebido:", data) 
+    
     usuario_logado = session['usuario']
 
-    if not nome_cliente:
-        return jsonify({"success": False, "error": "Nome do cliente não informado."}), 400
+    if "id_not" in data:
+        id_not = data["id_not"]
 
-    try:
-        conexao = criar_conexao()
-        cursor = conexao.cursor()
+        try:
+            conexao = criar_conexao()
+            cursor = conexao.cursor()
 
-        query = """
-            UPDATE atendimentos
-            SET data_agendamento = NULL
-            WHERE nome_cliente = %s AND usuario = %s
-        """
-        cursor.execute(query, (nome_cliente, usuario_logado))
-        conexao.commit()
+            query = """
+                UPDATE not_gerencia
+                SET estado = 'inativa'
+                WHERE id_not = %s
+            """
+            cursor.execute(query, (id_not))
+            conexao.commit()
 
-        return jsonify({"success": True})
+            if cursor.rowcount == 0:
+                return jsonify({"success": False, "error": "Notificação não encontrada."}), 404
 
-    except Exception as e:
-        print(f"Erro ao remover notificação: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+            return jsonify({"success": True})
 
-    finally:
-        if 'conexao' in locals():
-            conexao.close()
+        except ValueError:
+            return jsonify({"success": False, "error": "ID inválido."}), 400
+
+        except Exception as e:
+            print(f"Erro ao remover notificação: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
+
+        finally:
+            if 'conexao' in locals():
+                conexao.close()
+
+    return jsonify({"success": False, "error": "Dados inválidos."}), 400

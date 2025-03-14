@@ -44,7 +44,7 @@
                 <div class="alert-box">
                     <div class="alert-header">
                         <i class="fa fa-bell"></i>
-                        <h3>Avisos Agendados</h3>
+                        <h3>Notificações</h3>
                     </div>
                     {% if session['notificacoes'] %}
                         {% for notificacao in session['notificacoes'] %}
@@ -55,7 +55,7 @@
                                 {% if notificacao|length > 3 %}
                                     <p>{{ notificacao[3] }}</p>  
                                 {% endif %}
-                                <button class="close-btn" onclick="removerNotificacao('{{ notificacao[0] }}', this)">X</button>
+                                <button class="close-btn" onclick="removerNotificacao('{{ notificacao[-1] }}', this)">X</button>
                             </div>
                         {% endfor %}
                     {% else %}
@@ -69,17 +69,23 @@
         </div>
     </div>
     <script>
-        function removerNotificacao(nomeCliente, elemento) {
+        function removerNotificacao(notificacaoId, elemento) {
+            console.log("Tentando remover notificação com ID:", notificacaoId);
+
+            if (!notificacaoId || isNaN(notificacaoId)) {
+                alert("Erro: ID da notificação inválido!");
+                return;
+            }
+
             fetch('/remover_notificacao', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ nome_cliente: nomeCliente })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_not: notificacaoId }) 
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    console.log("Notificação removida com sucesso:", notificacaoId);
                     elemento.parentElement.remove(); 
                 } else {
                     alert('Erro ao remover notificação: ' + data.error);
@@ -88,6 +94,7 @@
             .catch(error => console.error('Erro:', error));
         }
 
+        
         if (document.getElementById('financeiroButton').classList.contains('error')) {
             setTimeout(function() {
                 var button = document.getElementById('financeiroButton');

@@ -337,6 +337,7 @@ def adicionar_observacao():
         observacao = request.form.get('observation')
         data_atendimento = request.form.get('date')
         data_agendamento = request.form.get('agendamento')
+        estado = "ativa"
 
         if not observacao or not data_atendimento or not nome_cliente or not cpf_cnpj:
             print("Erro: Dados incompletos")
@@ -348,17 +349,27 @@ def adicionar_observacao():
 
         conexao = criar_conexao()
 
-        query = """
-        INSERT INTO atendimentos (nome_cliente, cpf_cnpj, data_atendimento, observacao, usuario, data_agendamento)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        query_atendimento = """
+        INSERT INTO atendimentos (nome_cliente, cpf_cnpj, data_atendimento, observacao, usuario)
+        VALUES (%s, %s, %s, %s, %s)
         """
-        valores = (nome_cliente.strip(), cpf_cnpj.strip(), data_atendimento.strip(), observacao.strip(), usuario_logado.strip(), data_agendamento.strip() if data_agendamento else None)
+        valores_atendimento = (nome_cliente.strip(), cpf_cnpj.strip(), data_atendimento.strip(), observacao.strip(), usuario_logado.strip())
         
         with conexao.cursor() as cursor:
-            cursor.execute(query, valores)
+            cursor.execute(query_atendimento, valores_atendimento)
             conexao.commit()  
 
-        print(f"Observação adicionada com sucesso: {valores}")
+        if data_agendamento:
+            query_gerencia = """
+            INSERT INTO not_gerencia (nome_cliente, cpf_cnpj, data, anotacao, criador, data_agendamento, estado)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            valores_gerencia = (nome_cliente.strip(), cpf_cnpj.strip(), data_atendimento.strip(), observacao.strip(), usuario_logado.strip(), data_agendamento.strip(), estado)
+
+            with conexao.cursor() as cursor:
+                cursor.execute(query_gerencia, valores_gerencia)
+                conexao.commit() 
+
         return jsonify({"success": "Observação adicionada com sucesso!"}), 200
 
     except Exception as e:

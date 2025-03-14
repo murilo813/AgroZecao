@@ -33,11 +33,13 @@ body {
   padding-bottom: 10px; 
 }
 h1 {
-  color: #117011;
-  align-self: center; 
-  margin-top: 5px;
+  color: #117011; 
+  position: absolute;
+  top: 0.5%;
+  left: 50%;
+  transform: translateX(-50%);  
   font-weight: 900; 
-  font-size: 60px;
+  font-size: 50px; 
   -webkit-text-stroke: 3px black; 
   text-shadow: none; 
 }
@@ -50,7 +52,7 @@ h1 {
   gap: 20px; 
   margin-top: 30px;
 }
-button {
+.btn-principal {
   display: flex;
   align-items: center;
   padding: 15px 30px;
@@ -63,12 +65,66 @@ button {
   transition: background-color 0.3s, transform 0.2s;
   width: 200px; 
 }
-button i {
+.btn-principal i {
   margin-right: 10px; 
 }
-button:hover {
+.btn-principal:hover {
   background-color: #45a049;
   transform: translateY(-5px);
+}
+#togleForm {
+  position: absolute; 
+  top: 7%; 
+  right: 3%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000; 
+}
+#togleForm select {
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+#togleForm textarea {
+  width: 100%;
+  height: 100px; 
+  margin-bottom: 10px;
+}
+#togleForm input {
+  position: relative;
+  top: 10px;
+  width: 100%;
+  height: 20px;
+  margin-bottom: 10px;
+}
+#togleForm button {
+  position: relative;
+  top: 10px;
+  margin-top: 10px;
+  margin: 3px;
+  width: 90px;
+  height: 30px;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+#togleForm button:hover {
+  background-color: #0056b3;
+}
+#togleForm label {
+  position:relative;
+  top: 1px;
+  font-weight: bold;
+  color: #333;
 }
 .voltar-button {
   display: flex;
