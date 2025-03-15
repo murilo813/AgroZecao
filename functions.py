@@ -92,7 +92,7 @@ def obter_notificacoes(usuario):
         novas_notificacoes = cursor.fetchall()
 
         for noti in novas_notificacoes:
-            print(f"🔍 Criador: {noti['criador']}, Anotação: {noti['anotacao']}, ID_NOT: {noti['id_not']}")  # 🟥 Debug
+            print(f"🔍 Criador: {noti['criador']}, Anotação: {noti['anotacao']}, ID_NOT: {noti['id_not']}")
             notificacoes.append([
                 F"De: {noti['criador']}",  
                 noti['anotacao'],

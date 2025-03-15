@@ -61,7 +61,7 @@ def remover_notificacao():
                 SET estado = 'inativa'
                 WHERE id_not = %s
             """
-            cursor.execute(query, (id_not))
+            cursor.execute(query, (id_not,))
             conexao.commit()
 
             if cursor.rowcount == 0:

@@ -92,7 +92,7 @@ def consulta():
                     query_cliente = """
                         SELECT cpf_cnpj, nome_cliente, responsavel, bairro
                         FROM clientes
-                        WHERE cpf_cnpj = %s AND ativo = 'S'
+                        WHERE id_cliente = %s AND ativo = 'S'
                     """
                     cursor.execute(query_cliente, (cpf_selecionado,))
                     cliente = cursor.fetchone()
