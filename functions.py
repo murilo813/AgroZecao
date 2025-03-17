@@ -75,10 +75,8 @@ def obter_notificacoes(usuario):
             notificacao = [
                 atendimento['nome_cliente'],
                 atendimento['anotacao'],
-                data_atendimento.strftime('%d/%m/%Y'),
+                data_atendimento.strftime('%d/%m/%Y')
             ]
-            if data_agendamento < data_hoje:
-                notificacao.append(f"Aviso perdido {data_agendamento.strftime('%d/%m/%Y')}")
 
             notificacao.append(atendimento['id_not'])  
             notificacoes.append(notificacao)
@@ -96,6 +94,7 @@ def obter_notificacoes(usuario):
             notificacoes.append([
                 F"De: {noti['criador']}",  
                 noti['anotacao'],
+                "",
                 noti['id_not']
             ])
 
