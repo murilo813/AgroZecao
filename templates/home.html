@@ -52,9 +52,6 @@
                                 <p>{{ notificacao[0] }}</p>  
                                 <p>{{ notificacao[1] }}</p>  
                                 <p>{{ notificacao[2] }}</p>  
-                                {% if notificacao|length > 3 %}
-                                    <p>{{ notificacao[3] }}</p>  
-                                {% endif %}
                                 <button class="close-btn" onclick="removerNotificacao('{{ notificacao[-1] }}', this)">X</button>
                             </div>
                         {% endfor %}
