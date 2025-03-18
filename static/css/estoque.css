@@ -3,6 +3,8 @@ body {
   font-family: Arial, sans-serif;
   background-color: #333333;
   overflow:hidden;
+  height: 100%;  
+  margin: 0;   
 }
 .container {
     display: flex;
@@ -24,11 +26,14 @@ body {
     box-sizing: border-box; 
     padding-bottom: 10px; 
   }
-h1 {
-    color: #117011;
+  h1 {
+    position: relative;
+    margin-top: 0; 
+    margin-bottom: 10px;
+    color: #117011; 
     text-align: center; 
     font-weight: 900; 
-    font-size: 60px;
+    font-size: 50px; 
     -webkit-text-stroke: 3px black; 
-    text-shadow: none; 
+    text-shadow: none;
 }
