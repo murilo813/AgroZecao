@@ -1,7 +1,7 @@
 @charset "UTF-8";
 body {
   font-family: Arial, sans-serif;
-  background-color: #333333;
+  background-color: #ffffff;
   overflow:hidden;
   height: 100%;  
   margin: 0;   
@@ -13,19 +13,18 @@ body {
     height: 100vh;
 }
 .box {
-    background-color: white;
-    padding: 4px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: calc(100% - 40px);
-    height: calc(100% - 40px); 
-    display: flex;
-    flex-direction: column; 
-    justify-content: flex-start; 
-    box-sizing: border-box; 
-    padding-bottom: 10px; 
-  }
+  background-color: #ffffff;
+  padding: 20px;
+  padding-top: 40px;
+  text-align: center;
+  width: calc(100% - 40px); 
+  height: calc(100% - 40px); 
+  display: flex;
+  flex-direction: column; 
+  justify-content: flex-start; 
+  box-sizing: border-box; 
+  padding-bottom: 10px; 
+}
   h1 {
     position: relative;
     margin-top: 0; 
