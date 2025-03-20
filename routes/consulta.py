@@ -80,7 +80,7 @@ def consulta():
             atendimentos = []
 
             if cpf_selecionado:
-                if len(cpf_selecionado) == 11 and cpf_selecionado.isdigit():  
+                if len(cpf_selecionado) >= 11 and cpf_selecionado.isdigit():  
                     query_cliente = """
                         SELECT cpf_cnpj, nome_cliente, responsavel, bairro
                         FROM clientes 

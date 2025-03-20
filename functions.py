@@ -11,16 +11,19 @@ def criar_conexao():
         password=os.getenv('DB_PASSWORD')
     )
 
-def carregar_usuarios():
+def carregar_usuario_por_nome(nome):
+    """Carrega um usuário específico pelo nome e retorna a senha hash."""
     try:
         conexao = criar_conexao()
         cursor = conexao.cursor()
-        cursor.execute("SELECT nome, senha FROM usuarios")
-        usuarios = cursor.fetchall()
-        return usuarios
+        
+        cursor.execute("SELECT senha FROM usuarios WHERE nome = %s", (nome,))
+        usuario = cursor.fetchone()
+
+        return usuario[0] if usuario else None  
     except Exception as e:
-        print(f"Erro ao carregar usuários: {e}")
-        return []
+        print(f"Erro ao carregar usuário: {e}")
+        return None
 
 def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
     try:
