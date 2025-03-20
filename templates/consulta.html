@@ -10,7 +10,9 @@
 <body>
     <div class="container">
         <div class="box">
-            <h1 class="titulo">Consultar Cliente</h1>
+            <div id="tituloConsulta">
+                <h1 class="titulo">Consultar Cliente</h1>
+            </div>
             <form method="POST" action="/consulta">
                 <label for="nome">NOME:</label>
                 <input type="text" id="nome" name="nome">
@@ -204,9 +206,6 @@
                 </div>
             {% endif %}                  
             </div>
-            <footer>
-                © 2025 Agropecuária Zecão LTDA. Todos os direitos reservados.
-            </footer>
         </div>    
     </div>
 <button class="button voltar-button" onclick="window.location.href='{{ url_for('home.home') }}'">
@@ -345,6 +344,8 @@
                 currentScrollTop = tabela.scrollTop;
             });
         });    
+
+
     </script>      
 </body>
 </html>

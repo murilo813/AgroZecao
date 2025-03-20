@@ -11,19 +11,46 @@
     <div class="container">
         <div class="box">
             <h1>Gerenciamento</h1>
-                <div class="buttons-container">
-                    <button class="btn-principal">
-                        <i class="fas fa-file-alt"></i> Orçamentos
-                    </button>
-                    <button class="btn-principal">
-                        <i class="fas fa-boxes"></i> Estoque
-                    </button>
-                    <button class="btn-principal">
-                        <i class="fas fa-chart-line"></i> Estatísticas
-                    </button>
+            <div class="buttons-container">
+
+                <button class="btn-principal">
+                    <i class="fas fa-file-alt"></i> Orçamentos
+                </button>
+
+                <button class="btn-principal">
+                    <i class="fas fa-boxes"></i> Estoque
+                </button>
+
+                <button id="cobrancaBtn" class="btn-principal">
+                    <i class="fas fa-chart-line"></i> Cobranças
+                </button>
+
+                <button id="togleform" class="btn-principal">
+                    <i class="fas fa-envelope"></i> Enviar mensagem
+                </button>
+            </div>
+
+            <div id="cobrancamodal" class="modal">
+                <div class="modal_conteudo">
+                    <span id="fecharmodal" class="fechar">&times;</span>
+                    <h2>Cobranças do Dia</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Observação</th>
+                                <th>Usuário</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- As linhas dos atendimentos serão inseridas dinamicamente aqui -->
+                        </tbody>
+                    </table>
                 </div>
-            <div id="togleForm">
+            </div>
+            <div id="togleForm" style="display: none;">
                 <form id="formTogle" method="POST" action="/add_notificacao">
+                    <span id="fecharmodal" class="fechar">&times;</span>
                     <label for="usuario">Usuario:</label>
                     <select id="usuario" name="usuario">
                         {% for usuario in usuarios %}
@@ -31,19 +58,68 @@
                         {% endfor %}
                     </select>
 
-                    <label for="anotacao">Anotação</label>
+                    <label for="anotacao">Mensagem</label>
                     <textarea id="anotacao" name="anotacao" required></textarea>
 
                     <button type="submit" class="btn-enviar">Enviar</button>
                 </form>
             </div>
+
         </div>
-        <footer>
-            © 2025 Agropecuária Zecão LTDA. Todos os direitos reservados.
-        </footer>
     </div>
-<button class="button voltar-button" onclick="window.location.href='{{ url_for('home.home') }}'">
-    <i class="fas fa-arrow-left"></i> Voltar
-</button>
+    <button class="button voltar-button" onclick="window.location.href='{{ url_for('home.home') }}'">
+        <i class="fas fa-arrow-left"></i> Voltar
+    </button>
+    <script>
+        const modal = document.getElementById("cobrancamodal");
+        const btnAbrir = document.getElementById("cobrancaBtn");
+        const btnFechar = document.getElementById("fecharmodal");
+
+        btnAbrir.onclick = async function() {
+            try {
+                const response = await fetch('/cobrancas');
+                const data = await response.json();
+                if (response.ok) {
+                    const tbody = document.querySelector("#cobrancamodal .modal_conteudo table tbody");
+                    tbody.innerHTML = '';  // Limpar o conteúdo atual da tabela
+                    data.atendimentos.forEach(atendimento => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${atendimento[0]}</td>
+                            <td>${atendimento[1]}</td>
+                            <td>${atendimento[2]}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                    modal.style.display = "block";  // Mostrar o modal
+                } else {
+                    console.error("Erro ao buscar cobranças.");
+                }
+            } catch (error) {
+                console.error("Erro ao fazer requisição AJAX:", error);
+            }
+        }
+
+        btnFechar.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        const btnTogle = document.getElementById("togleform");
+        const formTogle = document.getElementById("togleForm");
+
+        btnTogle.onclick = function() {
+            if (formTogle.style.display === "none" || formTogle.style.display === "") {
+                formTogle.style.display = "block"; 
+            } else {
+                formTogle.style.display = "none";  
+            }
+        };
+    </script>
 </body>
 </html>

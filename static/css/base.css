@@ -1,25 +1,27 @@
+/* Google Fonts - Poppins */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
 }
 body {
   min-height: 100%;
   background: transparent;
 }
 nav {
-  position: relative;
+  font-family: "Poppins", sans-serif;
+  position: fixed;
   top: 0;
   left: 0;
   height: 70px;
   width: 100%;
   display: flex;
   align-items: center;
-  background: #fff;
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  background: #06c056;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border-bottom: 2px solid #797878; 
 }
 nav .logo {
   display: flex;
@@ -44,8 +46,9 @@ nav .sidebar {
   height: 100%;
   width: 260px;
   padding: 20px 0;
-  background-color: #fff;
+  background-color: #06c056;
   box-shadow: 0 5px 1px rgba(0, 0, 0, 0.1);
+  border-right: 2px solid #797878; 
   transition: all 0.4s ease;
 }
 nav.open .sidebar {
@@ -70,21 +73,21 @@ nav.open .sidebar {
   text-decoration: none;
 }
 .lists .nav-link:hover {
-  background-color: #4070f4;
+  background-color: #ffffff;
 }
 .nav-link .icon {
   margin-right: 14px;
   font-size: 20px;
-  color: #707070;
+  color: #333;
 }
 .nav-link .link {
   font-size: 16px;
-  color: #707070;
+  color: #333;
   font-weight: 400;
 }
 .lists .nav-link:hover .icon,
 .lists .nav-link:hover .link {
-  color: #fff;
+  color: #333;
 }
 .overlay {
   position: fixed;
@@ -101,4 +104,12 @@ nav.open ~ .overlay {
   opacity: 1;
   left: 260px;
   pointer-events: auto;
+}
+footer {
+  position: absolute;
+  bottom: 1%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #666;
+  font-size: 12px;
 }

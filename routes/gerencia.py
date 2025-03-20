@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, flash, redirect
+from flask import Blueprint, render_template, request, session, flash, redirect, jsonify
 from functions import criar_conexao
 from datetime import date
 
@@ -110,3 +110,36 @@ def adicionar_notificacao():
     finally:
         if 'conexao' in locals() and conexao:
             conexao.close()
+
+@gerencia_bp.route('/cobrancas', methods=['GET'])
+def cobrancas():
+    try:
+        conexao = criar_conexao()
+        cursor = conexao.cursor()
+        data_hoje = date.today()
+        usuario_logado = session['usuario']
+
+        query_id_empresa = """
+            SELECT id_empresa FROM usuarios WHERE nome = %s
+        """
+        cursor.execute(query_id_empresa, (usuario_logado,))
+        id_empresa = cursor.fetchone()
+        id_empresa = id_empresa[0]
+
+        query_atendimentos = """
+            SELECT a.nome_cliente, a.observacao, a.usuario
+            FROM atendimentos a
+            INNER JOIN usuarios u ON a.usuario = u.nome
+            WHERE a.data_atendimento = %s
+            AND u.id_empresa = %s
+            ORDER BY a.data_atendimento ASC
+        """
+        
+        cursor.execute(query_atendimentos, (data_hoje, id_empresa))
+        atendimentos = cursor.fetchall()
+
+        return jsonify({"atendimentos": atendimentos})
+    
+    except Exception as e:
+        print(f"Erro ao carregar atendimentos: {e}")
+        return jsonify({"atendimentos": []})
