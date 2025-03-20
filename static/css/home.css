@@ -28,7 +28,7 @@ body {
 h1 {
   color: #117011; 
   position: absolute;
-  top: 0.5%;
+  top: 10%;
   left: 50%;
   transform: translateX(-50%);  
   font-weight: 900; 
@@ -36,14 +36,6 @@ h1 {
   -webkit-text-stroke: 3px black; 
   text-shadow: none; 
   font-family: Arial, sans-serif;
-}
-footer {
-  position: absolute;
-  bottom: 4%;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #666;
-  font-size: 12px;
 }
 .buttons-container {
   display: flex;

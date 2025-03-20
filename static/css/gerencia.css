@@ -82,7 +82,7 @@ h1 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   z-index: 1000; 
 }
-#togleForm select {
+select {
   margin-bottom: 10px;
   width: 100%;
   padding: 5px;
@@ -154,4 +154,91 @@ footer {
   transform: translateX(-50%);
   color: #666;
   font-size: 12px;
+}
+
+/*Caixinnha de cobranças*/
+.modal {
+  display: none; 
+  position: absolute; 
+  bottom: 12%; 
+  left: 1%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  width: 600px;
+  height: 470px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000; 
+  overflow-y: auto;
+}
+.modal::-webkit-scrollbar {
+  width: 8px; 
+  height: 8px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background-color: #888; 
+  border-radius: 4px; 
+  border: 2px solid #fff; 
+}
+
+.modal::-webkit-scrollbar-thumb:hover {
+  background-color: #555; 
+}
+
+.modal::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 4px;
+}
+.modal-conteudo {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 100%;
+  text-align: center;
+  overflow-y: auto;
+  max-height: 350px;
+}
+.fechar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+th:nth-child(1), td:nth-child(1) {
+  width: 40%; 
+}
+
+th:nth-child(2), td:nth-child(2) {
+  width: 50%; 
+}
+
+th:nth-child(3), td:nth-child(3) {
+  width: 10%; 
+}
+td {
+  font-size: 13px;
+}
+tr:hover {
+  background-color: #f9f9f9;
+}
+tbody tr:last-child td {
+  border-bottom: none;
 }
