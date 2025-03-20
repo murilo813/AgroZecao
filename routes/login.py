@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, flash, session
-from functions import carregar_usuarios
+from functions import carregar_usuario_por_nome
+from werkzeug.security import check_password_hash
 
 login_bp = Blueprint('login', __name__)
 
@@ -13,11 +14,9 @@ def login():
         nome = request.form.get('username', '').strip()  
         senha = request.form.get('password', '').strip() 
 
-        usuarios = carregar_usuarios()
+        senha_hash = carregar_usuario_por_nome(nome)
 
-        usuario_encontrado = next((user for user in usuarios if user[0] == nome and user[1] == senha), None)
-
-        if usuario_encontrado:  
+        if senha_hash and check_password_hash(senha_hash, senha):  
             session['usuario'] = nome 
             return redirect('/home')
         else:
