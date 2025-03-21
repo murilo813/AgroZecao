@@ -50,7 +50,7 @@
             </div>
             <div id="togleForm" style="display: none;">
                 <form id="formTogle" method="POST" action="/add_notificacao">
-                    <span id="fecharmodal" class="fechar">&times;</span>
+                    <span id="fechartogle" class="fechar">&times;</span>
                     <label for="usuario">Usuario:</label>
                     <select id="usuario" name="usuario">
                         {% for usuario in usuarios %}
@@ -76,6 +76,11 @@
         const btnFechar = document.getElementById("fecharmodal");
 
         btnAbrir.onclick = async function() {
+            if (modal.style.display === "block") {
+                modal.style.display = "none"; // Fecha o modal se já estiver aberto
+                return;
+            }
+
             try {
                 const response = await fetch('/cobrancas');
                 const data = await response.json();
@@ -98,20 +103,23 @@
             } catch (error) {
                 console.error("Erro ao fazer requisição AJAX:", error);
             }
-        }
+        };
 
+        // Fechar ao clicar no botão de fechar
         btnFechar.onclick = function() {
             modal.style.display = "none";
-        }
+        };
 
+        // Fechar ao clicar fora do modal
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
-        }
+        };
 
         const btnTogle = document.getElementById("togleform");
         const formTogle = document.getElementById("togleForm");
+        const btnFecharTogle = document.getElementById("fechartogle");
 
         btnTogle.onclick = function() {
             if (formTogle.style.display === "none" || formTogle.style.display === "") {
@@ -120,6 +128,11 @@
                 formTogle.style.display = "none";  
             }
         };
+
+        btnFecharTogle.onclick = function() {
+            formTogle.style.display = "none";
+        };
+
     </script>
 </body>
 </html>
