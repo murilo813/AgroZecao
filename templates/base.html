@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<!-- Coding by CodingLab | www.codinglabweb.com-->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sidebar Menu | Side Navigation Bar</title>
+    <title>Agropecuária Zecão ERP</title>
 
     <link rel="stylesheet" href="static/css/base.css" />
 
@@ -18,21 +17,28 @@
     <nav>
       <div class="logo">
         <i class="bx bx-menu menu-icon"></i>
-        <span class="logo-name">Alembro</span>
+        <span class="logo-name">Agrozecão</span>
+        <div class="nav-buttons">
+          <a class="nav-button" href="home">Início</a>
+          <a class="nav-button" href="consulta">Financeiro</a>
+          <a class="nav-button" href="gerencia">Gêrencia</a>
+          <a class="nav-button" href="estoque">Estoque</a>
+          <a class="nav-button" href="#">Gastos</a>
+        </div>
       </div>
 
       <div class="sidebar">
         <div class="logo">
           <i class="bx bx-menu menu-icon"></i>
-          <span class="logo-name">Alembro</span>
+          <span class="logo-name2">Agrozecão</span>
         </div>
 
         <div class="sidebar-content">
           <ul class="lists">
             <li class="list">
-              <a href="#" class="nav-link">
+              <a onclick="window.location.href='{{ url_for('home.home') }}'" class="nav-link">
                 <i class="bx bx-home-alt icon"></i>
-                <span class="link">Dashboard</span>
+                <span class="link">Página inicial</span>
               </a>
             </li>
             <li class="list">
@@ -44,7 +50,7 @@
             <li class="list">
               <a href="#" class="nav-link">
                 <i class="bx bx-bell icon"></i>
-                <span class="link">Notifications</span>
+                <span class="link">Notificações</span>
               </a>
             </li>
             <li class="list">
@@ -77,26 +83,30 @@
             <li class="list">
               <a href="#" class="nav-link">
                 <i class="bx bx-cog icon"></i>
-                <span class="link">Settings</span>
+                <span class="link">Configurções</span>
               </a>
             </li>
             <li class="list">
               <a href="#" class="nav-link">
                 <i class="bx bx-log-out icon"></i>
-                <span class="link">Logout</span>
+                <span class="link">Sair</span>
               </a>
             </li>
           </div>
         </div>
       </div>
     </nav>
-    <footer>
+    <footer id="rodape-direitos">
       © 2025 Agropecuária Zecão LTDA. Todos os direitos reservados.
+    </footer>
+    <footer id="rodape-creditos">
+      <p>Desenvolvido por <a href="https://murilo813.github.io/AlembroSite/" target="_blank">Alembro</a></p>
     </footer>
 
     <section class="overlay"></section>
 
     <script>
+      /*Barra lateral*/
       const navBar = document.querySelector("nav"),
         menuBtns = document.querySelectorAll(".menu-icon"),
         overlay = document.querySelector(".overlay");
@@ -109,6 +119,20 @@
 
       overlay.addEventListener("click", () => {
         navBar.classList.remove("open");
+      });
+
+      /*Sublinha o setor atual*/
+      document.addEventListener("DOMContentLoaded", function () {
+          let buttons = document.querySelectorAll(".nav-button");
+          let currentPath = window.location.pathname.replace("/", ""); // Remove a barra inicial
+
+          buttons.forEach(button => {
+              let buttonPath = button.getAttribute("href").replace("/", ""); // Remove também do href
+              
+              if (buttonPath === currentPath) {
+                  button.classList.add("active"); 
+              }
+          });
       });
     </script>
   </body>

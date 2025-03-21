@@ -181,8 +181,9 @@ body {
 }
 h2 {
     position: absolute;
-    left: 3%;
-    top: 10%;
+    left: 2.6%;
+    top: 15%;
+    margin-bottom: 5px;
 }
 .detalhes-cliente {
     display: flex;
@@ -258,7 +259,7 @@ h2 {
   }
 h1 {
     position: relative;
-    top: -45px; 
+    top: 10%; 
     margin-top: 0; 
     margin-bottom: 10px;
     color: #117011; 
@@ -269,19 +270,16 @@ h1 {
     text-shadow: none;
 }
 label {
-    margin-top: 0; 
     position: relative;
-    top: -55px; 
+    top: 90%;
 }
 input {
-    margin-top: 0; 
     position: relative;
-    top: -55px; 
+    top: 90%;
 }
 button.botao-pesquisar {
-    margin-top: 26; 
     position: relative;
-    top: -55px; 
+    top: 90%;
 }
 h3 {
     position: relative;
@@ -318,7 +316,7 @@ h4 {
     margin-left: 20px; 
     text-align: left; 
     position: relative;
-    top: -100px; 
+    top: -10px; 
     margin-top: 0;
 }
 .tabela-detalhes th, .tabela-detalhes td {
@@ -343,7 +341,7 @@ h4 {
     position: relative;
     width: 100%;
     border-collapse: collapse;
-    margin-top: 1px;
+    margin-top: 30px;
 }
 .cabeçalho th:nth-child(1), 
 .cabeçalho td:nth-child(1) {
@@ -391,8 +389,8 @@ h4 {
 }
 #observationForm {
     position: absolute; 
-    top: 5%; 
-    right: 2.3%;
+    top: 12%; 
+    right: 1%;
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -482,27 +480,4 @@ h4 {
 }
 #tabela-atendimentos th {
     background-color: #f2f2f2;
-}
-.voltar-button {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    background-color: #4CAF50;
-    color: white;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    width: 100px;
-    position: absolute;
-    left: 23px; 
-    bottom: 23px;
-}
-.voltar-button i {
-    margin-right: 10px; 
-}
-.voltar-button:hover {
-    background-color: #2c6e30;
-    transform: translateY(-5px);
 }

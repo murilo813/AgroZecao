@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alembro</title>
+    <title>Agropecária Zecão ERP</title>
     <link href="static/css/gerencia.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
 <body>
+    {% include 'base.html' %}
     <div class="container">
         <div class="box">
             <h1>Gerenciamento</h1>
@@ -22,11 +24,11 @@
                 </button>
 
                 <button id="cobrancaBtn" class="btn-principal">
-                    <i class="fas fa-chart-line"></i> Cobranças
+                    <i class="fas fa-file-invoice"></i> Cobranças
                 </button>
 
                 <button id="togleform" class="btn-principal">
-                    <i class="fas fa-envelope"></i> Enviar mensagem
+                    <i class="fas fa-envelope"></i> Mensagem
                 </button>
             </div>
 
@@ -67,9 +69,6 @@
 
         </div>
     </div>
-    <button class="button voltar-button" onclick="window.location.href='{{ url_for('home.home') }}'">
-        <i class="fas fa-arrow-left"></i> Voltar
-    </button>
     <script>
         const modal = document.getElementById("cobrancamodal");
         const btnAbrir = document.getElementById("cobrancaBtn");

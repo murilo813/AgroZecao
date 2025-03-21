@@ -26,23 +26,34 @@ body {
   padding-bottom: 10px; 
 }
 h1 {
-  color: #117011; 
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);  
-  font-weight: 900; 
-  font-size: 50px; 
-  -webkit-text-stroke: 3px black; 
-  text-shadow: none; 
+  color: #117011;
+  font-weight: 900;
+  font-size: 50px;
+  -webkit-text-stroke: 3px black;
+  text-shadow: none;
   font-family: Arial, sans-serif;
+  opacity: 1;
 }
+@keyframes slidein {
+  from {
+    margin-left: 50%;
+    opacity: 0;
+  }
+  to {
+    margin-left: 0%;
+    opacity: 1;
+  }
+}
+.slidein {
+  animation: slidein 1s ease-out forwards; /* Mantém a posição final */
+}
+
 .buttons-container {
   display: flex;
   flex-direction: column; 
   align-items: center;
   justify-content: center; 
-  height: 100vh; 
+  height: 70%; 
   gap: 20px; 
   margin-top: 30px;
 }
@@ -138,6 +149,10 @@ html ::-webkit-scrollbar-track {
   color: #495057;
   display: flex;
   flex-direction: column;
+}
+.alert p {
+  margin: 0;
+  padding: 5px 0;
 }
 .alert p:first-child {
   font-weight: bold;

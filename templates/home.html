@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agropecuária Zecão Web</title>
+    <title>Agropecuária Zecão ERP</title>
     <link href="static/css/home.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
 <body>
+    {% include 'base.html' %}
     <div class="container">
         <div class="box">
-            <h1>Bem Vindo(a) {{ session['nomeclatura'] }}!</h1>
+            <h1 id="titulo">Bem Vindo(a) {{ session['nomeclatura'] }}!</h1>
             <div class="buttons-container">
                 <button id="financeiroButton" class="button {% if erro_financeiro %}error{% endif %}" onclick="window.location.href='{{ url_for('consulta.consulta') }}'">
                     <i class="fas fa-dollar-sign"></i>Financeiro
@@ -25,21 +27,6 @@
                     <i class="fas fa-box"></i>Estoque
                 </button>
             </div>
-<!--        <div class="releases-container">
-                <div class="box-releases">
-                    <div class="release-header"> 
-                        <i class="fa fa-cogs"></i>                       
-                        <h2>Atualizações</h2>
-                        <i class="fa fa-cogs"></i> 
-                    </div>
-                    <ul>
-                        <li>Nova página inicial.</li>
-                        <li>Design melhorado.</li>
-                        <li>Adição de novos setores.</li>
-                        <li>Adicionado o agendamento de atendimentos.</li>
-                    </ul>
-                </div>
-            </div>  irei implementar isto mais tarde.-->
             <div class="alert-container">
                 <div class="alert-box">
                     <div class="alert-header">
@@ -63,6 +50,7 @@
         </div>
     </div>
     <script>
+        /*Remove a notificação*/
         function removerNotificacao(notificacaoId, elemento) {
             console.log("Tentando remover notificação com ID:", notificacaoId);
 
@@ -88,7 +76,7 @@
             .catch(error => console.error('Erro:', error));
         }
 
-        
+        /*BOTOES COM ACESSO NEGADO ANIMAÇÃO*/
         if (document.getElementById('financeiroButton').classList.contains('error')) {
             setTimeout(function() {
                 var button = document.getElementById('financeiroButton');
@@ -116,7 +104,18 @@
                 button.classList.remove('error');
             }, 1000); 
         }
-        
+
+        /*Animação de entrada do título*/
+        document.addEventListener("DOMContentLoaded", function () {
+            const titulo = document.getElementById("titulo");
+
+            if (sessionStorage.getItem("loginEfetuado") === null) {
+                titulo.classList.add("slidein");
+                sessionStorage.setItem("loginEfetuado", "true"); // Marca que o login foi feito
+            } else {
+                titulo.style.opacity = "1"; // Garante que o título fique visível após reload
+            }
+        });
     </script>
 </body>
 </html>
