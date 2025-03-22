@@ -14,19 +14,6 @@
     <div class="container">
         <div class="box">
             <h1 id="titulo">Bem Vindo(a) {{ session['nomeclatura'] }}!</h1>
-            <div class="buttons-container">
-                <button id="financeiroButton" class="button {% if erro_financeiro %}error{% endif %}" onclick="window.location.href='{{ url_for('consulta.consulta') }}'">
-                    <i class="fas fa-dollar-sign"></i>Financeiro
-                </button>
-                <button id="gerenciaButton" class="button {% if erro_gerencia %}error{% endif %}" onclick="window.location.href='{{ url_for('gerencia.gerencia') }}'">
-                    <i class="fas fa-cogs"></i>Gerência
-                </button>
-                <button id="comercialButton" class="button {% if erro_comercial %}error{% endif %}" onclick="window.location.href='{{ url_for('comercial.comercial') }}'">
-                    <i class="fas fa-chart-line"></i>Comercial
-                </button>                <button id="estoqueButton" class="button {% if erro_estoque %}error{% endif %}" onclick="window.location.href='{{ url_for('estoque.estoque') }}'">
-                    <i class="fas fa-box"></i>Estoque
-                </button>
-            </div>
             <div class="alert-container">
                 <div class="alert-box">
                     <div class="alert-header">
@@ -74,35 +61,6 @@
                 }
             })
             .catch(error => console.error('Erro:', error));
-        }
-
-        /*BOTOES COM ACESSO NEGADO ANIMAÇÃO*/
-        if (document.getElementById('financeiroButton').classList.contains('error')) {
-            setTimeout(function() {
-                var button = document.getElementById('financeiroButton');
-                button.classList.remove('error');
-            }, 1000); 
-        }
-    
-        if (document.getElementById('gerenciaButton').classList.contains('error')) {
-            setTimeout(function() {
-                var button = document.getElementById('gerenciaButton');
-                button.classList.remove('error'); 
-            }, 1000); 
-        }
-
-        if (document.getElementById('comercialButton').classList.contains('error')) {
-            setTimeout(function() {
-                var button = document.getElementById('comercialButton');
-                button.classList.remove('error');
-            }, 1000); 
-        }
-
-        if (document.getElementById('estoqueButton').classList.contains('error')) {
-            setTimeout(function() {
-                var button = document.getElementById('estoqueButton');
-                button.classList.remove('error');
-            }, 1000); 
         }
 
         /*Animação de entrada do título*/
