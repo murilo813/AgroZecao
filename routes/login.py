@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, flash, session
+from flask import Blueprint, render_template, request, redirect, flash, session, url_for
 from functions import carregar_usuario_por_nome
 from werkzeug.security import check_password_hash
 
@@ -28,4 +28,4 @@ def login():
 @login_bp.route('/logout')
 def logout():
     session.clear()  
-    return redirect('/')  
+    return redirect(url_for('login.index')) 

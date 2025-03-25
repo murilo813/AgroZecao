@@ -13,56 +13,10 @@
     {% include 'base.html' %}
     <div class="container">
         <div class="box">
-            <h1 id="titulo">Bem Vindo(a) {{ session['nomeclatura'] }}!</h1>
-            <div class="alert-container">
-                <div class="alert-box">
-                    <div class="alert-header">
-                        <i class="fa fa-bell"></i>
-                        <h3>Notificações</h3>
-                    </div>
-                    {% if session['notificacoes'] %}
-                        {% for notificacao in session['notificacoes'] %}
-                            <div class="alert">
-                                <p>{{ notificacao[0] }}</p>  
-                                <p>{{ notificacao[1] }}</p>  
-                                <p>{{ notificacao[2] }}</p>  
-                                <button class="close-btn" onclick="removerNotificacao('{{ notificacao[-1] }}', this)">X</button>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="no-notifications">Nenhuma notificação no momento.</p>
-                    {% endif %}
-                </div>
-            </div>        
+            <h1 id="titulo">Bem Vindo(a) {{ session['nomeclatura'] }}!</h1>       
         </div>
     </div>
     <script>
-        /*Remove a notificação*/
-        function removerNotificacao(notificacaoId, elemento) {
-            console.log("Tentando remover notificação com ID:", notificacaoId);
-
-            if (!notificacaoId || isNaN(notificacaoId)) {
-                alert("Erro: ID da notificação inválido!");
-                return;
-            }
-
-            fetch('/remover_notificacao', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_not: notificacaoId }) 
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log("Notificação removida com sucesso:", notificacaoId);
-                    elemento.parentElement.remove(); 
-                } else {
-                    alert('Erro ao remover notificação: ' + data.error);
-                }
-            })
-            .catch(error => console.error('Erro:', error));
-        }
-
         /*Animação de entrada do título*/
         document.addEventListener("DOMContentLoaded", function () {
             const titulo = document.getElementById("titulo");

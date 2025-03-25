@@ -23,10 +23,13 @@
           <a class="nav-button" href="consulta">Financeiro</a>
           <a class="nav-button" href="gerencia">Gêrencia</a>
           <a class="nav-button" href="estoque">Estoque</a>
-          <a class="nav-button" href="#">Gastos</a>
+          <a class="nav-button" href="gastos">Gastos</a>
         </div>
       </div>
-
+      <div id="notification-icon" class="notification-icon">
+        <i class="bx bx-bell"></i>
+        <span id="notification-count" class="notification-count">0</span>
+      </div>
       <div class="sidebar">
         <div class="logo">
           <i class="bx bx-menu menu-icon"></i>
@@ -36,7 +39,7 @@
         <div class="sidebar-content">
           <ul class="lists">
             <li class="list">
-              <a onclick="window.location.href='{{ url_for('home.home') }}'" class="nav-link">
+              <a href="home" class="nav-link">
                 <i class="bx bx-home-alt icon"></i>
                 <span class="link">Página inicial</span>
               </a>
@@ -44,37 +47,26 @@
             <li class="list">
               <a href="#" class="nav-link">
                 <i class="bx bx-bar-chart-alt-2 icon"></i>
-                <span class="link">Revenue</span>
+                <span class="link">Inativo</span>
               </a>
             </li>
             <li class="list">
-              <a href="#" class="nav-link">
+              <a href="#" class="nav-link" id="openAlertModal">
                 <i class="bx bx-bell icon"></i>
                 <span class="link">Notificações</span>
               </a>
             </li>
-            <li class="list">
-              <a href="#" class="nav-link">
-                <i class="bx bx-message-rounded icon"></i>
-                <span class="link">Messages</span>
-              </a>
-            </li>
+
             <li class="list">
               <a href="#" class="nav-link">
                 <i class="bx bx-pie-chart-alt-2 icon"></i>
-                <span class="link">Analytics</span>
-              </a>
-            </li>
-            <li class="list">
-              <a href="#" class="nav-link">
-                <i class="bx bx-heart icon"></i>
-                <span class="link">Likes</span>
+                <span class="link">Inativo</span>
               </a>
             </li>
             <li class="list">
               <a href="#" class="nav-link">
                 <i class="bx bx-folder-open icon"></i>
-                <span class="link">Files</span>
+                <span class="link">Inativo</span>
               </a>
             </li>
           </ul>
@@ -87,7 +79,7 @@
               </a>
             </li>
             <li class="list">
-              <a href="#" class="nav-link">
+              <a href="/logout" class="nav-link">
                 <i class="bx bx-log-out icon"></i>
                 <span class="link">Sair</span>
               </a>
@@ -96,6 +88,26 @@
         </div>
       </div>
     </nav>
+    <div id="alertModal" class="alert-container" style="display: none;">
+      <div class="alert-box">
+          <div class="alert-header">
+              <i class="fa fa-bell"></i>
+              <h3>Notificações</h3>
+          </div>
+          {% if session['notificacoes'] %}
+              {% for notificacao in session['notificacoes'] %}
+                  <div class="alert">
+                      <p>{{ notificacao[0] }}</p>  
+                      <p>{{ notificacao[1] }}</p>  
+                      <p>{{ notificacao[2] }}</p>  
+                      <button class="close-btn" onclick="removerNotificacao('{{ notificacao[-1] }}', this)">X</button>
+                  </div>
+              {% endfor %}
+            {% else %}
+                <p class="no-notifications">Nenhuma notificação no momento.</p>
+            {% endif %}
+        </div>
+    </div> 
     <footer id="rodape-direitos">
       © 2025 Agropecuária Zecão LTDA. Todos os direitos reservados.
     </footer> 
@@ -110,17 +122,64 @@
       /*Barra lateral*/
       const navBar = document.querySelector("nav"),
         menuBtns = document.querySelectorAll(".menu-icon"),
-        overlay = document.querySelector(".overlay");
+        overlay = document.querySelector(".overlay"),
+        alertContainer = document.querySelector(".alert-container"),
+        sidebarLinks = document.querySelectorAll(".nav-link"),
+        notificationIcon = document.querySelector(".notification-icon"), // Ícone de notificações
+        notificationsButton = document.querySelector(".nav-link.notifications"); // Certifique-se de que este seletor corresponde ao botão correto na sidebar
 
+      // Função para adicionar o destaque ao botão clicado
+      function setActiveLink(clickedLink) {
+        sidebarLinks.forEach(link => link.classList.remove("active")); // Remove o destaque de todos os botões
+        if (clickedLink) {
+          clickedLink.classList.add("active"); // Adiciona o destaque ao botão selecionado
+        }
+      }
+
+      // Abre e fecha a sidebar ao clicar no ícone do menu
       menuBtns.forEach((menuBtn) => {
         menuBtn.addEventListener("click", () => {
-          navBar.classList.toggle("open");
+          const isOpen = navBar.classList.toggle("open");
+          if (!isOpen) {
+            alertContainer.style.display = "none"; // Fecha notificações
+            setActiveLink(null); // Remove o destaque de todos os botões
+          }
         });
       });
 
+      // Fecha a sidebar ao clicar no overlay
       overlay.addEventListener("click", () => {
         navBar.classList.remove("open");
+        alertContainer.style.display = "none"; // Fecha as notificações
+        setActiveLink(null); // Remove o destaque dos botões
       });
+
+      // Adiciona a funcionalidade de destacar o botão clicado na sidebar
+      sidebarLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          // Fecha o modal de notificações quando outro link for clicado
+          if (link !== notificationsButton) {
+            alertContainer.style.display = "none"; // Fecha as notificações
+          }
+          setActiveLink(link); // Adiciona o destaque ao botão clicado
+        });
+      });
+
+      // Abre a sidebar e destaca o botão de notificações ao clicar no ícone de notificações
+      notificationIcon.addEventListener("click", () => {
+        navBar.classList.add("open"); // Abre a sidebar
+        alertContainer.style.display = "block"; // Exibe as notificações
+
+        // Adiciona o destaque ao botão de notificações na sidebar
+        if (notificationsButton) {
+          setActiveLink(notificationsButton);
+        } else {
+          console.error("Botão de notificações não encontrado!");
+        }
+      });
+
+
+
 
       /*Sublinha o setor atual*/
       document.addEventListener("DOMContentLoaded", function () {
@@ -134,6 +193,67 @@
                   button.classList.add("active"); 
               }
           });
+      });
+
+      /*Remove a notificação*/
+      function removerNotificacao(notificacaoId, elemento) {
+          console.log("Tentando remover notificação com ID:", notificacaoId);
+
+          if (!notificacaoId || isNaN(notificacaoId)) {
+              alert("Erro: ID da notificação inválido!");
+              return;
+          }
+
+          fetch('/remover_notificacao', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_not: notificacaoId }) 
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  console.log("Notificação removida com sucesso:", notificacaoId);
+                  elemento.parentElement.remove(); 
+              } else {
+                  alert('Erro ao remover notificação: ' + data.error);
+              }
+          })
+          .catch(error => console.error('Erro:', error));
+      }     
+
+      /*Modal de notificações*/
+      document.addEventListener("DOMContentLoaded", function() {
+        const openModal = document.getElementById("openAlertModal");
+
+        openModal.addEventListener("click", function(event) {
+          event.preventDefault();
+          alertContainer.style.display = "block";
+          overlay.style.display = "block";
+        });
+      });
+
+      /*Icone de notificação*/
+      document.addEventListener("DOMContentLoaded", function () {
+        const notificationIcon = document.getElementById("notification-icon");
+        const notificationCount = document.getElementById("notification-count");
+        const notificacoes = {{ session['notificacoes'] | length }}; // Supondo que a quantidade de notificações esteja no backend
+        const navBar = document.querySelector("nav"); // A barra lateral (sidebar)
+
+        // Se houver notificações, mostra o ícone e atualiza o contador
+        if (notificacoes > 0) {
+          notificationIcon.classList.add("active");
+          notificationCount.textContent = notificacoes;
+        }
+
+        // Quando o ícone de notificação for clicado, abre a sidebar e o modal de notificações
+        notificationIcon.addEventListener("click", function () {
+          // Abre a sidebar
+          navBar.classList.add("open");
+
+          // Exibe o modal de notificações
+          alertContainer.style.display = "block";
+          overlay.style.display = "block";
+        });
       });
     </script>
   </body>

@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, session, flash, redirect
 from functions import criar_conexao
 
-comercial_bp = Blueprint('comercial', __name__)
+gastos_bp = Blueprint('gastos', __name__)
 
-@comercial_bp.route('/comercial')
-def comercial():
+@gastos_bp.route('/gastos')
+def gastos():
     if 'usuario' not in session:  
-        flash("Você precisa estar logado para acessar a página de comercial.")
+        flash("Você precisa estar logado para acessar a página de gastos.")
         return redirect('/login')  
 
     usuario_logado = session['usuario']
@@ -26,14 +26,14 @@ def comercial():
 
         cursor.execute("""
             SELECT 1 FROM acessos
-            WHERE usuario_id = %s AND setor_id = 4
+            WHERE usuario_id = %s AND setor_id = 1
         """, (usuario_id,))
 
         if cursor.fetchone():  
-            return render_template('comercial.html')  
+            return render_template('gastos.html')  
 
         else:
-            return render_template('home.html', erro_comercial=True)  
+            return render_template('home.html', erro_gastos=True)  
 
     except Exception as e:
         print(f"Erro ao verificar acesso: {e}")

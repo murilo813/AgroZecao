@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agropecuária Zecão ERP</title>
+    <link href="static/css/gastos.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+</head>
+<body>
+    {% include 'base.html' %}
+    <div>
+        <h1>Gastos</h1>
+        <button class="visualizar-dados" onclick="window.location.href='/verdados'">Visualizar dados</button>
+    </div>
+    <form action="/dados" method="POST">
+        <label for="placa">Placa:</label>
+        <input type="text" id="placa" name="placa" oninput="this.value = this.value.toUpperCase()" required><br>
+
+        <label for="responsavel">Responsável:</label>
+        <textarea id="responsavel" name="responsavel" required></textarea>
+
+        <label for="gasto">Gasto:</label>
+        <select id="gasto" name="gasto" required>
+            <option value="combustível">Combustível</option>
+            <option value="manutenção">Manutenção</option>
+        </select><br>
+
+        <label for="onde">Fornecedor</label>
+        <textarea id="onde" name="onde" required></textarea>
+
+
+        <label for="documento">Documento:</label>
+        <input type="text" id="documento" name="documento" oninput="this.value = this.value.toUpperCase()" required><br>
+
+        <label for="dia">Data:</label>
+        <input type="date" id="dia" name="dia" required><br>
+
+        <label for="valor">Valor:</label>
+        <input type="text" id="valor" name="valor" required pattern="^\d+([.,]\d+)?$" title="Use um número com '.' ou ',' como separador decimal."><br>
+
+        <label for="litros">Litros:</label>
+        <textarea id="litros" name="litros"></textarea>
+
+        <label for="km">KM:</label>
+        <textarea id="km" name="km" step="0.01" required></textarea>
+
+        <label for="observacao">Observação:</label>
+        <textarea id="observacao" name="observacao" required></textarea>
+
+        <button type="submit">Registrar</button>
+    </form>   
+</body>
+</html>

@@ -72,7 +72,7 @@ h1 {
 }
 #togleForm {
   position: absolute; 
-  top: 7%; 
+  top: 20%; 
   right: 3%;
   background-color: white;
   border: 1px solid #ccc;
@@ -129,14 +129,14 @@ select {
 .modal {
   display: none; 
   position: absolute; 
-  bottom: 12%; 
+  bottom: 10%; 
   left: 1%;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
-  width: 600px;
-  height: 470px;
+  width: 550px;
+  height: 420px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   z-index: 1000; 
   overflow-y: auto;
