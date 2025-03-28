@@ -26,15 +26,16 @@ body {
   padding-bottom: 10px; 
 }
 h1 {
+  margin-top: 2%;
   color: #06c056;
   font-weight: 900;
-  font-size: 50px;
+  font-size: 60px;
   -webkit-text-stroke: 3px black;
   text-shadow: none;
   font-family: Arial, sans-serif;
-  opacity: 1;
+  opacity: 0;
 }
-@keyframes slidein {
+@keyframes slidein-h1 {
   from {
     margin-left: 50%;
     opacity: 0;
@@ -44,8 +45,31 @@ h1 {
     opacity: 1;
   }
 }
-.slidein {
-  animation: slidein 1s ease-out forwards; 
+.slidein-h1 {
+  animation: slidein-h1 1s ease-out forwards;
+}
+
+h2 {
+  color: #06c056;
+  font-weight: 900;
+  font-size: 60px;
+  -webkit-text-stroke: 3px black;
+  text-shadow: none;
+  font-family: Arial, sans-serif;
+  opacity: 0;
+}
+@keyframes slidein-h2 {
+  from {
+    margin-left: 50%;
+    opacity: 0;
+  }
+  to {
+    margin-left: 0%;
+    opacity: 1;
+  }
+}
+.slidein-h2 {
+  animation: slidein-h2 1s ease-out forwards;
 }
 
 .buttons-container {
@@ -87,4 +111,12 @@ h1 {
   50% { transform: translateX(5px); }
   75% { transform: translateX(-5px); }
   100% { transform: translateX(0); }
+}
+.banner {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 750px;  /* Largura fixa */
+  height: auto;  /* Altura automática para manter proporção */
 }

@@ -26,7 +26,7 @@ def gastos():
 
         cursor.execute("""
             SELECT 1 FROM acessos
-            WHERE usuario_id = %s AND setor_id = 1
+            WHERE usuario_id = %s AND setor_id = 5
         """, (usuario_id,))
 
         if cursor.fetchone():  

@@ -15,9 +15,9 @@
             <h1>Gerenciamento</h1>
             <div class="buttons-container">
 
-                <button class="btn-principal">
+                <button class="btn-principal" data-action="orcamentos">
                     <i class="fas fa-file-alt"></i> Orçamentos
-                </button>
+                </button>                
 
                 <button class="btn-principal">
                     <i class="fas fa-boxes"></i> Estoque
@@ -30,6 +30,65 @@
                 <button id="togleform" class="btn-principal">
                     <i class="fas fa-envelope"></i> Mensagem
                 </button>
+            </div>
+            <div class="box" id="orcamentosContent" style="display: none;">
+                <h2>Orçamentos</h2>
+                <div class="orcamento-info">
+                    <div class="orcamento-col">
+                        <div class="orcamento-info-item">
+                            <strong>Produtor:</strong> João Silva dosSantos Seventino 
+                        </div>
+                        <div class="orcamento-info-item">
+                            <strong>Validade:</strong> 30 dias
+                        </div>
+                    </div>
+                    <div class="orcamento-col2">
+                        <div class="orcamento-info-item">
+                            <strong>Data:</strong> 25/03/2025
+                        </div>
+                        <div class="orcamento-info-item">
+                            <strong>Total:</strong> R$ 10.500,00
+                        </div>
+                    </div>
+                </div>                         
+                
+                <table class="orcamento-table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Qtd</th>
+                            <th>Custo</th>
+                            <th>Sistema</th>
+                            <th>Preço</th>
+                            <th>Custo Total</th>
+                            <th>Valor Total</th>
+                            <th>Lucro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ração Bovina</td>
+                            <td>105</td>
+                            <td>R$ 50,00</td>
+                            <td>R$ 60,00</td>
+                            <td>R$ 65,00</td>
+                            <td>R$ 500,00</td>
+                            <td>R$ 650,00</td>
+                            <td>R$ 15000,00</td>
+                        </tr>
+                        <tr>
+                            <td>Fertilizante NPK</td>
+                            <td>5</td>
+                            <td>R$ 80,00</td>
+                            <td>R$ 90,00</td>
+                            <td>R$ 95,00</td>
+                            <td>R$ 400,00</td>
+                            <td>R$ 475,00</td>
+                            <td>R$ 75,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn-voltar" id="voltarBtn">Voltar</button>
             </div>
 
             <div id="cobrancamodal" class="modal">
@@ -131,6 +190,32 @@
         btnFecharTogle.onclick = function() {
             formTogle.style.display = "none";
         };
+
+        /*orçamentos*/
+        document.addEventListener("DOMContentLoaded", function() {
+            const btnOrcamentos = document.querySelector('.btn-principal[data-action="orcamentos"]');
+            const orcamentosContent = document.querySelector('#orcamentosContent');
+            const btnVoltar = document.querySelector('#voltarBtn');
+            const gerenciamentoTitle = document.querySelector('h1'); // Seleciona o título "Gerenciamento"
+
+            // Exibir a seção de orçamentos
+            if (btnOrcamentos) {
+                btnOrcamentos.addEventListener("click", function() {
+                    orcamentosContent.style.display = 'block';  // Exibe a seção de orçamentos
+                    document.querySelector('.buttons-container').style.display = 'none'; // Oculta os outros botões
+                    gerenciamentoTitle.style.display = 'none'; // Esconde o título "Gerenciamento"
+                });
+            }
+
+            // Voltar para a tela inicial
+            if (btnVoltar) {
+                btnVoltar.addEventListener("click", function() {
+                    orcamentosContent.style.display = 'none';  // Esconde a seção de orçamentos
+                    document.querySelector('.buttons-container').style.display = 'flex'; // Exibe os outros botões
+                    gerenciamentoTitle.style.display = 'block'; // Reexibe o título "Gerenciamento"
+                });
+            }
+        });
 
     </script>
 </body>

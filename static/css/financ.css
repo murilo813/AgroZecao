@@ -176,7 +176,7 @@ body {
     margin-top: 10px; 
     margin-bottom: 20px;
     font-weight: bold;
-    color: green;
+    color: #06c056;
     text-shadow: 2px 2px black;
 }
 h2 {
@@ -262,11 +262,11 @@ h1 {
     top: 10%; 
     margin-top: 0; 
     margin-bottom: 10px;
-    color: #117011; 
+    color: #06c056;
     text-align: center; 
-    font-weight: 900; 
-    font-size: 50px; 
-    -webkit-text-stroke: 3px black; 
+    font-weight: 900;
+    font-size: 60px;
+    -webkit-text-stroke: 3px black;
     text-shadow: none;
 }
 label {

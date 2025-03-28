@@ -13,21 +13,41 @@
     {% include 'base.html' %}
     <div class="container">
         <div class="box">
-            <h1 id="titulo">Bem Vindo(a) {{ session['nomeclatura'] }}!</h1>       
+            <h1 id="titulo-h1">Bem Vindo(a)!</h1>      
+            <h2 id="titulo-h2">{{ session['nomeclatura'] }}</h2>             
         </div>
     </div>
+    <!--<img src="{{ url_for('static', filename='banner.png') }}" alt="banner" class="banner">-->
     <script>
         /*Animação de entrada do título*/
         document.addEventListener("DOMContentLoaded", function () {
-            const titulo = document.getElementById("titulo");
+            const tituloH1 = document.getElementById("titulo-h1");
+            const tituloH2 = document.getElementById("titulo-h2");
 
+            // Verifica se o login foi feito
             if (sessionStorage.getItem("loginEfetuado") === null) {
-                titulo.classList.add("slidein");
-                sessionStorage.setItem("loginEfetuado", "true"); // Marca que o login foi feito
+                // Marca o login como efetuado para que não ocorra mais animações
+                sessionStorage.setItem("loginEfetuado", "true");
+
+                // Adiciona as classes de animação ao título 1 e 2
+                tituloH1.classList.add("slidein-h1");
+
+                // Aqui definimos um tempo para adicionar a animação ao título 2 (pode ser ajustado conforme desejado)
+                setTimeout(function () {
+                    tituloH2.classList.add("slidein-h2");
+                }, 1000); // Espera 1 segundo antes de iniciar a animação do título 2
             } else {
-                titulo.style.opacity = "1"; // Garante que o título fique visível após reload
+                // Se já passou pelo login, apenas exibe os elementos sem animação
+                // Garante que os títulos fiquem visíveis e no estado final
+                tituloH1.style.opacity = "1";
+                tituloH2.style.opacity = "1";
+
+                // Aplica a transformação final para garantir que os elementos permaneçam no local certo
+                tituloH1.style.transform = "translateX(0%)";
+                tituloH2.style.transform = "translateX(0%)";
             }
         });
+
     </script>
 </body>
 </html>
