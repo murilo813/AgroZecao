@@ -12,6 +12,7 @@ def register_blueprints():
     from routes.consulta import consulta_bp 
     from routes.estoque import estoque_bp
     from routes.gastos import gastos_bp
+    from routes.addorcamento import addorcamento_bp
 
 
     app.register_blueprint(login_bp) 
@@ -20,6 +21,7 @@ def register_blueprints():
     app.register_blueprint(consulta_bp)
     app.register_blueprint(estoque_bp)
     app.register_blueprint(gastos_bp)
+    app.register_blueprint(addorcamento_bp)
 
 register_blueprints()
 
