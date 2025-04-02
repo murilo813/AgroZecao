@@ -12,7 +12,6 @@ def criar_conexao():
     )
 
 def carregar_usuario_por_nome(nome):
-    """Carrega um usuário específico pelo nome e retorna a senha hash."""
     try:
         conexao = criar_conexao()
         cursor = conexao.cursor()
@@ -65,7 +64,7 @@ def obter_notificacoes(usuario):
 
         # atendimentos
         cursor.execute("""
-            SELECT nome_cliente, anotacao, data_agendamento, data, criador, id_not
+            SELECT nome_cliente, anotacao, data_agendamento, data, criador, id_not, cpf_cnpj
             FROM not_gerencia
             WHERE criador = %s AND data_agendamento <= %s AND estado = 'ativa'
         """, (usuario, data_hoje))
@@ -78,7 +77,8 @@ def obter_notificacoes(usuario):
             notificacao = [
                 atendimento['nome_cliente'],
                 atendimento['anotacao'],
-                data_atendimento.strftime('%d/%m/%Y')
+                data_atendimento.strftime('%d/%m/%Y'),
+                atendimento['cpf_cnpj']
             ]
 
             notificacao.append(atendimento['id_not'])  

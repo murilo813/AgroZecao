@@ -12,7 +12,7 @@ body {
 nav {
   font-family: "Poppins", sans-serif;
   position: fixed;
-  z-index: 10000; /* Mudando o z-index da barra para um valor mais baixo */
+  z-index: 10000; 
   top: 0;
   left: 0;
   height: 70px;
@@ -113,10 +113,10 @@ nav.open .sidebar {
   background-color: #ffffff;
 }
 .lists .nav-link.active {
-  background-color: #ffffff; /* Cor de fundo para destacar o botão */
-  color: #333; /* Cor do texto */
-  font-weight: bold; /* Deixa o texto em negrito */
-  border-radius: 8px; /* Mantém o borda arredondada */
+  background-color: #ffffff; 
+  color: #333; 
+  font-weight: bold; 
+  border-radius: 8px; 
 }
 .nav-link .icon {
   margin-right: 14px;
@@ -142,7 +142,7 @@ nav.open .sidebar {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-  z-index: 9999; /* Definindo z-index alto para garantir que o overlay fique acima de tudo */
+  z-index: 9999; 
 }
 
 nav.open ~ .overlay {
@@ -155,11 +155,11 @@ nav.open ~ .overlay {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Efeito de escurecimento */
+  background: rgba(0, 0, 0, 0.5); 
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-  z-index: 9999; /* Definindo z-index alto para garantir que o overlay fique acima de tudo */
+  z-index: 9999; 
 }
 
 nav.open .overlay-logo {
@@ -190,7 +190,7 @@ nav.open .overlay-logo {
 /*NOTIFICAÇÕES*/
 .alert-container {
   position: absolute;
-  z-index: 11000 !important; /* Forçar o z-index mais alto */
+  z-index: 11000 !important; 
   top: 13%;
   left: 18%;
   width: 320px;
@@ -310,19 +310,37 @@ html ::-webkit-scrollbar-track {
   font-style: italic;
   padding: 10px;
 }
+.btn-ver-notas {
+  width: 100px;
+  text-align: center;
+  background-color: #4CAF50; 
+  color: white;
+  padding: 8px 12px;
+  bottom: 1px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-ver-notas:hover {
+  background-color: #45a049; 
+}
 
 /*ícone de notificação*/
 .notification-icon {
   position: fixed;
   top: 13%;
   left: 0.6%;
-  padding: 5px; /* Ajuste do padding para um espaçamento menor */
+  padding: 5px;
   font-size: 24px;
-  color: #06c056; /* Mantendo a cor do ícone */
+  color: #06c056; 
   display: none; 
   cursor: pointer;
   transition: transform 0.3s ease;
-  background: none; /* Removendo o fundo */
+  background: none; 
 }
 
 .notification-icon.active {

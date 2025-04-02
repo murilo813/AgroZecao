@@ -19,7 +19,7 @@
                 <label for="nome">NOME:</label>
                 <input type="text" id="nome" name="nome">
                 <label for="nome">CPF ou ID:</label>
-                <input type="text" id="cpf" name="cpf_selecionado">
+                <input type="text" id="cpf" name="cpf_selecionado" value="{{ request.args.get('cpf_cnpj', '') }}">
                 <button type="submit" class="botao-pesquisar">Pesquisar</button>
             </form>           
             <div>    
@@ -83,7 +83,7 @@
                                 </table>
                             </div>                       
                             <div class="caixa-atendimentos">
-                                <h3>Atendimentos Realizados</h3>                               
+                                <h3 id="atendimentosrota">Atendimentos Realizados</h3>                               
                                 {% if atendimentos and atendimentos|length > 0 %}
                                     <table id="tabela-atendimentos">
                                         <thead>

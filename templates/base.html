@@ -95,17 +95,22 @@
               <h3>Notificações</h3>
           </div>
           {% if session['notificacoes'] %}
-              {% for notificacao in session['notificacoes'] %}
-                  <div class="alert">
-                      <p>{{ notificacao[0] }}</p>  
-                      <p>{{ notificacao[1] }}</p>  
-                      <p>{{ notificacao[2] }}</p>  
-                      <button class="close-btn" onclick="removerNotificacao('{{ notificacao[-1] }}', this)">X</button>
-                  </div>
-              {% endfor %}
-            {% else %}
-                <p class="no-notifications">Nenhuma notificação no momento.</p>
-            {% endif %}
+            {% for notificacao in session['notificacoes'] %}
+                <div class="alert">
+                    <p>{{ notificacao[0] }}</p>  
+                    <p>{{ notificacao[1] }}</p>  
+                    <p>{{ notificacao[2] }}</p>  
+
+                    {% if notificacao|length > 4 %} 
+                      <a href="{{ url_for('consulta.consulta', cpf_cnpj=notificacao[3]) }}" class="btn-ver-notas">Ver</a>
+                    {% endif %}
+
+                    <button class="close-btn" onclick="removerNotificacao('{{ notificacao[-1] }}', this)">X</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-notifications">Nenhuma notificação no momento.</p>
+        {% endif %}
         </div>
     </div> 
     <footer id="rodape-direitos">
@@ -254,6 +259,17 @@
           alertContainer.style.display = "block";
           overlay.style.display = "block";
         });
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const scrollToNotas = "{{ scroll_to_notas }}";
+
+        if (scrollToNotas === "True") {
+            const notasSection = document.getElementById("atendimentosrota");
+            if (notasSection) {
+                notasSection.scrollIntoView({ behavior: "smooth" });
+            }
+          }
       });
     </script>
   </body>

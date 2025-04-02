@@ -245,12 +245,12 @@ tbody tr:last-child td {
 }
 
 .orcamento-info-item strong {
-  color: #333;               /* Cor do título */
-  font-weight: bold;         /* Deixa o título em negrito */
+  color: #333;               
+  font-weight: bold;         
 }
 
 .orcamento-info-item span {
-  color: #555;               /* Cor do valor */
+  color: #555;               
 }
 
 

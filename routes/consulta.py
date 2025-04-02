@@ -69,9 +69,9 @@ def consulta():
         if conexao:
             conexao.close()
  
-    if request.method == 'POST':
+    if request.method == 'POST' or 'cpf_cnpj' in request.args:
         nome = request.form.get('nome', '').strip()  
-        cpf_selecionado = request.form.get('cpf_selecionado', '').strip() 
+        cpf_selecionado = request.args.get('cpf_cnpj', '').strip() or request.form.get('cpf_selecionado', '').strip()
         data_hoje = date.today().strftime('%Y-%m-%d')
         
         try:
