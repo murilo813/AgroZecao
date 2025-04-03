@@ -33,45 +33,30 @@ def consulta():
             WHERE usuario_id = %s AND setor_id = 2
         """, (usuario_id,))
 
-        if cursor.fetchone():  
-            if request.method == 'GET':
-                data_hoje = date.today().strftime('%Y-%m-%d')
-                try:
-                    conexao = criar_conexao()
-                    cursor = conexao.cursor(cursor_factory=RealDictCursor)
-
-                    cursor.execute("""
-                        SELECT nome_cliente, cpf_cnpj, data_agendamento, data_atendimento, observacao, usuario
-                        FROM atendimentos
-                        WHERE usuario = %s AND data_agendamento <= %s
-                    """, (session['usuario'], data_hoje))
-                    atendimentos_filtrados = cursor.fetchall()
-
-                    if atendimentos_filtrados:
-                        return render_template('consulta.html', atendimentos=atendimentos_filtrados)
-
-                    else:
-                        return render_template('consulta.html')
-
-                except Exception as e:
-                    print(f"Erro ao consultar atendimentos: {e}")
-                    flash("Erro ao consultar atendimentos. Tente novamente.")
-                    return redirect('/home')
-
-        else:
+        if not cursor.fetchone():  
             return render_template('home.html', erro_financeiro=True)  
+
+        cpf_url = request.args.get('cpf_cnpj', '').strip() if request.method == 'GET' else None
 
     except Exception as e:
         print(f"Erro ao verificar acesso: {e}")
         flash("Erro ao verificar acesso. Tente novamente.")
         return redirect('/home')
+    
     finally:
+        if cursor:
+            cursor.close()
         if conexao:
             conexao.close()
+
+    if cpf_url:
+        cpf_selecionado = cpf_url  
+        nome = ""  
+        request.method = 'POST'  
  
-    if request.method == 'POST' or 'cpf_cnpj' in request.args:
+    if request.method == 'POST':
         nome = request.form.get('nome', '').strip()  
-        cpf_selecionado = request.args.get('cpf_cnpj', '').strip() or request.form.get('cpf_selecionado', '').strip()
+        cpf_selecionado = request.form.get('cpf_selecionado', '').strip() or request.args.get('cpf_cnpj', '').strip()
         data_hoje = date.today().strftime('%Y-%m-%d')
         
         try:
@@ -109,7 +94,7 @@ def consulta():
                 cursor.execute(query_cliente, (nome,))
                 cliente = cursor.fetchone()
             if cpf_selecionado and not cpf_selecionado.isdigit():
-                cpf_selecionado = cliente[0]  
+                cpf_selecionado = cliente[0] 
 
             cpfs_relacionados = [cpf_selecionado] if cpf_selecionado else []
             clientes_relacionados = []
@@ -162,7 +147,6 @@ def consulta():
                     """
                     cursor.execute(query_relacionados, (cliente[2],))
                     clientes_relacionados = cursor.fetchall()
-
                 atendimentos_filtrados = carregar_atendimentos(cpf_selecionado, [cliente[0] for cliente in clientes_relacionados])
 
                 if cliente:  
@@ -349,26 +333,108 @@ def adicionar_observacao():
 
         conexao = criar_conexao()
 
-        query_atendimento = """
-        INSERT INTO atendimentos (nome_cliente, cpf_cnpj, data_atendimento, observacao, usuario)
-        VALUES (%s, %s, %s, %s, %s)
-        """
-        valores_atendimento = (nome_cliente.strip(), cpf_cnpj.strip(), data_atendimento.strip(), observacao.strip(), usuario_logado.strip())
-        
         with conexao.cursor() as cursor:
-            cursor.execute(query_atendimento, valores_atendimento)
-            conexao.commit()  
-
-        if data_agendamento:
-            query_gerencia = """
-            INSERT INTO not_gerencia (nome_cliente, cpf_cnpj, data, anotacao, criador, data_agendamento, estado)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            # Inserir atendimento
+            query_atendimento = """
+            INSERT INTO atendimentos (nome_cliente, cpf_cnpj, data_atendimento, observacao, usuario)
+            VALUES (%s, %s, %s, %s, %s)
             """
-            valores_gerencia = (nome_cliente.strip(), cpf_cnpj.strip(), data_atendimento.strip(), observacao.strip(), usuario_logado.strip(), data_agendamento.strip(), estado)
+            valores_atendimento = (nome_cliente.strip(), cpf_cnpj.strip(), data_atendimento.strip(), observacao.strip(), usuario_logado.strip())
+            cursor.execute(query_atendimento, valores_atendimento)
+            conexao.commit()
 
-            with conexao.cursor() as cursor:
+            # Buscar CPFs relacionados
+            cpfs_relacionados = [cpf_cnpj.strip()]
+            clientes_relacionados = []
+
+            query_cliente = """
+                SELECT cpf_cnpj, nome_cliente, bairro, responsavel
+                FROM clientes
+                WHERE cpf_cnpj = %s AND ativo = 'S'
+            """
+            cursor.execute(query_cliente, (cpf_cnpj.strip(),))
+            cliente = cursor.fetchone()
+
+            if cliente:
+                cpfs_relacionados = [cliente[0]]
+
+                query_dublos = """
+                    SELECT cpf_cnpj, nome_cliente, bairro
+                    FROM clientes
+                    WHERE nome_cliente = %s AND ativo = 'S'
+                """
+                cursor.execute(query_dublos, (cliente[1],))
+                clientes_duplicados = cursor.fetchall()
+
+                if len(clientes_duplicados) > 1:
+                    bairro_selecionado = cliente[2]
+
+                    clientes_com_duplicata = []
+                    for rel_cliente in clientes_duplicados:
+                        if rel_cliente[0] != cliente[0]:  
+                            query_relacionados = """
+                                SELECT cpf_cnpj, nome_cliente, bairro
+                                FROM clientes
+                                WHERE responsavel = %s AND ativo = 'S'
+                            """
+                            cursor.execute(query_relacionados, (rel_cliente[0],))
+                            relacionados = cursor.fetchall()
+
+                            for relacionado in relacionados:
+                                if relacionado[1] in [cliente[1] for cliente in clientes_duplicados if cliente[0] != cliente[0]]:
+                                    clientes_com_duplicata.append(relacionado)
+
+                    if clientes_com_duplicata:
+                        clientes_relacionados = clientes_com_duplicata
+                    else:
+                        query_relacionados = """
+                            SELECT cpf_cnpj, nome_cliente, bairro
+                            FROM clientes
+                            WHERE responsavel = %s AND ativo = 'S'
+                        """
+                        cursor.execute(query_relacionados, (cliente[3],))
+                        clientes_relacionados = cursor.fetchall()
+
+                else:
+                    query_relacionados = """
+                        SELECT cpf_cnpj, nome_cliente, bairro
+                        FROM clientes
+                        WHERE responsavel = %s AND ativo = 'S'
+                    """
+                    cursor.execute(query_relacionados, (cliente[3],))
+                    clientes_relacionados = cursor.fetchall()
+
+                for relacionado in clientes_relacionados:
+                    if relacionado[0] not in cpfs_relacionados:
+                        cpfs_relacionados.append(relacionado[0])
+
+            # Se houver um agendamento, verificar notificações ativas e inserir a nova
+            if data_agendamento:
+                query_verifica = """
+                SELECT id_not FROM not_gerencia
+                WHERE cpf_cnpj = ANY(%s) AND estado = 'ativa'
+                """
+                cursor.execute(query_verifica, (cpfs_relacionados,))
+                notificacoes_ativas = cursor.fetchall()
+
+                # Se existir, atualizar para "inativa"
+                if notificacoes_ativas:
+                    ids_notificacoes = tuple(noti[0] for noti in notificacoes_ativas)
+                    query_inativar = """
+                    UPDATE not_gerencia SET estado = 'inativa'
+                    WHERE id_not IN %s
+                    """
+                    cursor.execute(query_inativar, (ids_notificacoes,))
+                    conexao.commit()
+
+                # Inserir nova notificação
+                query_gerencia = """
+                INSERT INTO not_gerencia (nome_cliente, cpf_cnpj, data, anotacao, criador, data_agendamento, estado)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """
+                valores_gerencia = (nome_cliente.strip(), cpf_cnpj.strip(), data_atendimento.strip(), observacao.strip(), usuario_logado.strip(), data_agendamento.strip(), estado)
                 cursor.execute(query_gerencia, valores_gerencia)
-                conexao.commit() 
+                conexao.commit()
 
         return jsonify({"success": "Observação adicionada com sucesso!"}), 200
 

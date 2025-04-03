@@ -4,6 +4,11 @@ html, body {
     margin: 0;     
     overflow: hidden;  
 }
+.nome-cpf {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+}
 .lista-clientes-container {
     max-height: 50vh;
     overflow-y: auto;
@@ -66,11 +71,11 @@ html, body {
     right: 40px;
     left: 40px;
     margin-top: 0; 
-    border: 1px solid #ccc;
+    border-bottom: 2px solid #ccc;
     border-radius: 5px; 
     padding: 0px; 
     background-color: #f9f9f9; 
-    max-height: 35vh; 
+    max-height: 39vh; 
     overflow-y: auto; 
     box-sizing: border-box; 
 }
@@ -89,23 +94,47 @@ html, body {
 }
 .contas_a_receber {
     width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 10px;
+    border-collapse: separate; 
+    border-spacing: 0;
 }
 .contas_a_receber thead th {
-    position: sticky; 
+    position: sticky;
     top: 0; 
     margin-top: 0px;
     background-color: #4e5255;
     color: #fff; 
-    text-align: left; 
+    text-align: center; 
     padding: 12px; 
     border-bottom: 2px solid #ddd; 
     z-index: 2; 
+    border-bottom: 2px solid #2c2f33; 
+    border-top: 2px solid #2c2f33;
+    border-left: 1px solid #2c2f33; 
+}
+.contas_a_receber th, .contas_a_receber td {
+    border-left: 1px solid #2c2f33;
+}
+.contas_a_receber th:nth-child(8) {
+    width: 10%; 
+    text-align: left;
+}
+.contas_a_receber th:nth-child(9) {
+    width: 10%; 
+    text-align: left;
 }
 .contas_a_receber tbody td {
     padding: 8px; 
-    border-bottom: 1px solid #ddd; 
+    text-align: center; 
+    border-bottom: 2px solid #a8abad; 
+    border-left: 1px solid #a8abad; 
+}
+.contas_a_receber td:nth-child(8) {
+    width: 10%; 
+    text-align: left;
+}
+.contas_a_receber td:nth-child(9) {
+    width: 10%; 
+    text-align: left;
 }
 .contas_a_receber tbody tr:nth-child(odd) {
     background-color: #f2f2f2; 
@@ -224,6 +253,14 @@ h2 {
     color: #000000; 
     font-size: 1.2em; 
     margin-bottom: 1px; 
+}
+.caixa-atendimentos p {
+    position: absolute;
+    left: 35%;
+    top: 40%;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
 }
 .resultado-container {
     width: 100%;

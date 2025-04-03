@@ -16,9 +16,9 @@
                 <h1 class="titulo">Consultar Cliente</h1>
             </div>
             <form method="POST" action="/consulta">
-                <label for="nome">NOME:</label>
+                <label class="nome-cpf" for="nome">NOME:</label>
                 <input type="text" id="nome" name="nome">
-                <label for="nome">CPF ou ID:</label>
+                <label class="nome-cpf" for="nome">CPF ou ID:</label>
                 <input type="text" id="cpf" name="cpf_selecionado" value="{{ request.args.get('cpf_cnpj', '') }}">
                 <button type="submit" class="botao-pesquisar">Pesquisar</button>
             </form>           
@@ -145,7 +145,7 @@
                                     <th>Número NFe</th>
                                     <th>Parcela</th> 
                                     <th>Data da Venda</th>
-                                    <th>Data do Vencimento</th>
+                                    <th>Vencimento</th>
                                     <th>Valor</th>
                                     <th>À Receber</th>  
                                 </tr>
@@ -193,8 +193,8 @@
                                                 {{ nota.data_vencimento.strftime('%d/%m/%Y') if nota.data_vencimento else 'N/A' }}
                                             </span>
                                         </td>
-                                        <td>R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
-                                        <td>R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
+                                        <td class="valor">R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
+                                        <td class="valor">R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

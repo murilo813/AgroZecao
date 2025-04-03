@@ -332,8 +332,8 @@ html ::-webkit-scrollbar-track {
 /*ícone de notificação*/
 .notification-icon {
   position: fixed;
-  top: 13%;
-  left: 0.6%;
+  top: 10%;
+  left: 0.1%;
   padding: 5px;
   font-size: 24px;
   color: #06c056; 

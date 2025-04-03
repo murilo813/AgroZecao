@@ -30,10 +30,12 @@ def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
         cursor = conexao.cursor()
 
         query_atendimentos = """
-            SELECT nome_cliente, cpf_cnpj, data_atendimento, observacao, usuario
-            FROM atendimentos
-            WHERE cpf_cnpj = %s OR cpf_cnpj = ANY(%s)
-            ORDER BY data_atendimento ASC
+            SELECT a.nome_cliente, a.cpf_cnpj, a.data_atendimento, a.observacao, 
+                   u.nomeclatura  
+            FROM atendimentos a
+            LEFT JOIN usuarios u ON a.usuario = u.nome 
+            WHERE a.cpf_cnpj = %s OR a.cpf_cnpj = ANY(%s)
+            ORDER BY a.data_atendimento ASC
         """
         cursor.execute(query_atendimentos, (cpf_cliente, cpfs_relacionados))
         atendimentos = cursor.fetchall()
@@ -44,7 +46,7 @@ def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
                 'cpf_cnpj': atendimento[1],
                 'data_atendimento': atendimento[2].strftime('%d/%m/%Y'), 
                 'observacao': atendimento[3],
-                'usuario': atendimento[4],
+                'usuario': atendimento[4],  
             }
             for atendimento in atendimentos
         ]
@@ -53,6 +55,7 @@ def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
     except Exception as e:
         print(f"Erro ao carregar atendimentos: {e}")
         return []
+
 
 def obter_notificacoes(usuario):
     notificacoes = []

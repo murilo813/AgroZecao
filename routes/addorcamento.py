@@ -18,7 +18,7 @@ def add_orcamento():
         # Seu código para salvar os dados vai aqui
 
         # Após salvar, redireciona para a página de gerenciamento
-        return redirect(url_for('gerenciamento.index'))  # Ajuste para a rota correta
+        return redirect(url_for('gerencia.gerencia'))  # Ajuste para a rota correta
 
     # Caso seja um GET, renderiza o formulário para novo orçamento
     return render_template('addorcamento.html')
