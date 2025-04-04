@@ -4,6 +4,43 @@ html, body {
     margin: 0;     
     overflow: hidden;  
 }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    overflow:hidden;
+}
+.container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh;
+    overflow: hidden;
+}
+.box {
+    background-color: #ffffff;
+    padding: 20px;
+    padding-top: 40px;
+    text-align: center;
+    width: calc(100% - 40px); 
+    height: calc(100% - 40px); 
+    display: flex;
+    flex-direction: column; 
+    justify-content: flex-start; 
+    box-sizing: border-box; 
+    padding-bottom: 10px; 
+  }
+h1 {
+    position: relative;
+    top: 10%; 
+    margin-top: 0; 
+    margin-bottom: 10px;
+    color: #06c056;
+    text-align: center; 
+    font-weight: 900;
+    font-size: 60px;
+    -webkit-text-stroke: 3px black;
+    text-shadow: none;
+}
 .nome-cpf {
     font-size: 16px;
     font-weight: bold;
@@ -194,20 +231,6 @@ h7 {
     top: -50px; 
     font-weight: bold; 
 }
-body {
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    overflow:hidden;
-}
-.titulo {
-    font-size: 3,6rem;
-    text-align: center;
-    margin-top: 10px; 
-    margin-bottom: 20px;
-    font-weight: bold;
-    color: #06c056;
-    text-shadow: 2px 2px black;
-}
 h2 {
     position: absolute;
     left: 2.6%;
@@ -274,38 +297,7 @@ h2 {
 .resultado-item {
     margin: 5px 0;
 }
-.container {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    height: 100vh;
-    overflow: hidden;
-}
-.box {
-    background-color: #ffffff;
-    padding: 20px;
-    padding-top: 40px;
-    text-align: center;
-    width: calc(100% - 40px); 
-    height: calc(100% - 40px); 
-    display: flex;
-    flex-direction: column; 
-    justify-content: flex-start; 
-    box-sizing: border-box; 
-    padding-bottom: 10px; 
-  }
-h1 {
-    position: relative;
-    top: 10%; 
-    margin-top: 0; 
-    margin-bottom: 10px;
-    color: #06c056;
-    text-align: center; 
-    font-weight: 900;
-    font-size: 60px;
-    -webkit-text-stroke: 3px black;
-    text-shadow: none;
-}
+
 label {
     position: relative;
     top: 90%;
