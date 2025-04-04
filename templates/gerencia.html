@@ -140,7 +140,7 @@
 
         btnAbrir.onclick = async function() {
             if (modal.style.display === "block") {
-                modal.style.display = "none"; // Fecha o modal se já estiver aberto
+                modal.style.display = "none"; 
                 return;
             }
 
@@ -149,7 +149,7 @@
                 const data = await response.json();
                 if (response.ok) {
                     const tbody = document.querySelector("#cobrancamodal .modal_conteudo table tbody");
-                    tbody.innerHTML = '';  // Limpar o conteúdo atual da tabela
+                    tbody.innerHTML = '';  
                     data.atendimentos.forEach(atendimento => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -159,7 +159,7 @@
                         `;
                         tbody.appendChild(tr);
                     });
-                    modal.style.display = "block";  // Mostrar o modal
+                    modal.style.display = "block";  
                 } else {
                     console.error("Erro ao buscar cobranças.");
                 }
@@ -168,12 +168,10 @@
             }
         };
 
-        // Fechar ao clicar no botão de fechar
         btnFechar.onclick = function() {
             modal.style.display = "none";
         };
 
-        // Fechar ao clicar fora do modal
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
@@ -197,32 +195,28 @@
         };
 
         /*orçamentos*/
-        /*
         document.addEventListener("DOMContentLoaded", function() {
             const btnOrcamentos = document.querySelector('.btn-principal[data-action="orcamentos"]');
             const orcamentosContent = document.querySelector('#orcamentosContent');
             const btnVoltar = document.querySelector('#voltarBtn');
-            const gerenciamentoTitle = document.querySelector('h1'); */
-            /*
-            // Exibir a seção de orçamentos
+            const gerenciamentoTitle = document.querySelector('h1'); 
+
             if (btnOrcamentos) {
                 btnOrcamentos.addEventListener("click", function() {
-                    orcamentosContent.style.display = 'block';  // Exibe a seção de orçamentos
-                    document.querySelector('.buttons-container').style.display = 'none'; // Oculta os outros botões
-                    gerenciamentoTitle.style.display = 'none'; // Esconde o título "Gerenciamento"
-                });
-            }*/
-            /*
-            // Voltar para a tela inicial
-            if (btnVoltar) {
-                btnVoltar.addEventListener("click", function() {
-                    orcamentosContent.style.display = 'none';  // Esconde a seção de orçamentos
-                    document.querySelector('.buttons-container').style.display = 'flex'; // Exibe os outros botões
-                    gerenciamentoTitle.style.display = 'block'; // Reexibe o título "Gerenciamento"
+                    orcamentosContent.style.display = 'block';  
+                    document.querySelector('.buttons-container').style.display = 'none'; 
+                    gerenciamentoTitle.style.display = 'none'; 
                 });
             }
-        });*/
 
+            if (btnVoltar) {
+                btnVoltar.addEventListener("click", function() {
+                    orcamentosContent.style.display = 'none';  
+                    document.querySelector('.buttons-container').style.display = 'flex'; 
+                    gerenciamentoTitle.style.display = 'block'; 
+                });
+            }
+        });
     </script>
 </body>
 </html>

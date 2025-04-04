@@ -31,19 +31,19 @@ nav .logo {
 }
 .logo .menu-icon {
   color: #333;
-  font-size: 27px;
-  margin-right: 14px;
+  font-size: 30px;
+  margin-right: 10px;
   cursor: pointer;
 }
 .logo .logo-name {
   color: #333;
-  font-size: 26px;
+  font-size: 30px;
   font-family: 'Poppins', sans-serif;
   font-weight: 900;
 }
 .logo .logo-name2 {
   color: #333;
-  font-size: 26px;
+  font-size: 30px;
   font-family: 'Poppins', sans-serif;
   font-weight: 900;
 }

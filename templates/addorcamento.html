@@ -2,74 +2,92 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Novo Orçamento - Agropecuária Zecão</title>
-    <link href="{{ url_for('static', filename='css/gerencia.css') }}" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Novo Orçamento - Agropecuária Zecão</title>
+    <link href="{{ url_for('static', filename='css/addorcamento.css') }}" rel="stylesheet" />
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     {% include 'base.html' %}
-    <div class="container">
-        <div class="box">
-            <div class="container-form"></div>
-                <h1>Criar Novo Orçamento</h1>
-
-                <form method="POST" action="{{ url_for('addorcamento.add_orcamento') }}">
+    <div class="container-form">
+        <h1>Novo Orçamento</h1>
+        
+        <form method="POST" action="{{ url_for('addorcamento.add_orcamento') }}">
+        <div class="orcamento-info-top">
+            <div class="orcamento-row">
+                <div class="info-box">
                     <label for="produtor">Produtor:</label>
                     <input type="text" id="produtor" name="produtor" required>
-
-                    <label for="validade">Validade (em dias):</label>
-                    <input type="number" id="validade" name="validade" required>
-
+                </div>
+                <div class="info-box">
+                    <label for="validade">Válido até:</label>
+                    <input type="date" id="validade" name="validade" required>
+                </div>
+            </div>
+            <div class="orcamento-row">
+                <div class="info-box">
                     <label for="data">Data:</label>
                     <input type="date" id="data" name="data" required>
-
+                </div>
+                <div class="info-box">
                     <label for="total">Total:</label>
                     <input type="text" id="total" name="total" required>
-
-                    <h3>Produtos:</h3>
-                    <div id="produtos-container">
-                        <div class="produto">
-                            <label for="produto1">Produto:</label>
-                            <input type="text" id="produto1" name="produto[]" required>
-
-                            <label for="quantidade1">Quantidade:</label>
-                            <input type="number" id="quantidade1" name="quantidade[]" required>
-
-                            <label for="preco1">Preço:</label>
-                            <input type="text" id="preco1" name="preco[]" required>
-                        </div>
-                    </div>
-                    <button type="button" id="adicionarProduto">Adicionar Produto</button>
-
-                    <button type="submit">Salvar Orçamento</button>
-                    <button type="button" onclick="window.location.href='/gerenciamento'">Cancelar</button>
-                </form>
+                </div>
             </div>
         </div>
+
+        <!-- Tabela interativa de produtos -->
+        <table class="orcamento-table" id="produtosTable">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Qtd</th>
+                    <th>Custo</th>
+                    <th>Sistema</th>
+                    <th>Preço</th>
+                    <th>Custo Total</th>
+                    <th>Valor Total</th>
+                    <th>Lucro</th>
+                </tr>
+            </thead>
+            <tbody id="produtosBody">
+                <tr>
+                    <td><input type="text" name="produto[]" required></td>
+                    <td><input type="number" name="quantidade[]" required></td>
+                    <td><input type="text" name="custo[]" required></td>
+                    <td><input type="text" name="sistema[]" required></td>
+                    <td><input type="text" name="preco[]" required></td>
+                    <td><input type="text" name="custo_total[]" required></td>
+                    <td><input type="text" name="valor_total[]" required></td>
+                    <td><input type="text" name="lucro[]" required></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button1" class="addproduto" id="adicionarProduto">+</button>
+        <button type="submit">Salvar Orçamento</button>
+        <button type="button" onclick="window.location.href='/gerenciamento'">Cancelar</button>
+        </form>
     </div>
+
     <script>
-        document.getElementById("adicionarProduto").addEventListener("click", function() {
-            const produtosContainer = document.getElementById("produtos-container");
-            const produtoCount = produtosContainer.children.length + 1;
+        document.getElementById("adicionarProduto").addEventListener("click", function () {
+        const tbody = document.getElementById("produtosBody");
+        const novaLinha = document.createElement("tr");
 
-            const novoProduto = document.createElement("div");
-            novoProduto.classList.add("produto");
+        novaLinha.innerHTML = `
+            <td><input type="text" name="produto[]" required></td>
+            <td><input type="number" name="quantidade[]" required></td>
+            <td><input type="text" name="custo[]" required></td>
+            <td><input type="text" name="sistema[]" required></td>
+            <td><input type="text" name="preco[]" required></td>
+            <td><input type="text" name="custo_total[]" required></td>
+            <td><input type="text" name="valor_total[]" required></td>
+            <td><input type="text" name="lucro[]" required></td>
+        `;
 
-            novoProduto.innerHTML = `
-                <label for="produto${produtoCount}">Produto:</label>
-                <input type="text" id="produto${produtoCount}" name="produto[]" required>
-
-                <label for="quantidade${produtoCount}">Quantidade:</label>
-                <input type="number" id="quantidade${produtoCount}" name="quantidade[]" required>
-
-                <label for="preco${produtoCount}">Preço:</label>
-                <input type="text" id="preco${produtoCount}" name="preco[]" required>
-            `;
-
-            produtosContainer.appendChild(novoProduto);
+        tbody.appendChild(novaLinha);
         });
     </script>
 </body>
