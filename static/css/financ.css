@@ -4,6 +4,11 @@ html, body {
     margin: 0;     
     overflow: hidden;  
 }
+.nome-cpf {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+}
 .lista-clientes-container {
     max-height: 50vh;
     overflow-y: auto;
@@ -66,11 +71,11 @@ html, body {
     right: 40px;
     left: 40px;
     margin-top: 0; 
-    border: 1px solid #ccc;
+    border-bottom: 2px solid #ccc;
     border-radius: 5px; 
     padding: 0px; 
     background-color: #f9f9f9; 
-    max-height: 35vh; 
+    max-height: 39vh; 
     overflow-y: auto; 
     box-sizing: border-box; 
 }
@@ -89,23 +94,47 @@ html, body {
 }
 .contas_a_receber {
     width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 10px;
+    border-collapse: separate; 
+    border-spacing: 0;
 }
 .contas_a_receber thead th {
-    position: sticky; 
+    position: sticky;
     top: 0; 
     margin-top: 0px;
     background-color: #4e5255;
     color: #fff; 
-    text-align: left; 
+    text-align: center; 
     padding: 12px; 
     border-bottom: 2px solid #ddd; 
     z-index: 2; 
+    border-bottom: 2px solid #2c2f33; 
+    border-top: 2px solid #2c2f33;
+    border-left: 1px solid #2c2f33; 
+}
+.contas_a_receber th, .contas_a_receber td {
+    border-left: 1px solid #2c2f33;
+}
+.contas_a_receber th:nth-child(8) {
+    width: 10%; 
+    text-align: left;
+}
+.contas_a_receber th:nth-child(9) {
+    width: 10%; 
+    text-align: left;
 }
 .contas_a_receber tbody td {
     padding: 8px; 
-    border-bottom: 1px solid #ddd; 
+    text-align: center; 
+    border-bottom: 2px solid #a8abad; 
+    border-left: 1px solid #a8abad; 
+}
+.contas_a_receber td:nth-child(8) {
+    width: 10%; 
+    text-align: left;
+}
+.contas_a_receber td:nth-child(9) {
+    width: 10%; 
+    text-align: left;
 }
 .contas_a_receber tbody tr:nth-child(odd) {
     background-color: #f2f2f2; 
@@ -176,13 +205,14 @@ body {
     margin-top: 10px; 
     margin-bottom: 20px;
     font-weight: bold;
-    color: green;
+    color: #06c056;
     text-shadow: 2px 2px black;
 }
 h2 {
     position: absolute;
-    left: 3%;
-    top: 10%;
+    left: 2.6%;
+    top: 15%;
+    margin-bottom: 5px;
 }
 .detalhes-cliente {
     display: flex;
@@ -224,6 +254,14 @@ h2 {
     font-size: 1.2em; 
     margin-bottom: 1px; 
 }
+.caixa-atendimentos p {
+    position: absolute;
+    left: 35%;
+    top: 40%;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
 .resultado-container {
     width: 100%;
     max-height: 100px; 
@@ -258,30 +296,27 @@ h2 {
   }
 h1 {
     position: relative;
-    top: -45px; 
+    top: 10%; 
     margin-top: 0; 
     margin-bottom: 10px;
-    color: #117011; 
+    color: #06c056;
     text-align: center; 
-    font-weight: 900; 
-    font-size: 50px; 
-    -webkit-text-stroke: 3px black; 
+    font-weight: 900;
+    font-size: 60px;
+    -webkit-text-stroke: 3px black;
     text-shadow: none;
 }
 label {
-    margin-top: 0; 
     position: relative;
-    top: -55px; 
+    top: 90%;
 }
 input {
-    margin-top: 0; 
     position: relative;
-    top: -55px; 
+    top: 90%;
 }
 button.botao-pesquisar {
-    margin-top: 26; 
     position: relative;
-    top: -55px; 
+    top: 90%;
 }
 h3 {
     position: relative;
@@ -318,7 +353,7 @@ h4 {
     margin-left: 20px; 
     text-align: left; 
     position: relative;
-    top: -100px; 
+    top: -10px; 
     margin-top: 0;
 }
 .tabela-detalhes th, .tabela-detalhes td {
@@ -343,7 +378,7 @@ h4 {
     position: relative;
     width: 100%;
     border-collapse: collapse;
-    margin-top: 1px;
+    margin-top: 30px;
 }
 .cabeçalho th:nth-child(1), 
 .cabeçalho td:nth-child(1) {
@@ -391,8 +426,8 @@ h4 {
 }
 #observationForm {
     position: absolute; 
-    top: 5%; 
-    right: 2.3%;
+    top: 12%; 
+    right: 1%;
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -482,27 +517,4 @@ h4 {
 }
 #tabela-atendimentos th {
     background-color: #f2f2f2;
-}
-.voltar-button {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    background-color: #4CAF50;
-    color: white;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    width: 100px;
-    position: absolute;
-    left: 23px; 
-    bottom: 23px;
-}
-.voltar-button i {
-    margin-right: 10px; 
-}
-.voltar-button:hover {
-    background-color: #2c6e30;
-    transform: translateY(-5px);
 }

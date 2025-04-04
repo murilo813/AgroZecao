@@ -3,120 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agropecuária Zecão Web</title>
+    <title>Agropecuária Zecão ERP</title>
     <link href="static/css/home.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
 <body>
+    {% include 'base.html' %}
     <div class="container">
         <div class="box">
-            <h1>Bem Vindo(a) {{ session['nomeclatura'] }}!</h1>
-            <div class="buttons-container">
-                <button id="financeiroButton" class="button {% if erro_financeiro %}error{% endif %}" onclick="window.location.href='{{ url_for('consulta.consulta') }}'">
-                    <i class="fas fa-dollar-sign"></i>Financeiro
-                </button>
-                <button id="gerenciaButton" class="button {% if erro_gerencia %}error{% endif %}" onclick="window.location.href='{{ url_for('gerencia.gerencia') }}'">
-                    <i class="fas fa-cogs"></i>Gerência
-                </button>
-                <button id="comercialButton" class="button {% if erro_comercial %}error{% endif %}" onclick="window.location.href='{{ url_for('comercial.comercial') }}'">
-                    <i class="fas fa-chart-line"></i>Comercial
-                </button>                <button id="estoqueButton" class="button {% if erro_estoque %}error{% endif %}" onclick="window.location.href='{{ url_for('estoque.estoque') }}'">
-                    <i class="fas fa-box"></i>Estoque
-                </button>
-            </div>
-<!--        <div class="releases-container">
-                <div class="box-releases">
-                    <div class="release-header"> 
-                        <i class="fa fa-cogs"></i>                       
-                        <h2>Atualizações</h2>
-                        <i class="fa fa-cogs"></i> 
-                    </div>
-                    <ul>
-                        <li>Nova página inicial.</li>
-                        <li>Design melhorado.</li>
-                        <li>Adição de novos setores.</li>
-                        <li>Adicionado o agendamento de atendimentos.</li>
-                    </ul>
-                </div>
-            </div>  irei implementar isto mais tarde.-->
-            <div class="alert-container">
-                <div class="alert-box">
-                    <div class="alert-header">
-                        <i class="fa fa-bell"></i>
-                        <h3>Notificações</h3>
-                    </div>
-                    {% if session['notificacoes'] %}
-                        {% for notificacao in session['notificacoes'] %}
-                            <div class="alert">
-                                <p>{{ notificacao[0] }}</p>  
-                                <p>{{ notificacao[1] }}</p>  
-                                <p>{{ notificacao[2] }}</p>  
-                                <button class="close-btn" onclick="removerNotificacao('{{ notificacao[-1] }}', this)">X</button>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="no-notifications">Nenhuma notificação no momento.</p>
-                    {% endif %}
-                </div>
-            </div>        
+            <h1 id="titulo-h1">Bem Vindo(a)!</h1>      
+            <h2 id="titulo-h2">{{ session['nomeclatura'] }}</h2>             
         </div>
     </div>
+    <!--<img src="{{ url_for('static', filename='banner.png') }}" alt="banner" class="banner">-->
     <script>
-        function removerNotificacao(notificacaoId, elemento) {
-            console.log("Tentando remover notificação com ID:", notificacaoId);
+        /*Animação de entrada do título*/
+        document.addEventListener("DOMContentLoaded", function () {
+            const tituloH1 = document.getElementById("titulo-h1");
+            const tituloH2 = document.getElementById("titulo-h2");
 
-            if (!notificacaoId || isNaN(notificacaoId)) {
-                alert("Erro: ID da notificação inválido!");
-                return;
+            // Verifica se o login foi feito
+            if (sessionStorage.getItem("loginEfetuado") === null) {
+                // Marca o login como efetuado para que não ocorra mais animações
+                sessionStorage.setItem("loginEfetuado", "true");
+
+                tituloH1.classList.add("slidein-h1");
+
+                setTimeout(function () {
+                    tituloH2.classList.add("slidein-h2");
+                }, 1000); // Espera 1 segundo antes de iniciar a animação do título 2
+            } else {
+
+                tituloH1.style.opacity = "1";
+                tituloH2.style.opacity = "1";
+
+                tituloH1.style.transform = "translateX(0%)";
+                tituloH2.style.transform = "translateX(0%)";
             }
+        });
 
-            fetch('/remover_notificacao', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_not: notificacaoId }) 
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log("Notificação removida com sucesso:", notificacaoId);
-                    elemento.parentElement.remove(); 
-                } else {
-                    alert('Erro ao remover notificação: ' + data.error);
-                }
-            })
-            .catch(error => console.error('Erro:', error));
-        }
-
-        
-        if (document.getElementById('financeiroButton').classList.contains('error')) {
-            setTimeout(function() {
-                var button = document.getElementById('financeiroButton');
-                button.classList.remove('error');
-            }, 1000); 
-        }
-    
-        if (document.getElementById('gerenciaButton').classList.contains('error')) {
-            setTimeout(function() {
-                var button = document.getElementById('gerenciaButton');
-                button.classList.remove('error'); 
-            }, 1000); 
-        }
-
-        if (document.getElementById('comercialButton').classList.contains('error')) {
-            setTimeout(function() {
-                var button = document.getElementById('comercialButton');
-                button.classList.remove('error');
-            }, 1000); 
-        }
-
-        if (document.getElementById('estoqueButton').classList.contains('error')) {
-            setTimeout(function() {
-                var button = document.getElementById('estoqueButton');
-                button.classList.remove('error');
-            }, 1000); 
-        }
-        
     </script>
 </body>
 </html>

@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Cliente</title>
+    <title>Agropecuária Zecão ERP</title>
     <link href="static/css/financ.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
 <body>
+    {% include 'base.html' %}
     <div class="container">
         <div class="box">
             <div id="tituloConsulta">
                 <h1 class="titulo">Consultar Cliente</h1>
             </div>
             <form method="POST" action="/consulta">
-                <label for="nome">NOME:</label>
+                <label class="nome-cpf" for="nome">NOME:</label>
                 <input type="text" id="nome" name="nome">
-                <label for="nome">CPF ou ID:</label>
-                <input type="text" id="cpf" name="cpf_selecionado">
+                <label class="nome-cpf" for="nome">CPF ou ID:</label>
+                <input type="text" id="cpf" name="cpf_selecionado" value="{{ request.args.get('cpf_cnpj', '') }}">
                 <button type="submit" class="botao-pesquisar">Pesquisar</button>
             </form>           
             <div>    
@@ -81,7 +83,7 @@
                                 </table>
                             </div>                       
                             <div class="caixa-atendimentos">
-                                <h3>Atendimentos Realizados</h3>                               
+                                <h3 id="atendimentosrota">Atendimentos Realizados</h3>                               
                                 {% if atendimentos and atendimentos|length > 0 %}
                                     <table id="tabela-atendimentos">
                                         <thead>
@@ -143,7 +145,7 @@
                                     <th>Número NFe</th>
                                     <th>Parcela</th> 
                                     <th>Data da Venda</th>
-                                    <th>Data do Vencimento</th>
+                                    <th>Vencimento</th>
                                     <th>Valor</th>
                                     <th>À Receber</th>  
                                 </tr>
@@ -191,8 +193,8 @@
                                                 {{ nota.data_vencimento.strftime('%d/%m/%Y') if nota.data_vencimento else 'N/A' }}
                                             </span>
                                         </td>
-                                        <td>R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
-                                        <td>R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
+                                        <td class="valor">R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
+                                        <td class="valor">R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -208,10 +210,8 @@
             </div>
         </div>    
     </div>
-<button class="button voltar-button" onclick="window.location.href='{{ url_for('home.home') }}'">
-    <i class="fas fa-arrow-left"></i> Voltar
-</button> 
     <script>
+
         function toggleObservationForm() {
             const form = document.getElementById('observationForm');
             form.classList.toggle('hidden');
@@ -220,7 +220,8 @@
                 const formObservation = document.getElementById('formObservation');
                 formObservation.reset();
             }
-        }       
+        } 
+        /*Carrega e exibe os atendimentos dinamicamente*/
         async function carregarAtendimentos() {
             try {
                 const response = await fetch('/get_atendimentos', { method: 'GET' });
@@ -247,6 +248,7 @@
                 console.error('Erro inesperado ao carregar atendimentos:', error);
             }
         }
+        /*Adicionar nova cobrança*/
         const formObservation = document.getElementById('formObservation');
         const submitButton = formObservation.querySelector('button[type="submit"]');
         const inputsToWatch = ['cliente', 'observation', 'date'];
@@ -285,12 +287,12 @@
                 submitButton.disabled = false;
             });
         });
-    
+        /*Carrega cobranças*/
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM totalmente carregado, iniciando carregamento dos atendimentos...');
             carregarAtendimentos();
         });
-    
+        /*Navegação e seleção de linhas na tabela*/
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM totalmente carregado, iniciando navegação e seleção...');
             const tabela = document.querySelector('.contas_a_receber tbody');
@@ -344,8 +346,14 @@
                 currentScrollTop = tabela.scrollTop;
             });
         });    
+        /*Esconder título da consulta com base em uma variável*/
+        document.addEventListener("DOMContentLoaded", function () {
+            const tituloConsulta = document.getElementById("tituloConsulta");
 
-
+            {% if cliente_detalhes %}
+                tituloConsulta.style.display = "none";
+            {% endif %}
+        });
     </script>      
 </body>
 </html>
