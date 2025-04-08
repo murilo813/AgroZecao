@@ -194,16 +194,6 @@ def consulta():
 
                     cursor.execute(query_notas, (cpf_selecionado, data_hoje))
                     notas = cursor.fetchall()
-
-                    cursor.execute("""
-                        SELECT empresa, nota, obs
-                        FROM obs_nota
-                        WHERE (empresa, nota) IN %s
-                    """, (tuple((n[0], n[1]) for n in notas),))
-
-                    observacoes_raw = cursor.fetchall()
-                    obs_dict = {(empresa, nota): obs for empresa, nota, obs in observacoes_raw}
-                    print(obs_dict)
                     data_hoje = date.today()
 
                     cliente_detalhes = {
@@ -219,7 +209,6 @@ def consulta():
                                     "data_vencimento": nota[4],  
                                     "valor_original": float(nota[5]) if nota[5] else 0.0,
                                     "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
-                                    "obs": obs_dict.get((nota[0], nota[1]), "")
                                 }
                                 for nota in notas
                             ],
@@ -231,6 +220,7 @@ def consulta():
                         ),
                     }
                     clientes_relacionados_detalhes = []
+                    notas_relacionadas_geral = []
 
                     for clientes_relacionado in clientes_relacionados:
                         cpf_selecionado = clientes_relacionado[0]
@@ -255,6 +245,24 @@ def consulta():
                                 for nota in notas_relacionadas
                             ],
                         })
+
+                    notas_dos_relacionados = [
+                        (nota["empresa"], nota["nota"])
+                        for cliente in clientes_relacionados_detalhes
+                        for nota in cliente["notas"]
+                    ]
+                    if notas_dos_relacionados:
+                        cursor.execute("""
+                            SELECT empresa, nota, obs
+                            FROM obs_nota
+                            WHERE (empresa, nota) IN %s
+                        """, (tuple(notas_dos_relacionados),))
+
+                        obs_dict_relacionados = {(empresa, nota): obs for empresa, nota, obs in cursor.fetchall()}
+
+                        for cliente in clientes_relacionados_detalhes:
+                            for nota in cliente["notas"]:
+                                nota["obs"] = obs_dict_relacionados.get((nota["empresa"], nota["nota"]), "")
                     #É usado o saldo_devedor pois é com ele que é feito o cálculo de quanto o cliente ainda deve.
                     total_a_receber = sum(
                         nota["saldo_devedor"] for nota in cliente_detalhes["notas"] if nota["saldo_devedor"]
@@ -335,12 +343,12 @@ def salvar_obs_notas():
                 observacao = obs.get("observacao")
 
                 if empresa and nota:
-                    if observacao.strip():
+                    if observacao.strip() != "":
                         cursor.execute("""
                             INSERT INTO obs_nota (empresa, nota, obs)
                             VALUES (%s, %s, %s)
                             ON CONFLICT (empresa, nota) DO UPDATE SET obs = EXCLUDED.obs
-                        """, (empresa, nota, observacao.strip()))
+                        """, (empresa, nota, observacao))
                     else:
                         cursor.execute("""
                             DELETE FROM obs_nota
