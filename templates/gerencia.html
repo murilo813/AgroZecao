@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agropecária Zecão ERP</title>
+    <title>Gerência - Agropecária Zecão ERP</title>
     <link href="static/css/gerencia.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
@@ -134,6 +134,7 @@
         </div>
     </div>
     <script>
+        /*MODAL DE COBRANÇAS*/
         const modal = document.getElementById("cobrancamodal");
         const btnAbrir = document.getElementById("cobrancaBtn");
         const btnFechar = document.getElementById("fecharmodal");
@@ -177,7 +178,7 @@
                 modal.style.display = "none";
             }
         };
-
+        /*MODAL DE MENSAGEM*/
         const btnTogle = document.getElementById("togleform");
         const formTogle = document.getElementById("togleForm");
         const btnFecharTogle = document.getElementById("fechartogle");
@@ -194,7 +195,7 @@
             formTogle.style.display = "none";
         };
 
-        /*orçamentos*
+        /*orçamentos*/
         document.addEventListener("DOMContentLoaded", function() {
             const btnOrcamentos = document.querySelector('.btn-principal[data-action="orcamentos"]');
             const orcamentosContent = document.querySelector('#orcamentosContent');
@@ -207,7 +208,7 @@
                     document.querySelector('.buttons-container').style.display = 'none'; 
                     gerenciamentoTitle.style.display = 'none'; 
                 });
-            }*/
+            }
 
             if (btnVoltar) {
                 btnVoltar.addEventListener("click", function() {

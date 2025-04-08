@@ -71,7 +71,7 @@ h2 {
 .slidein-h2 {
   animation: slidein-h2 1s ease-out forwards;
 }
-
+/*BOTÕES*/
 .buttons-container {
   display: flex;
   flex-direction: column; 
@@ -111,12 +111,4 @@ h2 {
   50% { transform: translateX(5px); }
   75% { transform: translateX(-5px); }
   100% { transform: translateX(0); }
-}
-.banner {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 750px;  
-  height: auto; 
 }
