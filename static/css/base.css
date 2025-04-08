@@ -186,7 +186,6 @@ nav.open .overlay-logo {
   font-weight: 900;
   font-style: italic;
 }
-
 /*NOTIFICAÇÕES*/
 .alert-container {
   position: absolute;
@@ -324,11 +323,9 @@ html ::-webkit-scrollbar-track {
   font-weight: bold;
   transition: background-color 0.3s ease;
 }
-
 .btn-ver-notas:hover {
   background-color: #45a049; 
 }
-
 /*ícone de notificação*/
 .notification-icon {
   position: fixed;
@@ -342,12 +339,10 @@ html ::-webkit-scrollbar-track {
   transition: transform 0.3s ease;
   background: none; 
 }
-
 .notification-icon.active {
   display: block;
   transform: scale(1.1); 
 }
-
 .notification-count {
   position: absolute;
   top: -5px;

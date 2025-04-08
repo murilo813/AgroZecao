@@ -130,76 +130,64 @@
         overlay = document.querySelector(".overlay"),
         alertContainer = document.querySelector(".alert-container"),
         sidebarLinks = document.querySelectorAll(".nav-link"),
-        notificationIcon = document.querySelector(".notification-icon"), // Ícone de notificações
-        notificationsButton = document.querySelector(".nav-link.notifications"); // Certifique-se de que este seletor corresponde ao botão correto na sidebar
+        notificationIcon = document.querySelector(".notification-icon"), 
+        notificationsButton = document.querySelector(".nav-link.notifications"); 
 
-      // Função para adicionar o destaque ao botão clicado
       function setActiveLink(clickedLink) {
-        sidebarLinks.forEach(link => link.classList.remove("active")); // Remove o destaque de todos os botões
+        sidebarLinks.forEach(link => link.classList.remove("active")); 
         if (clickedLink) {
-          clickedLink.classList.add("active"); // Adiciona o destaque ao botão selecionado
+          clickedLink.classList.add("active"); 
         }
       }
 
-      // Abre e fecha a sidebar ao clicar no ícone do menu
       menuBtns.forEach((menuBtn) => {
         menuBtn.addEventListener("click", () => {
           const isOpen = navBar.classList.toggle("open");
           if (!isOpen) {
-            alertContainer.style.display = "none"; // Fecha notificações
-            setActiveLink(null); // Remove o destaque de todos os botões
+            alertContainer.style.display = "none"; 
+            setActiveLink(null); 
           }
         });
       });
 
-      // Fecha a sidebar ao clicar no overlay
       overlay.addEventListener("click", () => {
         navBar.classList.remove("open");
-        alertContainer.style.display = "none"; // Fecha as notificações
-        setActiveLink(null); // Remove o destaque dos botões
+        alertContainer.style.display = "none";
+        setActiveLink(null); 
       });
 
-      // Adiciona a funcionalidade de destacar o botão clicado na sidebar
       sidebarLinks.forEach((link) => {
         link.addEventListener("click", () => {
-          // Fecha o modal de notificações quando outro link for clicado
           if (link !== notificationsButton) {
-            alertContainer.style.display = "none"; // Fecha as notificações
+            alertContainer.style.display = "none"; 
           }
-          setActiveLink(link); // Adiciona o destaque ao botão clicado
+          setActiveLink(link); 
         });
       });
 
-      // Abre a sidebar e destaca o botão de notificações ao clicar no ícone de notificações
       notificationIcon.addEventListener("click", () => {
-        navBar.classList.add("open"); // Abre a sidebar
-        alertContainer.style.display = "block"; // Exibe as notificações
+        navBar.classList.add("open"); 
+        alertContainer.style.display = "block"; 
 
-        // Adiciona o destaque ao botão de notificações na sidebar
         if (notificationsButton) {
           setActiveLink(notificationsButton);
         } else {
           console.error("Botão de notificações não encontrado!");
         }
       });
-
-
-
-
       /*Sublinha o setor atual*/
       document.addEventListener("DOMContentLoaded", function () {
           let buttons = document.querySelectorAll(".nav-button");
-          let currentPath = window.location.pathname.replace("/", ""); // Remove a barra inicial
+          let currentPath = window.location.pathname.replace("/", ""); 
 
           buttons.forEach(button => {
-              let buttonPath = button.getAttribute("href").replace("/", ""); // Remove também do href
+              let buttonPath = button.getAttribute("href").replace("/", ""); 
               
               if (buttonPath === currentPath) {
                   button.classList.add("active"); 
               }
           });
       });
-
       /*Remove a notificação*/
       function removerNotificacao(notificacaoId, elemento) {
           console.log("Tentando remover notificação com ID:", notificacaoId);
@@ -225,7 +213,6 @@
           })
           .catch(error => console.error('Erro:', error));
       }     
-
       /*Modal de notificações*/
       document.addEventListener("DOMContentLoaded", function() {
         const openModal = document.getElementById("openAlertModal");
@@ -236,7 +223,6 @@
           overlay.style.display = "block";
         });
       });
-
       /*Icone de notificação*/
       document.addEventListener("DOMContentLoaded", function () {
         const notificationIcon = document.getElementById("notification-icon");
@@ -260,7 +246,6 @@
           overlay.style.display = "block";
         });
       });
-
       document.addEventListener("DOMContentLoaded", function () {
         const scrollToNotas = "{{ scroll_to_notas }}";
 

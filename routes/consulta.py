@@ -1,8 +1,10 @@
 from flask import Flask, Blueprint, render_template, request, redirect, session, flash, jsonify
+from markupsafe import Markup
 from datetime import date
 from psycopg2 import connect, sql
 from psycopg2.extras import RealDictCursor
 import psycopg2
+import json
 from functions import carregar_atendimentos, criar_conexao
 
 consulta_bp = Blueprint('consulta', __name__)
@@ -193,6 +195,15 @@ def consulta():
                     cursor.execute(query_notas, (cpf_selecionado, data_hoje))
                     notas = cursor.fetchall()
 
+                    cursor.execute("""
+                        SELECT empresa, nota, obs
+                        FROM obs_nota
+                        WHERE (empresa, nota) IN %s
+                    """, (tuple((n[0], n[1]) for n in notas),))
+
+                    observacoes_raw = cursor.fetchall()
+                    obs_dict = {(empresa, nota): obs for empresa, nota, obs in observacoes_raw}
+                    print(obs_dict)
                     data_hoje = date.today()
 
                     cliente_detalhes = {
@@ -208,6 +219,7 @@ def consulta():
                                     "data_vencimento": nota[4],  
                                     "valor_original": float(nota[5]) if nota[5] else 0.0,
                                     "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
+                                    "obs": obs_dict.get((nota[0], nota[1]), "")
                                 }
                                 for nota in notas
                             ],
@@ -308,6 +320,38 @@ def consulta():
                 conexao.close()
 
     return render_template('consulta.html')
+
+@consulta_bp.route('/salvar_obs_notas', methods=['POST'])
+def salvar_obs_notas():
+    try:
+        data = request.get_json()
+        obs_notas = data.get('obs_notas')  
+
+        conexao = criar_conexao()
+        with conexao.cursor() as cursor:
+            for obs in obs_notas:
+                empresa = obs.get("empresa")
+                nota = obs.get("nota")
+                observacao = obs.get("observacao")
+
+                if empresa and nota:
+                    if observacao.strip():
+                        cursor.execute("""
+                            INSERT INTO obs_nota (empresa, nota, obs)
+                            VALUES (%s, %s, %s)
+                            ON CONFLICT (empresa, nota) DO UPDATE SET obs = EXCLUDED.obs
+                        """, (empresa, nota, observacao.strip()))
+                    else:
+                        cursor.execute("""
+                            DELETE FROM obs_nota
+                            WHERE empresa = %s AND nota = %s
+                        """, (empresa, nota))
+
+            conexao.commit()
+        return jsonify({"status": "ok"})
+    except Exception as e:
+        print("Erro ao salvar observações via sendBeacon:", e)
+        return jsonify({"status": "erro"}), 500
 
 @consulta_bp.route('/add_observation', methods=['POST'])
 def adicionar_observacao():

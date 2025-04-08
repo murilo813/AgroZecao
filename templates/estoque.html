@@ -3,18 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agropecuária Zecão ERP</title>
-    <link href="static/css/estoque.css" rel="stylesheet" />
+    <title>Estoque - Agropecária Zecão ERP</title>
+    <link href="static/css/gerencia.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
 <body>
     {% include 'base.html' %}
     <div class="container">
         <div class="box">
-            <h1>ESTOQUE</h1>
-            <button class="estoque">relatorios</button>
-            <div>
+            <h1>Gerenciamento</h1>
+            <div class="buttons-container">
 
+                <button class="btn-principal" data-action="orcamentos">
+                    <i class="fas fa-file-alt"></i> Relatórios
+                </button>                
+
+                <button class="btn-principal">
+                    <i class="fas fa-boxes"></i> Contagens
+                </button>
+
+                <button id="cobrancaBtn" class="btn-principal">
+                    <i class="fas fa-file-invoice"></i> Não conformidade
+                </button>
+
+                <button id="togleform" class="btn-principal">
+                    <i class="fas fa-envelope"></i> Outro
+                </button>
             </div>
         </div>
     </div>

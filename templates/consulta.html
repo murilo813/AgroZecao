@@ -139,6 +139,7 @@
                         <table class="contas_a_receber">
                             <thead>
                                 <tr>
+                                    <th>OBS</th>
                                     <th>Empresa</th>
                                     <th>Nome</th>
                                     <th>CPF</th>
@@ -154,6 +155,7 @@
                                 {% set todas_notas = [] %}
                                 {% for nota in cliente_detalhes["notas"] %}
                                     {% set _ = todas_notas.append({
+                                        "obs": nota.obs,
                                         "empresa": nota.empresa,
                                         "nome": cliente_detalhes['nome'],
                                         "cpf": cliente_detalhes['cpf'],
@@ -168,6 +170,7 @@
                                 {% for cliente_relacionado in clientes_relacionados_detalhes %}
                                     {% for nota in cliente_relacionado["notas"] %}
                                         {% set _ = todas_notas.append({
+                                            "obs": nota.obs,
                                             "empresa": nota.empresa,
                                             "nome": cliente_relacionado['nome'],
                                             "cpf": cliente_relacionado['cpf'],
@@ -182,6 +185,7 @@
                                 {% endfor %}
                                 {% for nota in todas_notas|sort(attribute="data_vencimento") %}
                                     <tr>
+                                        <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent;" /></td>
                                         <td>{{ nota.empresa }}</td>
                                         <td>{{ nota.nome }}</td>
                                         <td>{{ nota.cpf }}</td>
@@ -211,7 +215,76 @@
         </div>    
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const obsInputs = document.querySelectorAll('input[name="observacao"]');
 
+            obsInputs.forEach(input => {
+                const parentRow = input.closest("tr");
+                const empresa = parentRow.querySelector("td:nth-child(2)").textContent.trim();
+                const nota = parentRow.querySelector("td:nth-child(5)").textContent.trim();
+                const key = `obs-${empresa}-${nota}`;
+
+                // Carrega do localStorage se já existir
+                if (localStorage.getItem(key)) {
+                    input.value = localStorage.getItem(key);
+                    input.setAttribute("title", input.value);  // tooltip
+                }
+
+                // Atualiza localStorage ao digitar
+                input.addEventListener("input", function () {
+                    localStorage.setItem(key, input.value);
+                    input.setAttribute("title", input.value);
+                });
+            });
+
+            async function enviarObs() {
+                const obsInputs = document.querySelectorAll('input[name="observacao"]');
+                const obsData = Array.from(obsInputs).map(input => {
+                    const parentRow = input.closest("tr");
+                    const empresa = parentRow.querySelector("td:nth-child(2)").textContent.trim();
+                    const nota = parentRow.querySelector("td:nth-child(5)").textContent.trim();
+                    return {
+                        empresa: empresa,
+                        nota: nota,
+                        observacao: input.value
+                    };
+                });
+
+                try {
+                    await fetch('/salvar_obs_notas', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ obs_notas: obsData })
+                    });
+                    console.log('Observações enviadas com sucesso!');
+                } catch (error) {
+                    console.error('Erro ao enviar observações:', error);
+                }
+            }
+
+            // Enviar ao sair da página
+            window.addEventListener('beforeunload', function () {
+                const obsInputs = document.querySelectorAll('input[name="observacao"]');
+                const obsData = Array.from(obsInputs).map(input => {
+                    const parentRow = input.closest("tr");
+                    const empresa = parentRow.querySelector("td:nth-child(2)").textContent.trim();
+                    const nota = parentRow.querySelector("td:nth-child(5)").textContent.trim();
+                    return {
+                        empresa: empresa,
+                        nota: nota,
+                        observacao: input.value
+                    };
+                });
+
+                const blob = new Blob([JSON.stringify({ obs_notas: obsData })], {
+                    type: 'application/json'
+                });
+                navigator.sendBeacon('/salvar_obs_notas', blob);
+            });
+        });
+        /*modal de observação dos atendimentos*/
         function toggleObservationForm() {
             const form = document.getElementById('observationForm');
             form.classList.toggle('hidden');
