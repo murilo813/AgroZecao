@@ -219,6 +219,7 @@ def consulta():
                             )
                         ),
                     }
+                    #Aqui trás tanto os clientes selecionados quanto os relacionados 
                     clientes_relacionados_detalhes = []
                     notas_relacionadas_geral = []
 
@@ -259,7 +260,7 @@ def consulta():
                         """, (tuple(notas_dos_relacionados),))
 
                         obs_dict_relacionados = {(empresa, nota): obs for empresa, nota, obs in cursor.fetchall()}
-
+                        print(obs_dict_relacionados)
                         for cliente in clientes_relacionados_detalhes:
                             for nota in cliente["notas"]:
                                 nota["obs"] = obs_dict_relacionados.get((nota["empresa"], nota["nota"]), "")

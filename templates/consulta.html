@@ -135,15 +135,15 @@
                         </div>
                     </div>
                     <h4>Notas em Aberto</h4>
-                    <div class="notas-container">
+                    <div class="notas-container" id="notas-container">
                         <table class="contas_a_receber">
                             <thead>
                                 <tr>
-                                    <th>OBS</th>
                                     <th>Empresa</th>
                                     <th>Nome</th>
                                     <th>CPF</th>
                                     <th>Número NFe</th>
+                                    <th>OBS</th>
                                     <th>Parcela</th> 
                                     <th>Data da Venda</th>
                                     <th>Vencimento</th>
@@ -155,11 +155,11 @@
                                 {% set todas_notas = [] %}
                                 {% for nota in cliente_detalhes["notas"] %}
                                     {% set _ = todas_notas.append({
-                                        "obs": nota.obs,
                                         "empresa": nota.empresa,
                                         "nome": cliente_detalhes['nome'],
                                         "cpf": cliente_detalhes['cpf'],
                                         "nota": nota.nota,
+                                        "obs": nota.obs,
                                         "parcela": nota.parcela,  
                                         "data_venda": nota.data_venda,
                                         "data_vencimento": nota.data_vencimento,
@@ -170,11 +170,11 @@
                                 {% for cliente_relacionado in clientes_relacionados_detalhes %}
                                     {% for nota in cliente_relacionado["notas"] %}
                                         {% set _ = todas_notas.append({
-                                            "obs": nota.obs,
                                             "empresa": nota.empresa,
                                             "nome": cliente_relacionado['nome'],
                                             "cpf": cliente_relacionado['cpf'],
                                             "nota": nota.nota,
+                                            "obs": nota.obs,
                                             "parcela": nota.parcela,  
                                             "data_venda": nota.data_venda,
                                             "data_vencimento": nota.data_vencimento,
@@ -185,11 +185,11 @@
                                 {% endfor %}
                                 {% for nota in todas_notas|sort(attribute="data_vencimento") %}
                                     <tr>
-                                        <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent;" /></td>
                                         <td>{{ nota.empresa }}</td>
                                         <td>{{ nota.nome }}</td>
                                         <td>{{ nota.cpf }}</td>
                                         <td>{{ nota.nota }}</td>
+                                        <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" /></td>
                                         <td>{{ nota.parcela }}</td>
                                         <td>{{ nota.data_venda }}</td>
                                         <td>
@@ -197,9 +197,11 @@
                                                 {{ nota.data_vencimento.strftime('%d/%m/%Y') if nota.data_vencimento else 'N/A' }}
                                             </span>
                                         </td>
-                                        <td class="valor">R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
-                                        <td class="valor">R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
-                                    </tr>
+                                        <td class="valor" style="color: {% if nota.valor_original < 0 %}green{% else %}black{% endif %};">
+                                            R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                        </td>                                        <td class="valor" style="color: {% if nota.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                            R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                        </td>                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -216,18 +218,21 @@
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const obsInputs = document.querySelectorAll('input[name="observacao"]');
+            const container = document.getElementById("notas-container");
+            if (!container) return; // sai do script se não for a página certa
+
+            const obsInputs = container.querySelectorAll('input[name="observacao"]');
 
             obsInputs.forEach(input => {
                 const parentRow = input.closest("tr");
-                const empresa = parentRow.querySelector("td:nth-child(2)").textContent.trim();
-                const nota = parentRow.querySelector("td:nth-child(5)").textContent.trim();
+                const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
+                const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
                 const key = `obs-${empresa}-${nota}`;
 
                 // Carrega do localStorage se já existir
                 if (localStorage.getItem(key)) {
                     input.value = localStorage.getItem(key);
-                    input.setAttribute("title", input.value);  // tooltip
+                    input.setAttribute("title", input.value);
                 }
 
                 // Atualiza localStorage ao digitar
@@ -238,11 +243,11 @@
             });
 
             async function enviarObs() {
-                const obsInputs = document.querySelectorAll('input[name="observacao"]');
+                const obsInputs = container.querySelectorAll('input[name="observacao"]');
                 const obsData = Array.from(obsInputs).map(input => {
                     const parentRow = input.closest("tr");
-                    const empresa = parentRow.querySelector("td:nth-child(2)").textContent.trim();
-                    const nota = parentRow.querySelector("td:nth-child(5)").textContent.trim();
+                    const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
+                    const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
                     return {
                         empresa: empresa,
                         nota: nota,
@@ -266,11 +271,11 @@
 
             // Enviar ao sair da página
             window.addEventListener('beforeunload', function () {
-                const obsInputs = document.querySelectorAll('input[name="observacao"]');
+                const obsInputs = container.querySelectorAll('input[name="observacao"]');
                 const obsData = Array.from(obsInputs).map(input => {
                     const parentRow = input.closest("tr");
-                    const empresa = parentRow.querySelector("td:nth-child(2)").textContent.trim();
-                    const nota = parentRow.querySelector("td:nth-child(5)").textContent.trim();
+                    const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
+                    const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
                     return {
                         empresa: empresa,
                         nota: nota,
@@ -284,6 +289,7 @@
                 navigator.sendBeacon('/salvar_obs_notas', blob);
             });
         });
+
         /*modal de observação dos atendimentos*/
         function toggleObservationForm() {
             const form = document.getElementById('observationForm');
