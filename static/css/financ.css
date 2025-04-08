@@ -215,12 +215,14 @@ input {
     border-left: 1px solid #2c2f33;
 }
 .contas_a_receber th:nth-child(1) {
-    width: 4%; 
-    text-align: left;
+    width: 1%; 
 }
-.contas_a_receber th:nth-child(2) {
-    width: 4%; 
-    text-align: left;
+.contas_a_receber th:nth-child(4) {
+    width: 9%; 
+}
+.contas_a_receber th:nth-child(5) {
+    width: 10%; 
+    text-align: center;
 }
 .contas_a_receber th:nth-child(9) {
     width: 10%; 
@@ -235,6 +237,10 @@ input {
     text-align: center; 
     border-bottom: 2px solid #a8abad; 
     border-left: 1px solid #a8abad; 
+}
+.contas_a_receber td:nth-child(5) {
+    width: 10%; 
+    text-align: center;
 }
 .contas_a_receber td:nth-child(9) {
     width: 10%; 
