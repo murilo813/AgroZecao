@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estoque - Agropecária Zecão ERP</title>
-    <link href="static/css/gerencia.css" rel="stylesheet" />
+    <link href="static/css/estoque.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
@@ -12,12 +12,12 @@
     {% include 'base.html' %}
     <div class="container">
         <div class="box">
-            <h1>Gerenciamento</h1>
+            <h1>Estoque</h1>
             <div class="buttons-container">
 
-                <button class="btn-principal" data-action="orcamentos">
+                <button class="btn-principal" data-action="relatorios">
                     <i class="fas fa-file-alt"></i> Relatórios
-                </button>                
+                </button>           
 
                 <button class="btn-principal">
                     <i class="fas fa-boxes"></i> Contagens
@@ -31,7 +31,38 @@
                     <i class="fas fa-envelope"></i> Outro
                 </button>
             </div>
+            <div class="boxrelatorios" id="relatoriosContent" style="display: none;">
+                <h2>Orçamentos</h2>
+
+
+                
+                <button id="voltarBtn" class="btn-secundario">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+            </div>     
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btnOrcamentos = document.querySelector('[data-action="relatorios"]');
+            const relatoriosContent = document.querySelector('#relatoriosContent');
+            const buttonsContainer = document.querySelector('.buttons-container');
+            const gerenciamentoTitle = document.querySelector('h1'); 
+
+            btnOrcamentos?.addEventListener("click", function () {
+                relatoriosContent.style.display = 'block';
+                buttonsContainer.style.display = 'none';
+                gerenciamentoTitle.style.display = 'none';
+            });
+
+            relatoriosContent.addEventListener("click", function (e) {
+                if (e.target.id === "voltarBtn") {
+                    relatoriosContent.style.display = 'none';
+                    buttonsContainer.style.display = 'flex';
+                    gerenciamentoTitle.style.display = 'block';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
