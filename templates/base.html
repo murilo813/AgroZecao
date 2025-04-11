@@ -64,9 +64,9 @@
               </a>
             </li>
             <li class="list">
-              <a href="#" class="nav-link">
+              <a href="#" class="nav-link" id="minhascobrancas">
                 <i class="bx bx-folder-open icon"></i>
-                <span class="link">Inativo</span>
+                <span class="link">Minhas cobranças</span>
               </a>
             </li>
           </ul>
@@ -88,6 +88,22 @@
         </div>
       </div>
     </nav>
+    <div id="minhascobrancasmodal" class="modal2">
+      <div class="modal_conteudo2">
+          <h2>Cobranças do Dia</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Observação</th>
+              </tr>
+            </thead>
+            <tbody>
+                <!-- As linhas dos atendimentos serão inseridas dinamicamente aqui -->
+            </tbody>
+          </table>
+      </div>
+    </div>
     <div id="alertModal" class="alert-container" style="display: none;">
       <div class="alert-box">
           <div class="alert-header">
@@ -100,7 +116,6 @@
                     <p>{{ notificacao[0] }}</p>  
                     <p>{{ notificacao[1] }}</p>  
                     <p>{{ notificacao[2] }}</p>  
-
                     {% if notificacao|length > 4 %} 
                       <a href="{{ url_for('consulta.consulta', cpf_cnpj=notificacao[3]) }}" class="btn-ver-notas">Ver</a>
                     {% endif %}
@@ -131,7 +146,9 @@
         alertContainer = document.querySelector(".alert-container"),
         sidebarLinks = document.querySelectorAll(".nav-link"),
         notificationIcon = document.querySelector(".notification-icon"), 
-        notificationsButton = document.querySelector(".nav-link.notifications"); 
+        notificationsButton = document.querySelector(".nav-link.notifications"),
+        minhasCobrancasButton = document.getElementById("minhascobrancas"),
+        minhasCobrancasModal = document.getElementById("minhascobrancasmodal");
 
       function setActiveLink(clickedLink) {
         sidebarLinks.forEach(link => link.classList.remove("active")); 
@@ -161,6 +178,12 @@
           if (link !== notificationsButton) {
             alertContainer.style.display = "none"; 
           }
+
+          // FECHA O MODAL DE COBRANÇAS SE NÃO CLICOU NO BOTÃO DE COBRANÇAS
+          if (link !== minhasCobrancasButton && minhasCobrancasModal) {
+            minhasCobrancasModal.style.display = "none";
+          }
+
           setActiveLink(link); 
         });
       });
@@ -175,18 +198,19 @@
           console.error("Botão de notificações não encontrado!");
         }
       });
+
       /*Sublinha o setor atual*/
       document.addEventListener("DOMContentLoaded", function () {
-          let buttons = document.querySelectorAll(".nav-button");
-          let currentPath = window.location.pathname.replace("/", ""); 
+        let buttons = document.querySelectorAll(".nav-button");
+        let currentPath = window.location.pathname.replace("/", ""); 
 
-          buttons.forEach(button => {
-              let buttonPath = button.getAttribute("href").replace("/", ""); 
-              
-              if (buttonPath === currentPath) {
-                  button.classList.add("active"); 
-              }
-          });
+        buttons.forEach(button => {
+          let buttonPath = button.getAttribute("href").replace("/", ""); 
+          
+          if (buttonPath === currentPath) {
+            button.classList.add("active"); 
+          }
+        });
       });
       /*Remove a notificação*/
       function removerNotificacao(notificacaoId, elemento) {
@@ -221,6 +245,57 @@
           event.preventDefault();
           alertContainer.style.display = "block";
           overlay.style.display = "block";
+        });
+      });
+      /*Modal de cobranças com overlay e fechamento ao clicar fora*/
+      document.addEventListener("DOMContentLoaded", function () {
+        const cobrancasBtn = document.getElementById("minhascobrancas");
+        const cobrancasModal = document.getElementById("minhascobrancasmodal");
+        const overlay = document.querySelector(".overlay");
+
+        cobrancasBtn.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          fetch("/minhascobrancas")
+            .then(response => response.json())
+            .then(data => {
+              const tbody = cobrancasModal.querySelector("tbody");
+              tbody.innerHTML = '';
+
+              if (data.atendimentos.length > 0) {
+                data.atendimentos.forEach(atendimento => {
+                  const tr = document.createElement("tr");
+                  tr.innerHTML = `
+                    <td>${atendimento[0]}</td>
+                    <td>${atendimento[1]}</td>
+                  `;
+                  tbody.appendChild(tr);
+                });
+              } else {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td colspan="3">Nenhuma cobrança encontrada.</td>`;
+                tbody.appendChild(tr);
+              }
+
+              cobrancasModal.style.display = "block";
+              overlay.style.display = "block";
+            })
+            .catch(error => {
+              console.error("Erro ao buscar cobranças:", error);
+            });
+        });
+
+        overlay.addEventListener("click", () => {
+          cobrancasModal.style.display = "none";
+          overlay.style.display = "none";
+        });
+
+        // Fecha com Esc também (opcional)
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") {
+            cobrancasModal.style.display = "none";
+            overlay.style.display = "none";
+          }
         });
       });
       /*Icone de notificação*/

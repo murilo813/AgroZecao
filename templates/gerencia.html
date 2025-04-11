@@ -183,17 +183,44 @@
         const formTogle = document.getElementById("togleForm");
         const btnFecharTogle = document.getElementById("fechartogle");
 
-        btnTogle.onclick = function() {
-            if (formTogle.style.display === "none" || formTogle.style.display === "") {
-                formTogle.style.display = "block"; 
-            } else {
-                formTogle.style.display = "none";  
-            }
+        btnTogle.onclick = function () {
+            formTogle.style.display = formTogle.style.display === "block" ? "none" : "block";
         };
 
-        btnFecharTogle.onclick = function() {
+        btnFecharTogle.onclick = function () {
             formTogle.style.display = "none";
         };
+
+        document.getElementById("formTogle").addEventListener("submit", async function (e) {
+            e.preventDefault(); // Impede o reload da página
+
+            const usuario = document.getElementById("usuario").value;
+            const anotacao = document.getElementById("anotacao").value;
+
+            const formData = new FormData();
+            formData.append("usuario", usuario);
+            formData.append("anotacao", anotacao);
+
+            try {
+                const response = await fetch("/add_notificacao", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Esconde o formulário/modal
+                    formTogle.style.display = "none";
+
+                    // (Opcional) Limpa o formulário
+                    this.reset();
+                } else {
+                    alert("Erro ao enviar a notificação.");
+                }
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao enviar a notificação.");
+            }
+        });
 
         /*orçamentos*/
         document.addEventListener("DOMContentLoaded", function() {
