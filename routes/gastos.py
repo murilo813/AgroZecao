@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session, flash, redirect
-from functions import criar_conexao
+from functions import criar_conexao, obter_notificacoes
 
 gastos_bp = Blueprint('gastos', __name__)
 
@@ -29,8 +29,10 @@ def gastos():
             WHERE usuario_id = %s AND setor_id = 5
         """, (usuario_id,))
 
+        session['notificacoes'] = obter_notificacoes(usuario_logado)
+
         if cursor.fetchone():  
-            return render_template('gastos.html')  
+            return render_template('gastos.html', notificacoes=session['notificacoes'])  
 
         else:
             return render_template('home.html', erro_gastos=True)  

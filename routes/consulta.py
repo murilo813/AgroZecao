@@ -5,7 +5,7 @@ from psycopg2 import connect, sql
 from psycopg2.extras import RealDictCursor
 import psycopg2
 import json
-from functions import carregar_atendimentos, criar_conexao
+from functions import carregar_atendimentos, criar_conexao, obter_notificacoes
 
 consulta_bp = Blueprint('consulta', __name__)
 
@@ -16,6 +16,7 @@ def consulta():
         return redirect('/login')  
 
     usuario_logado = session['usuario']
+    session['notificacoes'] = obter_notificacoes(usuario_logado)
 
     try:
         conexao = criar_conexao()
@@ -291,7 +292,8 @@ def consulta():
                         cliente_detalhes=cliente_detalhes,
                         clientes_relacionados_detalhes=clientes_relacionados_detalhes,
                         atendimentos=atendimentos_filtrados,
-                        data_hoje=data_hoje
+                        data_hoje=data_hoje,
+                        notificacoes=session['notificacoes']
                     )
 
                     flash("Cliente não encontrado para o CPF selecionado.")
@@ -315,9 +317,9 @@ def consulta():
                     clientes_unicos.append((cpf, nome, responsavel, bairro))
                     
             if clientes_unicos:
-                return render_template('consulta.html', data_hoje=data_hoje, clientes=clientes_unicos, atendimentos=atendimentos)
+                return render_template('consulta.html', notificacoes=session['notificacoes'], data_hoje=data_hoje, clientes=clientes_unicos, atendimentos=atendimentos)
 
-            return render_template('consulta.html')
+            return render_template('consulta.html', notificacoes=session['notificacoes'])
 
         except Exception as e:
             print(f"Erro na consulta: {e}")
@@ -328,7 +330,7 @@ def consulta():
             if 'conexao' in locals():
                 conexao.close()
 
-    return render_template('consulta.html')
+    return render_template('consulta.html', notificacoes=session['notificacoes'])
 
 @consulta_bp.route('/salvar_obs_notas', methods=['POST'])
 def salvar_obs_notas():

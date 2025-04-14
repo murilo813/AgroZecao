@@ -269,7 +269,7 @@
                 }
             }
 
-            // Enviar ao sair da página
+            // Enviar e limpar localStorage ao sair da página
             window.addEventListener('beforeunload', function () {
                 const obsInputs = container.querySelectorAll('input[name="observacao"]');
                 const obsData = Array.from(obsInputs).map(input => {
@@ -287,6 +287,13 @@
                     type: 'application/json'
                 });
                 navigator.sendBeacon('/salvar_obs_notas', blob);
+
+                // Remove todas as observações salvas no localStorage
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith("obs-")) {
+                        localStorage.removeItem(key);
+                    }
+                });
             });
         });
 

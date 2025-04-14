@@ -1,4 +1,5 @@
 import psycopg2
+from flask import g
 from psycopg2.extras import RealDictCursor
 import os
 from datetime import date
@@ -55,7 +56,6 @@ def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
     except Exception as e:
         print(f"Erro ao carregar atendimentos: {e}")
         return []
-
 
 def obter_notificacoes(usuario):
     notificacoes = []

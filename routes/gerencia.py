@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session, flash, redirect, jsonify
-from functions import criar_conexao
+from functions import criar_conexao, obter_notificacoes
 from datetime import date
 
 gerencia_bp = Blueprint('gerencia', __name__)
@@ -45,8 +45,10 @@ def gerencia():
             WHERE usuario_id = %s AND setor_id = 3
         """, (usuario_id,))
 
+        session['notificacoes'] = obter_notificacoes(usuario_logado)
+
         if cursor.fetchone():  
-            return render_template('gerencia.html', usuarios=usuarios)  
+            return render_template('gerencia.html', usuarios=usuarios, notificacoes=session['notificacoes'])  
 
         else:
             return render_template('home.html', erro_gerencia=True)  
