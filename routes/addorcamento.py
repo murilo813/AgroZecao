@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+from functions import obter_notificacoes
 
 addorcamento_bp = Blueprint('addorcamento', __name__, template_folder='templates')
 
@@ -13,8 +14,9 @@ def add_orcamento():
                        request.form.getlist('quantidade[]'), 
                        request.form.getlist('preco[]'))
 
+        session['notificacoes'] = obter_notificacoes(usuario_logado)
 
         return redirect(url_for('gerencia.gerencia'))  
 
-    return render_template('addorcamento.html')
+    return render_template('addorcamento.html', notificacoes=session['notificacoes'])
 

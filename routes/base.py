@@ -28,3 +28,47 @@ def minhascobrancas():
     except Exception as e:
         print(f"Erro ao carregar atendimentos: {e}")
         return jsonify({"atendimentos": []})
+
+@base_bp.route('/remover_notificacao', methods=['POST'])
+def remover_notificacao():
+    data = request.json
+
+    if 'usuario' not in session:
+        return jsonify({"success": False, "error": "Usuário não autenticado."}), 403
+
+    print("JSON recebido:", data) 
+    
+    usuario_logado = session['usuario']
+
+    if "id_not" in data:
+        id_not = data["id_not"]
+
+        try:
+            conexao = criar_conexao()
+            cursor = conexao.cursor()
+
+            query = """
+                UPDATE not_gerencia
+                SET estado = 'inativa'
+                WHERE id_not = %s
+            """
+            cursor.execute(query, (id_not,))
+            conexao.commit()
+
+            if cursor.rowcount == 0:
+                return jsonify({"success": False, "error": "Notificação não encontrada."}), 404
+
+            return jsonify({"success": True})
+
+        except ValueError:
+            return jsonify({"success": False, "error": "ID inválido."}), 400
+
+        except Exception as e:
+            print(f"Erro ao remover notificação: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
+
+        finally:
+            if 'conexao' in locals():
+                conexao.close()
+
+    return jsonify({"success": False, "error": "Dados inválidos."}), 400
