@@ -9,46 +9,238 @@
 </head>
 <body>
     {% include 'base.html' %}
-    <div>
-        <h1>Gastos</h1>
-        <button class="visualizar-dados" onclick="window.location.href='/verdados'">Visualizar dados</button>
+    <div class="container">
+        <div class="box">
+            <div>
+                <h1>Gastos</h1>
+                <button class="visualizar-dados" onclick="window.location.href='/verdados'">Visualizar dados</button>
+            </div>
+            
+            <form action="/dados" method="POST">
+                <div class="form-group">
+                    <label for="placa">Placa:</label>
+                    <input type="text" id="placa" name="placa" oninput="this.value = this.value.toUpperCase()" required>
+                </div>
+            
+                <div class="form-group">
+                    <label for="responsavel">Responsável:</label>
+                    <input id="responsavel" name="responsavel" oninput="this.value = this.value.toUpperCase()" required></input>
+                </div>
+            
+                <div class="form-group">
+                    <label for="gasto">Gasto:</label>
+                    <select id="gasto" name="gasto" required>
+                        <option value="combustível">COMBUSTÍVEL</option>
+                        <option value="manutenção">MANUTENÇÃO</option>
+                    </select>
+                </div>
+            
+                <div class="form-group">
+                    <label for="onde">Fornecedor:</label>
+                    <input id="onde" name="onde" oninput="this.value = this.value.toUpperCase()" required></input>
+                </div>
+            
+                <div class="form-group">
+                    <label for="documento">Número da nota:</label>
+                    <input type="text" id="documento" name="documento" oninput="this.value = this.value.toUpperCase()" required>
+                </div>
+            
+                <div class="form-group">
+                    <label for="dia">Data:</label>
+                    <input type="date" id="dia" name="dia" required>
+                </div>
+            
+                <div class="form-group">
+                    <label for="valor">Valor:</label>
+                    <input type="text" id="valor" name="valor" placeholder="R$ 00,00" readonly>
+                </div>
+            
+                <div class="form-group">
+                    <label for="litros">Litros:</label>
+                    <input id="litros" name="litros" pattern="\d*" placeholder="0,00"></input>
+                </div>
+            
+                <div class="form-group">
+                    <label for="km">KM:</label>
+                    <input id="km" name="km" step="0.01" pattern="\d*" placeholder="00" title=""></input>
+                </div>
+            
+                <div class="form-group full-width">
+                    <label>Produtos da Nota:</label>
+                    <table id="tabela-produtos">
+                        <thead>
+                            <tr>
+                                <th>ID Pro.</th>
+                                <th>Produto</th>
+                                <th>Valor Unit</th>
+                                <th>Quantidade</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" name="id_pro[]"></td>
+                                <td><input type="text" name="produto[]" oninput="this.value = this.value.toUpperCase()"></td>
+                                <td><input type="text" name="valor_unit[]" class="valor-unit" placeholder="R$ 00,00" title="Digite apenas o valor e a vírgula."></td>
+                                <td><input type="number" name="quantidade[]" class="quantidade" min="1"></td>
+                                <td><input type="text" name="total[]" class="total" readonly></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" onclick="adicionarLinha()">Nova Linha</button>
+                </div>
+            
+                <div class="form-group full-width">
+                    <button type="submit">Registrar</button>
+                </div>
+            </form>            
+        </div>  
     </div>
-    
-    <form action="/dados" method="POST">
-        <label for="placa">Placa:</label>
-        <input type="text" id="placa" name="placa" oninput="this.value = this.value.toUpperCase()" required><br>
+    <script>
+        // NOVA LINHA
+        function adicionarLinha() {
+            const tabela = document.getElementById('tabela-produtos').getElementsByTagName('tbody')[0];
+            const novaLinha = tabela.rows[0].cloneNode(true);
 
-        <label for="responsavel">Responsável:</label>
-        <textarea id="responsavel" name="responsavel" required></textarea>
+            Array.from(novaLinha.querySelectorAll('input')).forEach(input => {
+                input.value = '';
+            });
 
-        <label for="gasto">Gasto:</label>
-        <select id="gasto" name="gasto" required>
-            <option value="combustível">Combustível</option>
-            <option value="manutenção">Manutenção</option>
-        </select><br>
+            const novoValorUnit = novaLinha.querySelector('.valor-unit');
+            formatarComoMoeda(novoValorUnit);
 
-        <label for="onde">Fornecedor</label>
-        <textarea id="onde" name="onde" required></textarea>
+            tabela.appendChild(novaLinha);
+        }
+        // Garante que novas linhas também tenham o mesmo comportamento
+        function adicionarLinha() {
+            const tabela = document.getElementById('tabela-produtos').getElementsByTagName('tbody')[0];
+            const novaLinha = tabela.rows[0].cloneNode(true);
 
-        <label for="documento">Documento:</label>
-        <input type="text" id="documento" name="documento" oninput="this.value = this.value.toUpperCase()" required><br>
+            Array.from(novaLinha.querySelectorAll('input')).forEach(input => {
+                input.value = '';
+            });
 
-        <label for="dia">Data:</label>
-        <input type="date" id="dia" name="dia" required><br>
+            formatarComoMoeda(novaLinha.querySelector('.valor-unit'));
 
-        <label for="valor">Valor:</label>
-        <input type="text" id="valor" name="valor" required pattern="^\d+([.,]\d+)?$" title="Use um número com '.' ou ',' como separador decimal."><br>
+            tabela.appendChild(novaLinha);
+        }
+        const inputValor = document.getElementById('valor');
 
-        <label for="litros">Litros:</label>
-        <textarea id="litros" name="litros"></textarea>
+        inputValor.addEventListener('input', function(e) {
+            let valor = e.target.value.replace(/[^0-9,]/g, '');
+            
+            const partes = valor.split(',');
+            if (partes.length > 2) {
+                valor = partes[0] + ',' + partes.slice(1).join('');
+            }
 
-        <label for="km">KM:</label>
-        <textarea id="km" name="km" step="0.01" required></textarea>
+            e.target.value = valor;
+        });
 
-        <label for="observacao">Observação:</label>
-        <textarea id="observacao" name="observacao" required></textarea>
+        inputValor.addEventListener('blur', function() {
+            let valor = inputValor.value;
 
-        <button type="submit">Registrar</button>
-    </form>   
+            valor = valor.replace(',', '.');
+
+            valor = parseFloat(valor).toLocaleString('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            inputValor.value = valor;
+        });
+        
+        // Atualiza automaticamente o campo "total" quando valor unit ou quantidade mudam
+        document.addEventListener('input', function (e) {
+            if (e.target.classList.contains('valor-unit') || e.target.classList.contains('quantidade')) {
+                const linha = e.target.closest('tr');
+
+                const valorStr = linha.querySelector('.valor-unit').value.replace(/[^\d,]/g, '').replace(',', '.');
+                const valor = parseFloat(valorStr) || 0;
+
+                const quantidade = parseFloat(linha.querySelector('.quantidade').value) || 0;
+
+                const total = (valor * quantidade).toFixed(2).replace('.', ',');
+
+                linha.querySelector('.total').value = 'R$ ' + total;
+
+                // Atualiza o total da nota após calcular o total da linha
+                atualizarTotalNota();
+            }
+        });
+        // soma os valores dos produtos
+        function atualizarTotalNota() {
+            const totais = document.querySelectorAll('.total');
+            let soma = 0;
+
+            totais.forEach(totalInput => {
+                const valor = parseFloat(totalInput.value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                soma += valor;
+            });
+
+            document.getElementById('valor').value = soma.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        // formata o "valor" dos produtos
+        function formatarComoMoeda(input) {
+            input.addEventListener('input', function(e) {
+                let valor = e.target.value.replace(/[^0-9,]/g, '');
+                const partes = valor.split(',');
+                if (partes.length > 2) {
+                    valor = partes[0] + ',' + partes.slice(1).join('');
+                }
+                e.target.value = valor;
+            });
+
+            input.addEventListener('blur', function() {
+                let valor = input.value.replace(',', '.');
+                if (valor) {
+                    valor = parseFloat(valor).toLocaleString('pt-BR', { 
+                        style: 'currency', 
+                        currency: 'BRL',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    input.value = valor;
+                }
+            });
+        }
+
+        document.querySelectorAll('.valor-unit').forEach(input => {
+            formatarComoMoeda(input);
+        });
+
+        // KM
+        const inputKm = document.getElementById('km');
+
+        inputKm.addEventListener('input', function(e) {
+            let valor = e.target.value;
+
+            valor = valor.replace(/[^0-9,]/g, '');
+
+            const partes = valor.split(',');
+            if (partes.length > 2) {
+                valor = partes[0] + ',' + partes.slice(1).join('');
+            }
+
+            e.target.value = valor;
+        });
+
+        inputKm.addEventListener('blur', function() {
+            let valor = inputKm.value;
+
+            valor = valor.replace(',', '.');
+
+            valor = parseFloat(valor).toLocaleString('pt-BR');
+
+            inputKm.value = valor;
+        });
+    </script>        
 </body>
 </html>
