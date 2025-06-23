@@ -56,7 +56,6 @@
                 <span class="link">Notificações</span>
               </a>
             </li>
-
             <li class="list">
               <a href="#" class="nav-link">
                 <i class="bx bx-pie-chart-alt-2 icon"></i>
@@ -66,7 +65,13 @@
             <li class="list">
               <a href="#" class="nav-link" id="minhascobrancas">
                 <i class="bx bx-folder-open icon"></i>
-                <span class="link">Minhas cobranças</span>
+                <span class="link">Minhas Observações</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#" class="nav-link" id="contratos">
+                <i class="bx bx-edit icon"></i>
+                <span class="link">Contratos</span>
               </a>
             </li>
           </ul>
@@ -88,9 +93,15 @@
         </div>
       </div>
     </nav>
+    <div id="contratoModal" class="modalcontrato">
+      <div class="modal-content">
+        <h2>Contrato</h2>
+        <p>Conteúdo do modal aqui...</p>
+      </div>
+    </div>
     <div id="minhascobrancasmodal" class="modal2">
       <div class="modal_conteudo2">
-          <h2>Cobranças do Dia</h2>
+          <h2>Observações do Dia</h2>
           <table>
             <thead>
               <tr>
@@ -139,66 +150,6 @@
     <section class="overlay"></section>
 
     <script>
-      /*Barra lateral*/
-      const navBar = document.querySelector("nav"),
-        menuBtns = document.querySelectorAll(".menu-icon"),
-        overlay = document.querySelector(".overlay"),
-        alertContainer = document.querySelector(".alert-container"),
-        sidebarLinks = document.querySelectorAll(".nav-link"),
-        notificationIcon = document.querySelector(".notification-icon"), 
-        notificationsButton = document.querySelector(".nav-link.notifications"),
-        minhasCobrancasButton = document.getElementById("minhascobrancas"),
-        minhasCobrancasModal = document.getElementById("minhascobrancasmodal");
-
-      function setActiveLink(clickedLink) {
-        sidebarLinks.forEach(link => link.classList.remove("active")); 
-        if (clickedLink) {
-          clickedLink.classList.add("active"); 
-        }
-      }
-
-      menuBtns.forEach((menuBtn) => {
-        menuBtn.addEventListener("click", () => {
-          const isOpen = navBar.classList.toggle("open");
-          if (!isOpen) {
-            alertContainer.style.display = "none"; 
-            setActiveLink(null); 
-          }
-        });
-      });
-
-      overlay.addEventListener("click", () => {
-        navBar.classList.remove("open");
-        alertContainer.style.display = "none";
-        setActiveLink(null); 
-      });
-
-      sidebarLinks.forEach((link) => {
-        link.addEventListener("click", () => {
-          if (link !== notificationsButton) {
-            alertContainer.style.display = "none"; 
-          }
-
-          // FECHA O MODAL DE COBRANÇAS SE NÃO CLICOU NO BOTÃO DE COBRANÇAS
-          if (link !== minhasCobrancasButton && minhasCobrancasModal) {
-            minhasCobrancasModal.style.display = "none";
-          }
-
-          setActiveLink(link); 
-        });
-      });
-
-      notificationIcon.addEventListener("click", () => {
-        navBar.classList.add("open"); 
-        alertContainer.style.display = "block"; 
-
-        if (notificationsButton) {
-          setActiveLink(notificationsButton);
-        } else {
-          console.error("Botão de notificações não encontrado!");
-        }
-      });
-
       /*Sublinha o setor atual*/
       document.addEventListener("DOMContentLoaded", function () {
         let buttons = document.querySelectorAll(".nav-button");
@@ -212,125 +163,189 @@
           }
         });
       });
-      /*Remove a notificação*/
-      function removerNotificacao(notificacaoId, elemento) {
-          console.log("Tentando remover notificação com ID:", notificacaoId);
 
-          if (!notificacaoId || isNaN(notificacaoId)) {
-              alert("Erro: ID da notificação inválido!");
-              return;
-          }
-
-          fetch('/remover_notificacao', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id_not: notificacaoId }) 
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  console.log("Notificação removida com sucesso:", notificacaoId);
-                  elemento.parentElement.remove(); 
-              } else {
-                  alert('Erro ao remover notificação: ' + data.error);
-              }
-          })
-          .catch(error => console.error('Erro:', error));
-      }     
-      /*Modal de notificações*/
-      document.addEventListener("DOMContentLoaded", function() {
-        const openModal = document.getElementById("openAlertModal");
-
-        openModal.addEventListener("click", function(event) {
-          event.preventDefault();
-          alertContainer.style.display = "block";
-          overlay.style.display = "block";
-        });
-      });
-      /*Modal de cobranças com overlay e fechamento ao clicar fora*/
-      document.addEventListener("DOMContentLoaded", function () {
-        const cobrancasBtn = document.getElementById("minhascobrancas");
-        const cobrancasModal = document.getElementById("minhascobrancasmodal");
-        const overlay = document.querySelector(".overlay");
-
-        cobrancasBtn.addEventListener("click", function (event) {
-          event.preventDefault();
-
-          fetch("/minhascobrancas")
-            .then(response => response.json())
-            .then(data => {
-              const tbody = cobrancasModal.querySelector("tbody");
-              tbody.innerHTML = '';
-
-              if (data.atendimentos.length > 0) {
-                data.atendimentos.forEach(atendimento => {
-                  const tr = document.createElement("tr");
-                  tr.innerHTML = `
-                    <td>${atendimento[0]}</td>
-                    <td>${atendimento[1]}</td>
-                  `;
-                  tbody.appendChild(tr);
-                });
-              } else {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `<td colspan="3">Nenhuma cobrança encontrada.</td>`;
-                tbody.appendChild(tr);
-              }
-
-              cobrancasModal.style.display = "block";
-              overlay.style.display = "block";
-            })
-            .catch(error => {
-              console.error("Erro ao buscar cobranças:", error);
-            });
-        });
-
-        overlay.addEventListener("click", () => {
-          cobrancasModal.style.display = "none";
-          overlay.style.display = "none";
-        });
-
-        // Fecha com Esc também (opcional)
-        document.addEventListener("keydown", function (e) {
-          if (e.key === "Escape") {
-            cobrancasModal.style.display = "none";
-            overlay.style.display = "none";
-          }
-        });
-      });
       /*Icone de notificação*/
       document.addEventListener("DOMContentLoaded", function () {
         const notificationIcon = document.getElementById("notification-icon");
         const notificationCount = document.getElementById("notification-count");
-        const notificacoes = {{ session['notificacoes'] | length }}; // Supondo que a quantidade de notificações esteja no backend
-        const navBar = document.querySelector("nav"); // A barra lateral (sidebar)
+        const alertContainer = document.querySelector(".alert-container");
+        const overlay = document.querySelector(".overlay");
+        const navBar = document.querySelector("nav");
 
-        // Se houver notificações, mostra o ícone e atualiza o contador
+        const notificacoes = {{ session['notificacoes'] | length }};
+
         if (notificacoes > 0) {
           notificationIcon.classList.add("active");
           notificationCount.textContent = notificacoes;
+          notificationCount.style.display = "inline-block"; 
+        } else {
+          notificationCount.style.display = "none"; 
         }
 
-        // Quando o ícone de notificação for clicado, abre a sidebar e o modal de notificações
         notificationIcon.addEventListener("click", function () {
-          // Abre a sidebar
           navBar.classList.add("open");
-
-          // Exibe o modal de notificações
           alertContainer.style.display = "block";
-          overlay.style.display = "block";
+          overlay.classList.add('show');
         });
-      });
-      document.addEventListener("DOMContentLoaded", function () {
+
         const scrollToNotas = "{{ scroll_to_notas }}";
 
         if (scrollToNotas === "True") {
-            const notasSection = document.getElementById("atendimentosrota");
-            if (notasSection) {
-                notasSection.scrollIntoView({ behavior: "smooth" });
-            }
+          const notasSection = document.getElementById("atendimentosrota");
+          if (notasSection) {
+            notasSection.scrollIntoView({ behavior: "smooth" });
           }
+        }
       });
+
+      /*Barra lateral*/
+      document.addEventListener("DOMContentLoaded", function () {
+        const navBar = document.querySelector("nav");
+        const menuBtns = document.querySelectorAll(".menu-icon");
+        const overlay = document.querySelector(".overlay");
+        const alertContainer = document.querySelector(".alert-container");
+        const sidebarLinks = document.querySelectorAll(".nav-link");
+        const notificationIcon = document.querySelector(".notification-icon");
+        const notificationsButton = document.getElementById("openAlertModal");
+        const minhasCobrancasButton = document.getElementById("minhascobrancas");
+        const minhasCobrancasModal = document.getElementById("minhascobrancasmodal");
+        const contratosModal = document.getElementById("contratoModal");
+        const contratosBtn = document.getElementById("contratos");
+        const closeContrato = document.querySelector(".close");
+
+        function setActiveLink(clickedLink) {
+          document.querySelectorAll(".lists .nav-link").forEach(link => link.classList.remove("active"));
+
+          if (clickedLink) {
+            clickedLink.classList.add("active"); 
+          }
+        }
+
+        // Toggle da sidebar
+        menuBtns.forEach(btn => {
+          btn.addEventListener("click", () => {
+            const isOpen = navBar.classList.toggle("open");
+            if (!isOpen) {
+              alertContainer.style.display = "none";
+              overlay.classList.remove('show');
+              setActiveLink(null);
+            } else {
+              overlay.classList.add('show');
+            }
+          });
+        });
+
+        // Click fora
+        overlay.addEventListener("click", () => {
+          navBar.classList.remove("open");
+          alertContainer.style.display = "none";
+          minhasCobrancasModal.style.display = "none";
+          contratosModal.style.display = "none";
+          overlay.classList.remove('show');
+          setActiveLink(null);
+        });
+
+        // Clique nos links da sidebar
+        sidebarLinks.forEach(link => {
+          link.addEventListener("click", () => {
+            if (link !== notificationsButton) alertContainer.style.display = "none";
+            if (link !== minhasCobrancasButton) minhasCobrancasModal.style.display = "none";
+            if (link !== contratosBtn) contratosModal.style.display = "none";
+            setActiveLink(link);
+          });
+        });
+
+        // Notificações
+        if (notificationIcon) {
+          notificationIcon.addEventListener("click", () => {
+            navBar.classList.add("open");
+            alertContainer.style.display = "block";
+            if (notificationsButton) setActiveLink(notificationsButton);
+            else console.error("Botão de notificações não encontrado!");
+          });
+        }
+
+        // Botão de abrir notificações
+        if (notificationsButton) {
+          notificationsButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            alertContainer.style.display = "block";
+            overlay.classList.add('show');
+          });
+        }
+
+        // Modal de contratos
+        if (contratosBtn && contratosModal && closeContrato) {
+          contratosBtn.onclick = (e) => {
+            e.preventDefault();
+            contratosModal.style.display = "block";
+            overlay.classList.add('show');
+          };
+
+          closeContrato.onclick = () => {
+            contratosModal.style.display = "none";
+            overlay.classList.remove('show');
+          };
+        }
+        contratosBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          contratosModal.style.display = "block";
+          overlay.classList.add('show');
+        });
+
+        // Modal de cobranças
+        if (minhasCobrancasButton && minhasCobrancasModal) {
+          minhasCobrancasButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            fetch("/minhascobrancas")
+              .then(res => res.json())
+              .then(data => {
+                const tbody = minhasCobrancasModal.querySelector("tbody");
+                tbody.innerHTML = "";
+
+                if (data.atendimentos.length > 0) {
+                  data.atendimentos.forEach(atendimento => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `<td>${atendimento[0]}</td><td>${atendimento[1]}</td>`;
+                    tbody.appendChild(tr);
+                  });
+                } else {
+                  const tr = document.createElement("tr");
+                  tr.innerHTML = `<td colspan="2">Nenhuma cobrança encontrada.</td>`;
+                  tbody.appendChild(tr);
+                }
+
+                minhasCobrancasModal.style.display = "block";
+                overlay.classList.add('show');
+              })
+              .catch(err => console.error("Erro ao buscar cobranças:", err));
+          });
+        }
+
+        // Remover notificação
+        window.removerNotificacao = function (notificacaoId, elemento) {
+          if (!notificacaoId || isNaN(notificacaoId)) {
+            alert("Erro: ID da notificação inválido!");
+            return;
+          }
+
+          fetch('/remover_notificacao', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_not: notificacaoId })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                elemento.parentElement.remove();
+              } else {
+                alert("Erro ao remover: " + data.error);
+              }
+            })
+            .catch(err => console.error("Erro:", err));
+        }
+      });
+
     </script>
   </body>
 </html>

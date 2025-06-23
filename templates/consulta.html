@@ -134,45 +134,35 @@
                             </div>
                         </div>
                     </div>
-                    <h4>Notas em Aberto</h4>
-                    <div class="notas-container" id="notas-container">
-                        <table class="contas_a_receber">
-                            <thead>
-                                <tr>
-                                    <th>Empresa</th>
-                                    <th>Nome</th>
-                                    <th>CPF</th>
-                                    <th>Número NFe</th>
-                                    <th>OBS</th>
-                                    <th>Parcela</th> 
-                                    <th>Data da Venda</th>
-                                    <th>Vencimento</th>
-                                    <th>Valor</th>
-                                    <th>À Receber</th>  
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% set todas_notas = [] %}
-                                {% for nota in cliente_detalhes["notas"] %}
-                                    {% set _ = todas_notas.append({
-                                        "empresa": nota.empresa,
-                                        "nome": cliente_detalhes['nome'],
-                                        "cpf": cliente_detalhes['cpf'],
-                                        "nota": nota.nota,
-                                        "obs": nota.obs,
-                                        "parcela": nota.parcela,  
-                                        "data_venda": nota.data_venda,
-                                        "data_vencimento": nota.data_vencimento,
-                                        "valor_original": nota.valor_original,
-                                        "saldo_devedor": nota.saldo_devedor
-                                    }) %}
-                                {% endfor %}
-                                {% for cliente_relacionado in clientes_relacionados_detalhes %}
-                                    {% for nota in cliente_relacionado["notas"] %}
+                    <h4>Pendências</h4>
+                    <div id="painel-container" style="position: fixed; top: 53%; left: 40px; right: 40px; display: flex; flex-direction: column; gap: 2px; z-index: 10;"> 
+                        <div class="cheques-container minimized" id="cheques-container">
+                            <div id="cheques-header" class="cheques-header" onclick="togglecheques()">
+                                <span class="seta2">&#9650;</span> 
+                                <span class="titulo-cheques">Cheques em Aberto</span>
+                            </div>
+                            <table class="cheques_a_receber">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>Nome</th>
+                                        <th>CPF</th>
+                                        <th>DOC</th>
+                                        <th>OBS</th>
+                                        <th>Correntista</th> 
+                                        <th>Recebimento</th>
+                                        <th>Bom para</th>
+                                        <th>Valor</th>
+                                        <th>À Receber</th>  
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% set todas_notas = [] %}
+                                    {% for nota in cliente_detalhes.notas | selectattr("tipo", "equalto", "CHEQUE")%}
                                         {% set _ = todas_notas.append({
                                             "empresa": nota.empresa,
-                                            "nome": cliente_relacionado['nome'],
-                                            "cpf": cliente_relacionado['cpf'],
+                                            "nome": cliente_detalhes['nome'],
+                                            "cpf": cliente_detalhes['cpf'],
                                             "nota": nota.nota,
                                             "obs": nota.obs,
                                             "parcela": nota.parcela,  
@@ -182,41 +172,172 @@
                                             "saldo_devedor": nota.saldo_devedor
                                         }) %}
                                     {% endfor %}
-                                {% endfor %}
-                                {% for nota in todas_notas|sort(attribute="data_vencimento") %}
+                                    {% for cliente_relacionado in clientes_relacionados_detalhes %}
+                                        {% for nota in cliente_relacionado["notas"] | selectattr("tipo", "equalto", "CHEQUE") %}
+                                            {% set _ = todas_notas.append({
+                                                "empresa": nota.empresa,
+                                                "nome": cliente_relacionado['nome'],
+                                                "cpf": cliente_relacionado['cpf'],
+                                                "nota": nota.nota,
+                                                "obs": nota.obs,
+                                                "parcela": nota.parcela,  
+                                                "data_venda": nota.data_venda,
+                                                "data_vencimento": nota.data_vencimento,
+                                                "valor_original": nota.valor_original,
+                                                "saldo_devedor": nota.saldo_devedor
+                                            }) %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for nota in todas_notas|sort(attribute="data_vencimento") %}
+                                        <tr>
+                                            <td>{{ nota.empresa }}</td>
+                                            <td>{{ nota.nome }}</td>
+                                            <td>{{ nota.cpf }}</td>
+                                            <td>{{ nota.nota }}</td>
+                                            <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" /></td>
+                                            <td>{{ nota.parcela }}</td>
+                                            <td>{{ nota.data_venda }}</td>
+                                            <td>
+                                                <span style="color: {% if nota.data_vencimento and nota.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
+                                                    {{ nota.data_vencimento.strftime('%d/%m/%Y') if nota.data_vencimento else 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td class="valor" style="color: {% if nota.valor_original < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>                                        <td class="valor" style="color: {% if nota.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="notas-container minimized" id="notas-container">
+                            <div id="notas-header" class="notas-header" onclick="toggleNotas()">
+                                <span class="seta">&#9650;</span> 
+                                <span class="titulo-notas">Notas em Aberto</span>
+                            </div>
+                            <table class="contas_a_receber">
+                                <thead>
                                     <tr>
-                                        <td>{{ nota.empresa }}</td>
-                                        <td>{{ nota.nome }}</td>
-                                        <td>{{ nota.cpf }}</td>
-                                        <td>{{ nota.nota }}</td>
-                                        <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" /></td>
-                                        <td>{{ nota.parcela }}</td>
-                                        <td>{{ nota.data_venda }}</td>
-                                        <td>
-                                            <span style="color: {% if nota.data_vencimento and nota.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
-                                                {{ nota.data_vencimento.strftime('%d/%m/%Y') if nota.data_vencimento else 'N/A' }}
-                                            </span>
-                                        </td>
-                                        <td class="valor" style="color: {% if nota.valor_original < 0 %}green{% else %}black{% endif %};">
-                                            R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                        </td>                                        <td class="valor" style="color: {% if nota.saldo_devedor < 0 %}green{% else %}black{% endif %};">
-                                            R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                        </td>                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                        <th>Empresa</th>
+                                        <th>Nome</th>
+                                        <th>CPF</th>
+                                        <th>NFe</th>
+                                        <th>OBS</th>
+                                        <th>Parcela</th> 
+                                        <th>Data da Venda</th>
+                                        <th>Vencimento</th>
+                                        <th>Valor</th>
+                                        <th>À Receber</th>  
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% set todas_notas = [] %}
+                                    {% for nota in cliente_detalhes.notas | selectattr("tipo", "equalto", "NOTA")%}
+                                        {% set _ = todas_notas.append({
+                                            "empresa": nota.empresa,
+                                            "nome": cliente_detalhes['nome'],
+                                            "cpf": cliente_detalhes['cpf'],
+                                            "nota": nota.nota,
+                                            "obs": nota.obs,
+                                            "parcela": nota.parcela,  
+                                            "data_venda": nota.data_venda,
+                                            "data_vencimento": nota.data_vencimento,
+                                            "valor_original": nota.valor_original,
+                                            "saldo_devedor": nota.saldo_devedor
+                                        }) %}
+                                    {% endfor %}
+                                    {% for cliente_relacionado in clientes_relacionados_detalhes %}
+                                        {% for nota in cliente_relacionado["notas"] | selectattr("tipo", "equalto", "NOTA") %}
+                                            {% set _ = todas_notas.append({
+                                                "empresa": nota.empresa,
+                                                "nome": cliente_relacionado['nome'],
+                                                "cpf": cliente_relacionado['cpf'],
+                                                "nota": nota.nota,
+                                                "obs": nota.obs,
+                                                "parcela": nota.parcela,  
+                                                "data_venda": nota.data_venda,
+                                                "data_vencimento": nota.data_vencimento,
+                                                "valor_original": nota.valor_original,
+                                                "saldo_devedor": nota.saldo_devedor
+                                            }) %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for nota in todas_notas|sort(attribute="data_vencimento") %}
+                                        <tr>
+                                            <td>{{ nota.empresa }}</td>
+                                            <td>{{ nota.nome }}</td>
+                                            <td>{{ nota.cpf }}</td>
+                                            <td>{{ nota.nota }}</td>
+                                            <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" /></td>
+                                            <td>{{ nota.parcela }}</td>
+                                            <td>{{ nota.data_venda }}</td>
+                                            <td>
+                                                <span style="color: {% if nota.data_vencimento and nota.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
+                                                    {{ nota.data_vencimento.strftime('%d/%m/%Y') if nota.data_vencimento else 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td class="valor" style="color: {% if nota.valor_original < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>                                        <td class="valor" style="color: {% if nota.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     {% if cliente_detalhes['notas'] %}
-                        <div class="total-a-receber">
+                        <div class="total-a-receber" id="total-a-receber">
                             <h5>Total a Receber: R$ {{ cliente_detalhes['total_a_receber'] }}</h5>
                         </div>
                     {% endif %}
-                </div>
-            {% endif %}                  
+                {% endif %}                  
             </div>
         </div>    
     </div>
     <script>
+        // container de notas
+        function toggleNotas() {
+            const notas = document.getElementById("notas-container");
+            const cheques = document.getElementById("cheques-container");
+
+            const estaMinimizado = notas.classList.contains("minimized");
+
+            cheques.classList.add("minimized");
+            cheques.classList.remove("ativo");
+
+            if (estaMinimizado) {
+                notas.classList.remove("minimized");
+                notas.classList.add("ativo");
+                notas.style.order = "2";
+                cheques.style.order = "1";
+            } else {
+                notas.classList.add("minimized");
+                notas.classList.remove("ativo");
+            }
+        }
+        // container de cheques
+        function togglecheques() {
+            const notas = document.getElementById("notas-container");
+            const cheques = document.getElementById("cheques-container");
+
+            const estaMinimizado = cheques.classList.contains("minimized");
+
+            notas.classList.add("minimized");
+            notas.classList.remove("ativo");
+
+            if (estaMinimizado) {
+                cheques.classList.remove("minimized");
+                cheques.classList.add("ativo");
+                cheques.style.order = "2";
+                notas.style.order = "1";
+            } else {
+                cheques.classList.add("minimized");
+                cheques.classList.remove("ativo");
+            }
+        }
+        // cache
         document.addEventListener("DOMContentLoaded", function () {
             const container = document.getElementById("notas-container");
             if (!container) return; // sai do script se não for a página certa

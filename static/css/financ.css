@@ -57,7 +57,7 @@ h4 {
     bottom: 48vh; 
     left: 43%;
     margin: 0 auto; 
-    font-size: 20px; 
+    font-size: 25px; 
 }
 .nome-cpf {
     font-size: 16px;
@@ -165,8 +165,36 @@ input {
     background-color: #888a8b;
 }
 /*LISTA DAS NOTAS DO CLIENTE*/
+.notas-header {
+    position: sticky;
+    top: 0;
+    z-index: 3; 
+    background-color: #4e5255;
+    color: white;
+    padding: 8px 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.seta {
+    margin-right: 10px;
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+.notas-container.minimized .seta {
+    transform: rotate(180deg);
+}
+.notas-container.minimized table,
+.notas-container.minimized .total-a-receber {
+    display: none;
+}
+
+
 .notas-container {
-    position: absolute;
     top: 52%;
     right: 40px;
     left: 40px;
@@ -175,7 +203,7 @@ input {
     border-radius: 5px; 
     padding: 0px; 
     background-color: #f9f9f9; 
-    max-height: 39vh; 
+    max-height: 32vh; 
     overflow-y: auto; 
     box-sizing: border-box; 
 }
@@ -199,17 +227,15 @@ input {
 }
 .contas_a_receber thead th {
     position: sticky;
-    border-spacing: 0;
-    top: 0; 
-    margin-top: 0px;
+    top: 34px; 
+    z-index: 2;
     background-color: #4e5255;
-    color: #fff; 
-    text-align: center; 
-    padding: 12px; 
-    z-index: 2; 
-    border-bottom: 2px solid #2c2f33; 
+    color: #fff;
+    text-align: center;
+    padding: 6px 12px;
+    border-bottom: 2px solid #2c2f33;
     border-top: 2px solid #2c2f33;
-    border-left: 2px solid #2c2f33; 
+    border-left: 2px solid #2c2f33;
 }
 .contas_a_receber th, .contas_a_receber td {
     border-left: 1px solid #2c2f33;
@@ -233,7 +259,7 @@ input {
     text-align: left;
 }
 .contas_a_receber tbody td {
-    padding: 8px; 
+    padding: 6px 12px;
     text-align: center; 
     border-bottom: 2px solid #a8abad; 
     border-left: 1px solid #a8abad; 
@@ -299,6 +325,182 @@ input {
     background-color: #f0f8ff; 
     outline: 2px solid #007bff; 
 }
+
+.minimized table {
+    display: none;
+}
+
+/*LISTA DOS CHEQUES DO CLIENTE*/
+.cheques-header {
+    position: sticky;
+    top: 0;
+    z-index: 3; 
+    background-color: #4e5255;
+    color: white;
+    padding: 8px 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.seta2 {
+    margin-right: 10px;
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+.cheques-container.minimized .seta2 {
+    transform: rotate(180deg);
+}
+.cheques-container.minimized table,
+.cheques-container.minimized .total-a-receber {
+    display: none;
+}
+.notas-container.ativo .notas-header,
+.cheques-container.ativo .cheques-header {
+    color: #00aaff; 
+    font-weight: bold;
+}
+
+.cheques-container {
+    top: 57%;
+    right: 40px;
+    left: 40px;
+    margin-top: 0; 
+    border-bottom: 2px solid #ccc;
+    border-radius: 5px; 
+    padding: 0px; 
+    background-color: #f9f9f9; 
+    max-height: 32vh; 
+    overflow-y: auto; 
+    box-sizing: border-box; 
+}
+.cheques-container::-webkit-scrollbar {
+    width: 10px;
+}
+.cheques-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.cheques-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+.cheques-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.cheques_a_receber {
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0;
+}
+.cheques_a_receber thead th {
+    position: sticky;
+    top: 34px; 
+    z-index: 2;
+    background-color: #4e5255;
+    color: #fff;
+    text-align: center;
+    padding: 6px 12px;
+    border-bottom: 2px solid #2c2f33;
+    border-top: 2px solid #2c2f33;
+    border-left: 2px solid #2c2f33;
+}
+.cheques_a_receber th, .cheques_a_receber td {
+    border-left: 1px solid #2c2f33;
+}
+.cheques_a_receber th:nth-child(1) {
+    width: 1%; 
+}
+.cheques_a_receber th:nth-child(2) {
+    width: 17%; 
+}
+.cheques_a_receber th:nth-child(4) {
+    width: 5%; 
+}
+.cheques_a_receber th:nth-child(5) {
+    width: 10%; 
+    text-align: center;
+}
+.cheques_a_receber th:nth-child(9) {
+    width: 10%; 
+    text-align: left;
+}
+.cheques_a_receber th:nth-child(10) {
+    width: 10%; 
+    text-align: left;
+}
+.cheques_a_receber tbody td {
+    padding: 6px 12px;
+    text-align: center; 
+    border-bottom: 2px solid #a8abad; 
+    border-left: 1px solid #a8abad; 
+}
+.cheques_a_receber td:nth-child(5) {
+    width: 10%; 
+    text-align: center;
+}
+.cheques_a_receber td:nth-child(9) {
+    width: 10%; 
+    text-align: left;
+}
+.cheques_a_receber td:nth-child(10) {
+    width: 10%; 
+    text-align: left;
+}
+.cheques_a_receber tbody tr:nth-child(odd) {
+    background-color: #f2f2f2; 
+}
+.cheques_a_receber tbody tr:hover {
+    background-color: #e6f7ff; 
+}
+.cheques_a_receber td, .cheques_a_receber th {
+    word-wrap: break-word; 
+}
+.cheques-container::-webkit-scrollbar {
+    width: 10px; 
+}
+.cheques-container::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+.cheques-container::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 5px;
+}
+.cheques-container::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+.tabela-cheques {
+    width: 100%; 
+    border-collapse: collapse; 
+    margin: 0; 
+}
+.tabela-cheques th, .tabela-cheques td {
+    padding: 8px; 
+    border: 1px solid #ddd; 
+    text-align: center; 
+    word-wrap: break-word; 
+}
+.tabela-cheques tr:nth-child(even) {
+    background-color: #f9f9f9; 
+}
+.tabela-cheques tr:hover {
+    background-color: #ddd; 
+}
+.cheques_a_receber tr[style] {
+    color: red;
+}
+.cheques_a_receber td, .cheques_a_receber th {
+    word-wrap: break-word; 
+}
+.selected-row {
+    background-color: #f0f8ff; 
+    outline: 2px solid #007bff; 
+}
+
+
+
 /*TOTAL A RECEBER*/
 .total-a-receber {
     position: absolute;
