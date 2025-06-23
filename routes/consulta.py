@@ -161,7 +161,8 @@ def consulta():
                             cr.data_venda,
                             cr.data_vencimento,
                             cr.valor_original,
-                            cr.saldo_devedor
+                            cr.saldo_devedor,
+                            cr.tipo
                         FROM 
                             contas_a_receber cr
                         WHERE 
@@ -210,6 +211,7 @@ def consulta():
                                     "data_vencimento": nota[4],  
                                     "valor_original": float(nota[5]) if nota[5] else 0.0,
                                     "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
+                                    "tipo": nota[7]
                                 }
                                 for nota in notas
                             ],
@@ -243,6 +245,7 @@ def consulta():
                                     "data_vencimento": nota[4],  
                                     "valor_original": float(nota[5]) if nota[5] else 0.0,
                                     "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
+                                    "tipo": nota[7]
                                 }
                                 for nota in notas_relacionadas
                             ],
