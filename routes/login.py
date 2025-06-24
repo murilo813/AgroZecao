@@ -6,6 +6,8 @@ login_bp = Blueprint('login', __name__)
 
 @login_bp.route('/')
 def index():
+    if 'usuario' in session:
+        return redirect('home.html')
     return render_template('login.html')
 
 @login_bp.route('/login', methods=['POST', 'GET'])
