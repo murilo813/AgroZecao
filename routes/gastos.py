@@ -24,18 +24,32 @@ def gastos():
 
         usuario_id = usuario_id[0]  
 
-        cursor.execute("""
-            SELECT 1 FROM acessos
-            WHERE usuario_id = %s AND setor_id = 5
-        """, (usuario_id,))
+        cursor.execute("SELECT 1 FROM acessos WHERE usuario_id = %s AND setor_id = 5", (usuario_id,))
+        tem_acesso = cursor.fetchone()
+
+        if not tem_acesso:
+            return render_template('home.html', erro_gastos=True)  
+
+        cursor.execute("SELECT placa, responsavel FROM frota ORDER BY placa")
+        frota = cursor.fetchall()  
+
+        placas = sorted(list(set([f[0] for f in frota])))
+        responsaveis = sorted(list(set([f[1] for f in frota])))
+
+        vinculos = {placa: resp for placa, resp in frota}
+
+        cursor.execute("SELECT nome_cliente FROM clientes WHERE tipo_pessoa = 'J' AND perfil_for = true")
+        fornecedor_tuplas = cursor.fetchall()
+        fornecedor = [f[0] for f in fornecedor_tuplas]  
 
         session['notificacoes'] = obter_notificacoes(usuario_logado)
 
-        if cursor.fetchone():  
-            return render_template('gastos.html', notificacoes=session['notificacoes'])  
-
-        else:
-            return render_template('home.html', erro_gastos=True)  
+        return render_template('gastos.html',
+                            notificacoes=session['notificacoes'],
+                            placas=placas,
+                            responsaveis=responsaveis,
+                            vinculos=vinculos,
+                            fornecedor=fornecedor)
 
     except Exception as e:
         print(f"Erro ao verificar acesso: {e}")

@@ -1,9 +1,10 @@
 from flask import Flask
 from config import Config
-from datetime import date
+from datetime import date, timedelta
 
 app = Flask(__name__)
 app.config.from_object(Config)  
+app.permanent_session_lifetime = timedelta(days=7)
 
 def register_blueprints(): 
     from routes.login import login_bp  
