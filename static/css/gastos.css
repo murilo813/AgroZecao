@@ -134,7 +134,7 @@ input:-webkit-autofill {
     background-color: white !important;
     color: black !important;
 }
-/* Container principal Choices - altura baixa como select nativo */
+/* selects com choice */
 .choices__inner {
   background-color: white !important;
   border: 1px solid #ccc !important;
@@ -202,4 +202,135 @@ button.visualizar-dados:hover {
 button.visualizar-dados:focus {
     outline: none;  
     border-color: #0056b3;  
+}
+/*verdados*/
+/* verdados */
+#tabela-dados {
+  margin-top: 30px;
+  width: 95vw;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+#tabela-dados h2 {
+  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #222;
+}
+
+#tabela-dados button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 18px;
+  transition: background-color 0.3s ease;
+}
+
+#tabela-dados button:hover {
+  background-color: #0056b3;
+}
+
+.tabela-gastos {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.88rem; /* Fonte menor para os dados */
+}
+
+.tabela-gastos thead {
+  background-color: #aaaaaa;
+  color: rgb(0, 0, 0);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  user-select: none;
+}
+
+.tabela-gastos th,
+.tabela-gastos td {
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ccc; /* LINHA VERTICAL */
+  overflow-wrap: break-word;
+  vertical-align: top;
+}
+
+/* Remove a borda da última coluna pra não ficar com duplo traço */
+.tabela-gastos th:last-child,
+.tabela-gastos td:last-child {
+  border-right: none;
+}
+
+/* Alinhamento geral das células */
+.tabela-gastos td {
+  text-align: left !important;
+  font-size: 0.88rem;
+}
+
+/* Cabeçalho */
+.tabela-gastos th {
+  font-weight: 600;
+  font-size: 0.9rem;
+  background-color: #aaaaaa;
+  color: black;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  user-select: none;
+}
+
+/* Estilo hover para linhas */
+.tabela-gastos tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+.tabela-gastos tbody tr:hover {
+  background-color: #e6f0ff;
+}
+
+/* Ajustes de largura */
+.tabela-gastos th:nth-child(1), .tabela-gastos td:nth-child(1) { width: 6%; }   /* Placa */
+.tabela-gastos th:nth-child(2), .tabela-gastos td:nth-child(2) { width: 8%; text-align: center; }   /* Responsável */
+.tabela-gastos th:nth-child(3), .tabela-gastos td:nth-child(3) { width: 7%; }   /* Gasto */
+.tabela-gastos th:nth-child(4), .tabela-gastos td:nth-child(4) { width: 26%; }  /* Fornecedor (maior) */
+.tabela-gastos th:nth-child(5), .tabela-gastos td:nth-child(5) { width: 5%; text-align: center; }   /* Documento (menor) */
+.tabela-gastos th:nth-child(6), .tabela-gastos td:nth-child(6) { width: 7%; }   /* Data */
+.tabela-gastos th:nth-child(7), .tabela-gastos td:nth-child(7) { width: 6%; }   /* Valor */
+.tabela-gastos th:nth-child(8), .tabela-gastos td:nth-child(8) { width: 5%; }   /* KM */
+.tabela-gastos th:nth-child(9), .tabela-gastos td:nth-child(9) { width: 5%; }   /* ID Produto */
+.tabela-gastos th:nth-child(10), .tabela-gastos td:nth-child(10) { width: 15%; } /* Produto */
+.tabela-gastos th:nth-child(11), .tabela-gastos td:nth-child(11) { width: 6%; } /* Valor Unit */
+.tabela-gastos th:nth-child(12), .tabela-gastos td:nth-child(12) { width: 5%; } /* Quantidade */
+.tabela-gastos th:nth-child(13), .tabela-gastos td:nth-child(13) { width: 6%; } /* Total */
+
+.tabela-gastos th:nth-child(1)  { text-align: center; vertical-align: middle; }  /* Placa */
+.tabela-gastos th:nth-child(2)  { vertical-align: middle; } 
+.tabela-gastos th:nth-child(3)  { text-align: center; vertical-align: middle; }  /* Gasto */
+.tabela-gastos th:nth-child(4)  { text-align: center; vertical-align: middle; }  /* Fornecedor */
+.tabela-gastos th:nth-child(5)  { vertical-align: middle; } 
+.tabela-gastos th:nth-child(6)  { text-align: center; vertical-align: middle; }  /* Data */
+.tabela-gastos th:nth-child(7)  { text-align: center; vertical-align: middle; }  /* Valor */
+.tabela-gastos th:nth-child(8)  { text-align: center; vertical-align: middle; }  /* KM */
+.tabela-gastos th:nth-child(9)  { text-align: center; vertical-align: middle; }  /* ID Produto */
+.tabela-gastos th:nth-child(10) { text-align: left; vertical-align: middle; } /* Produto */
+.tabela-gastos th:nth-child(11) { text-align: center; vertical-align: middle; }  /* Valor Unit */
+.tabela-gastos th:nth-child(12) { text-align: center; vertical-align: middle; }  /* Quantidade */
+.tabela-gastos th:nth-child(13) { text-align: center; vertical-align: middle; }  /* Total */
+
+/* Fornecedor com quebra de linha, se necessário */
+.tabela-gastos td:nth-child(4) {
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
 }

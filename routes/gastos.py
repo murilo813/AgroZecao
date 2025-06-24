@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, request, session, flash, redirect
 from functions import criar_conexao, obter_notificacoes
+from datetime import datetime
+import psycopg2
+import os
 
 gastos_bp = Blueprint('gastos', __name__)
 
@@ -42,6 +45,28 @@ def gastos():
         fornecedor_tuplas = cursor.fetchall()
         fornecedor = [f[0] for f in fornecedor_tuplas]  
 
+        cursor.execute("""
+            SELECT
+                placa,
+                responsavel,
+                tipo_gasto AS gasto,
+                fornecedor AS onde,
+                doc AS documento,
+                TO_CHAR(data, 'DD/MM/YYYY') AS dia,
+                valor_total AS valor,
+                km,
+                id_produto AS id_pro,
+                produto,
+                valor_produto AS valor_unit,
+                quantidade,
+                total_produto AS total
+            FROM gastos
+            ORDER BY documento, id_pro
+        """)
+        registros = cursor.fetchall()
+        colunas = [desc[0] for desc in cursor.description]
+        dados = [dict(zip(colunas, linha)) for linha in registros]
+
         session['notificacoes'] = obter_notificacoes(usuario_logado)
 
         return render_template('gastos.html',
@@ -49,7 +74,8 @@ def gastos():
                             placas=placas,
                             responsaveis=responsaveis,
                             vinculos=vinculos,
-                            fornecedor=fornecedor)
+                            fornecedor=fornecedor,
+                            dados=dados) 
 
     except Exception as e:
         print(f"Erro ao verificar acesso: {e}")
@@ -58,3 +84,64 @@ def gastos():
     finally:
         if conexao:
             conexao.close()
+
+
+@gastos_bp.route('/registrargastos', methods=["POST"])
+def registrargastos():
+    try:
+        placa = request.form['placa']
+        responsavel = request.form['responsavel']
+        tipo_gasto = request.form['gasto'].upper()
+        fornecedor = request.form['onde']
+        doc = request.form['documento']
+        data = request.form['dia']
+        valor_total = request.form['valor'].replace('R$', '').replace('.', '').replace(',', '.').strip()
+        km = request.form['km'].replace('.', '').strip()
+
+        ids_produto = request.form.getlist('id_pro[]')
+        produtos = request.form.getlist('produto[]')
+        valores_unit = request.form.getlist('valor_unit[]')
+        quantidades = request.form.getlist('quantidade[]')
+        totais_produto = request.form.getlist('total[]')
+
+        conn = criar_conexao()
+        cur = conn.cursor()
+
+        for i in range(len(produtos)):
+            if not produtos[i].strip():
+                continue  
+
+            valor_prod = valores_unit[i].replace('R$', '').replace('.', '').replace(',', '.').strip()
+            total_prod = totais_produto[i].replace('R$', '').replace('.', '').replace(',', '.').strip()
+            qtd = quantidades[i] or '0'
+
+            cur.execute("""
+                INSERT INTO gastos (
+                    placa, responsavel, tipo_gasto, fornecedor, doc, data, valor_total, km,
+                    id_produto, produto, valor_produto, quantidade, total_produto
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                placa,
+                responsavel,
+                tipo_gasto,
+                fornecedor,
+                doc,
+                datetime.strptime(data, '%Y-%m-%d').date(),
+                valor_total,
+                int(km) if km else None,
+                ids_produto[i],
+                produtos[i],
+                valor_prod,
+                int(qtd),
+                total_prod
+            ))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return redirect('/gastos')  
+
+    except Exception as e:
+        print(f"Erro ao registrar gastos: {e}")
+        return "Erro ao registrar dados", 500
