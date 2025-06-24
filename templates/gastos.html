@@ -15,10 +15,9 @@
         <div class="box">
             <div>
                 <h1>Gastos</h1>
-                <button class="visualizar-dados" onclick="window.location.href='/verdados'">Visualizar dados</button>
-            </div>
+                <button class="visualizar-dados" onclick="mostrarTabela()">Visualizar dados</button>            </div>
             
-            <form action="/dados" method="POST">
+            <form action="/registrargastos" method="POST">
                 <div class="form-group">
                     <label for="placa">Placa:</label>
                     <select id="placa" name="placa" required>
@@ -40,8 +39,9 @@
                 <div class="form-group">
                     <label for="gasto">Gasto:</label>
                     <select id="gasto" name="gasto" required>
-                        <option value="combustível">COMBUSTÍVEL</option>
-                        <option value="manutenção">MANUTENÇÃO</option>
+                        <option value="COMBUSTÍVEL">COMBUSTÍVEL</option>
+                        <option value="MANUTENÇÃO">MANUTENÇÃO</option>
+                        <option value="AQUISIÇÃO">AQUISIÇÃO</option>
                     </select>
                 </div>
             
@@ -67,11 +67,6 @@
                 <div class="form-group">
                     <label for="valor">Valor:</label>
                     <input type="text" id="valor" name="valor" placeholder="R$ 00,00" readonly>
-                </div>
-            
-                <div class="form-group">
-                    <label for="litros">Litros:</label>
-                    <input id="litros" name="litros" pattern="\d*" placeholder="0,00"></input>
                 </div>
             
                 <div class="form-group">
@@ -109,8 +104,71 @@
                 </div>
             </form>            
         </div>  
+        <div id="tabela-dados" style="display: none; margin-top: 30px;">
+            <h2>Gastos Registrados</h2>
+            <button onclick="voltar()">Voltar</button>
+            <table class="tabela-gastos">
+                <thead>
+                    <tr>
+                        <th>Placa</th>
+                        <th>Responsável</th>
+                        <th>Gasto</th>
+                        <th>Fornecedor</th>
+                        <th>Doc</th>
+                        <th>Data</th>
+                        <th>Total</th>
+                        <th>KM</th>
+                        <th>ID Prod</th>
+                        <th>Produto</th>
+                        <th>Valor</th>
+                        <th>QTD</th>
+                        <th>Total Prod</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set doc_anterior = '' %}
+                    {% for linha in dados %}
+                        <tr>
+                            <td>{{ '' if linha.documento == doc_anterior else linha.placa }}</td>
+                            <td>{{ '' if linha.documento == doc_anterior else linha.responsavel }}</td>
+                            <td>{{ '' if linha.documento == doc_anterior else linha.gasto }}</td>
+                            <td>{{ '' if linha.documento == doc_anterior else linha.onde }}</td>
+                            <td>{{ '' if linha.documento == doc_anterior else linha.documento }}</td>
+                            <td>{{ '' if linha.documento == doc_anterior else linha.dia }}</td>
+                            <td>{{ '' if linha.documento == doc_anterior else ("R$ {:.2f}".format(linha.valor|float).replace('.', ',')) }}</td>
+                            <td>{{ '' if linha.documento == doc_anterior else linha.km }}</td>
+                            <td>{{ linha.id_pro }}</td>
+                            <td>{{ linha.produto }}</td>
+                            <td>{{ "R$ {:.2f}".format(linha.valor_unit|float).replace('.', ',') }}</td>
+                            <td>{{ linha.quantidade }}</td>
+                            <td>{{ "R$ {:.2f}".format(linha.total|float).replace('.', ',') }}</td>
+                        </tr>
+                        {% set doc_anterior = linha.documento %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
     <script>
+        // tabela de dados
+        function mostrarTabela() {
+            const tabela = document.getElementById('tabela-dados');
+            const box = document.querySelector('.box');
+
+            box.style.display = 'none';
+            tabela.style.display = 'block';
+            tabela.scrollIntoView({ behavior: 'smooth' });
+        }
+        // voltar da tabela de dados
+        function voltar() {
+            const tabela = document.getElementById('tabela-dados');
+            const box = document.querySelector('.box');
+
+            tabela.style.display = 'none';
+            box.style.display = 'block';
+            box.scrollIntoView({ behavior: 'smooth' });
+        }
+        // selects dinamicos
         document.addEventListener('DOMContentLoaded', function () {
             const choicesInstances = {}; 
 
