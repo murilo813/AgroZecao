@@ -1,10 +1,13 @@
 from flask import Flask
 from config import Config
 from datetime import date, timedelta
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 app.config.from_object(Config)  
 app.permanent_session_lifetime = timedelta(days=7)
+print("SECRET_KEY:", app.config['SECRET_KEY'])
 
 def register_blueprints(): 
     from routes.login import login_bp  
