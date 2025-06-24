@@ -6,6 +6,8 @@
     <title>Agropecuária Zecão ERP</title>
     <link href="static/css/gastos.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 </head>
 <body>
     {% include 'base.html' %}
@@ -19,12 +21,20 @@
             <form action="/dados" method="POST">
                 <div class="form-group">
                     <label for="placa">Placa:</label>
-                    <input type="text" id="placa" name="placa" oninput="this.value = this.value.toUpperCase()" required>
+                    <select id="placa" name="placa" required>
+                        {% for placa in placas %}
+                            <option value="{{ placa }}">{{ placa }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             
                 <div class="form-group">
                     <label for="responsavel">Responsável:</label>
-                    <input id="responsavel" name="responsavel" oninput="this.value = this.value.toUpperCase()" required></input>
+                    <select id="responsavel" name="responsavel" required>
+                        {% for resp in responsaveis %}
+                            <option value="{{ resp }}">{{ resp }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             
                 <div class="form-group">
@@ -36,8 +46,12 @@
                 </div>
             
                 <div class="form-group">
-                    <label for="onde">Fornecedor:</label>
-                    <input id="onde" name="onde" oninput="this.value = this.value.toUpperCase()" required></input>
+                <label for="onde">Fornecedor:</label>
+                <select id="onde" name="onde" required>
+                    {% for fornecedor_item in fornecedor %}
+                    <option value="{{ fornecedor_item }}">{{ fornecedor_item }}</option>
+                    {% endfor %}
+                </select>
                 </div>
             
                 <div class="form-group">
@@ -62,7 +76,7 @@
             
                 <div class="form-group">
                     <label for="km">KM:</label>
-                    <input id="km" name="km" step="0.01" pattern="\d*" placeholder="00" title=""></input>
+                    <input id="km" name="km" placeholder="0000" title="">
                 </div>
             
                 <div class="form-group full-width">
@@ -97,6 +111,45 @@
         </div>  
     </div>
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const choicesInstances = {}; 
+
+            ['#onde', '#placa', '#responsavel'].forEach(selector => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    choicesInstances[selector] = new Choices(element, {
+                        searchEnabled: true,
+                        itemSelectText: '',
+                        placeholder: true,
+                        placeholderValue: 'Selecione uma opção',
+                        shouldSort: false,
+                        position: 'bottom',
+                        searchPlaceholderValue: 'Pesquisar...',
+                    });
+                }
+            });
+
+            const vinculos = {{ vinculos | tojson }};
+            const placaSelect = document.getElementById('placa');
+            const responsavelSelect = document.getElementById('responsavel');
+            const placaChoices = choicesInstances['#placa'];
+            const responsavelChoices = choicesInstances['#responsavel'];
+
+            placaSelect.addEventListener('change', () => {
+                const placaSelecionada = placaSelect.value;
+                if (vinculos[placaSelecionada]) {
+                    responsavelChoices.setChoiceByValue(vinculos[placaSelecionada]);
+                }
+            });
+
+            responsavelSelect.addEventListener('change', () => {
+                const responsavelSelecionado = responsavelSelect.value;
+                const placaCorrespondente = Object.keys(vinculos).find(placa => vinculos[placa] === responsavelSelecionado);
+                if (placaCorrespondente) {
+                    placaChoices.setChoiceByValue(placaCorrespondente);
+                }
+            });
+        });
         // NOVA LINHA
         function adicionarLinha() {
             const tabela = document.getElementById('tabela-produtos').getElementsByTagName('tbody')[0];
@@ -111,7 +164,6 @@
 
             tabela.appendChild(novaLinha);
         }
-        // Garante que novas linhas também tenham o mesmo comportamento
         function adicionarLinha() {
             const tabela = document.getElementById('tabela-produtos').getElementsByTagName('tbody')[0];
             const novaLinha = tabela.rows[0].cloneNode(true);
@@ -166,7 +218,6 @@
 
                 linha.querySelector('.total').value = 'R$ ' + total;
 
-                // Atualiza o total da nota após calcular o total da linha
                 atualizarTotalNota();
             }
         });
@@ -219,27 +270,11 @@
         // KM
         const inputKm = document.getElementById('km');
 
-        inputKm.addEventListener('input', function(e) {
-            let valor = e.target.value;
-
-            valor = valor.replace(/[^0-9,]/g, '');
-
-            const partes = valor.split(',');
-            if (partes.length > 2) {
-                valor = partes[0] + ',' + partes.slice(1).join('');
+        inputKm.addEventListener('blur', function () {
+            let valor = inputKm.value.replace(/\D/g, ''); 
+            if (valor) {
+                inputKm.value = parseInt(valor).toLocaleString('pt-BR');
             }
-
-            e.target.value = valor;
-        });
-
-        inputKm.addEventListener('blur', function() {
-            let valor = inputKm.value;
-
-            valor = valor.replace(',', '.');
-
-            valor = parseFloat(valor).toLocaleString('pt-BR');
-
-            inputKm.value = valor;
         });
     </script>        
 </body>

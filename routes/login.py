@@ -13,10 +13,12 @@ def login():
     if request.method == 'POST':  
         nome = request.form.get('username', '').strip()  
         senha = request.form.get('password', '').strip() 
+        remember = request.form.get('remember_me')
 
         senha_hash = carregar_usuario_por_nome(nome)
 
         if senha_hash and check_password_hash(senha_hash, senha):  
+            session.permanent = True if remember else False
             session['usuario'] = nome 
             return redirect('/home')
         else:
