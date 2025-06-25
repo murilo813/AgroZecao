@@ -35,9 +35,7 @@ def remover_notificacao():
 
     if 'usuario' not in session:
         return jsonify({"success": False, "error": "Usuário não autenticado."}), 403
-
-    print("JSON recebido:", data) 
-    
+            
     usuario_logado = session['usuario']
 
     if "id_not" in data:

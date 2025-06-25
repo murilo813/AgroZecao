@@ -41,6 +41,7 @@ h1 {
     -webkit-text-stroke: 3px black; 
     text-shadow: none; 
   }
+
 /*FORMULÁRIO DE INSERIR GASTOS*/
 form {
     background-color: white;
@@ -105,6 +106,7 @@ form textarea:focus {
     border-color: #007bff;
     outline: none;
 }
+
 /*PRODUTOS DAS NOTAS*/
 .full-width {
     width: 100%;
@@ -203,41 +205,57 @@ button.visualizar-dados:focus {
     outline: none;  
     border-color: #0056b3;  
 }
-/*verdados*/
+
 /* verdados */
 #tabela-dados {
-  margin-top: 30px;
-  width: 95vw;
-  max-width: 1600px;
-  margin-left: auto;
-  margin-right: auto;
+  position: absolute;
+  top: 5% !important;
+  height: 88%;
+  max-width: 98%;
+  margin-bottom: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
 }
-
-#tabela-dados h2 {
-  margin-bottom: 12px;
-  font-weight: 700;
-  font-size: 1.8rem;
-  color: #222;
-}
-
-#tabela-dados button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  font-size: 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 18px;
-  transition: background-color 0.3s ease;
-}
-
 #tabela-dados button:hover {
   background-color: #0056b3;
 }
 
+.titulo-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 14px;
+  height: 40px; 
+}
+.titulo-container h2 {
+  margin: 0;
+  margin-bottom: 4px;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #222;
+}
+.titulo-container button {
+  position: absolute;
+  left: 2%;
+  bottom: 0;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 18px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 0;
+  transition: background-color 0.3s ease;
+}
+
+.tabela-container {
+  max-height: 85%;       
+  overflow-y: auto;       
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
 .tabela-gastos {
   width: 100%;
   border-collapse: collapse;
@@ -245,44 +263,37 @@ button.visualizar-dados:focus {
   box-shadow: 0 0 15px rgba(0,0,0,0.1);
   border-radius: 8px;
   overflow: hidden;
-  font-size: 0.88rem; /* Fonte menor para os dados */
+  font-size: 0.8rem; 
 }
-
-.tabela-gastos thead {
-  background-color: #aaaaaa;
-  color: rgb(0, 0, 0);
+.tabela-gastos thead th {
   position: sticky;
   top: 0;
-  z-index: 10;
-  user-select: none;
+  background-color: #4e5255;
+  color: white;
+  z-index: 1;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
 }
-
 .tabela-gastos th,
 .tabela-gastos td {
   padding: 10px 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ccc; /* LINHA VERTICAL */
+  border-right: 1px solid #ccc; 
   overflow-wrap: break-word;
   vertical-align: top;
 }
-
-/* Remove a borda da última coluna pra não ficar com duplo traço */
 .tabela-gastos th:last-child,
 .tabela-gastos td:last-child {
   border-right: none;
 }
-
-/* Alinhamento geral das células */
 .tabela-gastos td {
   text-align: left !important;
-  font-size: 0.88rem;
+  font-size: 0.8rem;
 }
-
-/* Cabeçalho */
 .tabela-gastos th {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   background-color: #aaaaaa;
   color: black;
   position: sticky;
@@ -290,45 +301,41 @@ button.visualizar-dados:focus {
   z-index: 10;
   user-select: none;
 }
-
-/* Estilo hover para linhas */
 .tabela-gastos tbody tr:nth-child(odd) {
   background-color: #f9f9f9;
 }
 .tabela-gastos tbody tr:hover {
   background-color: #e6f0ff;
 }
-
 /* Ajustes de largura */
 .tabela-gastos th:nth-child(1), .tabela-gastos td:nth-child(1) { width: 6%; }   /* Placa */
 .tabela-gastos th:nth-child(2), .tabela-gastos td:nth-child(2) { width: 8%; text-align: center; }   /* Responsável */
-.tabela-gastos th:nth-child(3), .tabela-gastos td:nth-child(3) { width: 7%; }   /* Gasto */
-.tabela-gastos th:nth-child(4), .tabela-gastos td:nth-child(4) { width: 26%; }  /* Fornecedor (maior) */
-.tabela-gastos th:nth-child(5), .tabela-gastos td:nth-child(5) { width: 5%; text-align: center; }   /* Documento (menor) */
+.tabela-gastos th:nth-child(3), .tabela-gastos td:nth-child(3) { width: 9%; }   /* Gasto */
+.tabela-gastos th:nth-child(4), .tabela-gastos td:nth-child(4) { width: 24%; }  /* Fornecedor */
+.tabela-gastos th:nth-child(5), .tabela-gastos td:nth-child(5) { width: 5%; text-align: center; }   /* Documento */
 .tabela-gastos th:nth-child(6), .tabela-gastos td:nth-child(6) { width: 7%; }   /* Data */
-.tabela-gastos th:nth-child(7), .tabela-gastos td:nth-child(7) { width: 6%; }   /* Valor */
-.tabela-gastos th:nth-child(8), .tabela-gastos td:nth-child(8) { width: 5%; }   /* KM */
+.tabela-gastos th:nth-child(7), .tabela-gastos td:nth-child(7) { width: 8%; }   /* Valor */
+.tabela-gastos th:nth-child(8), .tabela-gastos td:nth-child(8) { width: 7%; }   /* KM */
 .tabela-gastos th:nth-child(9), .tabela-gastos td:nth-child(9) { width: 5%; }   /* ID Produto */
-.tabela-gastos th:nth-child(10), .tabela-gastos td:nth-child(10) { width: 15%; } /* Produto */
-.tabela-gastos th:nth-child(11), .tabela-gastos td:nth-child(11) { width: 6%; } /* Valor Unit */
-.tabela-gastos th:nth-child(12), .tabela-gastos td:nth-child(12) { width: 5%; } /* Quantidade */
-.tabela-gastos th:nth-child(13), .tabela-gastos td:nth-child(13) { width: 6%; } /* Total */
-
+.tabela-gastos th:nth-child(10), .tabela-gastos td:nth-child(10) { width: 13%; } /* Produto */
+.tabela-gastos th:nth-child(11), .tabela-gastos td:nth-child(11) { width: 8%; } /* Valor Unit */
+.tabela-gastos th:nth-child(12), .tabela-gastos td:nth-child(12) { width: 4%; text-align: center; } /* Quantidade */
+.tabela-gastos th:nth-child(13), .tabela-gastos td:nth-child(13) { width: 8%; } /* Total */
+/* Cabeçalho */
 .tabela-gastos th:nth-child(1)  { text-align: center; vertical-align: middle; }  /* Placa */
-.tabela-gastos th:nth-child(2)  { vertical-align: middle; } 
+.tabela-gastos th:nth-child(2)  { vertical-align: middle; } /* Responsável */
 .tabela-gastos th:nth-child(3)  { text-align: center; vertical-align: middle; }  /* Gasto */
 .tabela-gastos th:nth-child(4)  { text-align: center; vertical-align: middle; }  /* Fornecedor */
-.tabela-gastos th:nth-child(5)  { vertical-align: middle; } 
+.tabela-gastos th:nth-child(5)  { vertical-align: middle; } /* Documento */
 .tabela-gastos th:nth-child(6)  { text-align: center; vertical-align: middle; }  /* Data */
 .tabela-gastos th:nth-child(7)  { text-align: center; vertical-align: middle; }  /* Valor */
 .tabela-gastos th:nth-child(8)  { text-align: center; vertical-align: middle; }  /* KM */
 .tabela-gastos th:nth-child(9)  { text-align: center; vertical-align: middle; }  /* ID Produto */
 .tabela-gastos th:nth-child(10) { text-align: left; vertical-align: middle; } /* Produto */
 .tabela-gastos th:nth-child(11) { text-align: center; vertical-align: middle; }  /* Valor Unit */
-.tabela-gastos th:nth-child(12) { text-align: center; vertical-align: middle; }  /* Quantidade */
+.tabela-gastos th:nth-child(12) { vertical-align: middle; }  /* Quantidade */
 .tabela-gastos th:nth-child(13) { text-align: center; vertical-align: middle; }  /* Total */
-
-/* Fornecedor com quebra de linha, se necessário */
+/* Dados */
 .tabela-gastos td:nth-child(4) {
   white-space: normal;
   word-wrap: break-word;
