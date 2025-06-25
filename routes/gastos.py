@@ -129,7 +129,7 @@ def registrargastos():
         ids_produto = request.form.getlist('id_pro[]')
         produtos = request.form.getlist('produto[]')
         valores_unit = request.form.getlist('valor_unit[]')
-        quantidades = request.form.getlist('quantidade[]')
+        quantidades = request.form.getlist('quantidade[]')  # <- isso estava faltando
         totais_produto = request.form.getlist('total[]')
 
         conn = criar_conexao()
@@ -141,7 +141,7 @@ def registrargastos():
 
             valor_prod = valores_unit[i].replace('R$', '').replace('.', '').replace(',', '.').strip()
             total_prod = totais_produto[i].replace('R$', '').replace('.', '').replace(',', '.').strip()
-            qtd = quantidades[i] or '0'
+            qtd = quantidades[i].strip() or '0'
 
             cur.execute("""
                 INSERT INTO gastos (
@@ -160,7 +160,7 @@ def registrargastos():
                 ids_produto[i],
                 produtos[i],
                 valor_prod,
-                int(qtd),
+                qtd,  
                 total_prod,
                 desconto
             ))

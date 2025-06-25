@@ -63,22 +63,22 @@
                     <label for="dia">Data:</label>
                     <input type="date" id="dia" name="dia" required>
                 </div>
-            
+
                 <div class="form-group">
-                    <label for="valor">Valor:</label>
-                    <input type="text" id="valor" name="valor" placeholder="R$ 00,00" readonly>
+                    <label for="km">KM:</label>
+                    <input id="km" name="km" placeholder="0000" title="">
                 </div>
 
                 <div class="form-group">
                     <label for="desconto">Desconto:</label>
                     <input type="text" id="desconto" name="desconto" placeholder="R$ 00,00">
                 </div>
-            
+
                 <div class="form-group">
-                    <label for="km">KM:</label>
-                    <input id="km" name="km" placeholder="0000" title="">
+                    <label for="valor">Valor:</label>
+                    <input type="text" id="valor" name="valor" placeholder="R$ 00,00" readonly>
                 </div>
-            
+
                 <div class="form-group full-width">
                     <label>Produtos da Nota:</label>
                     <table id="tabela-produtos">
@@ -96,7 +96,7 @@
                                 <td><input type="text" name="id_pro[]"></td>
                                 <td><input type="text" name="produto[]" oninput="this.value = this.value.toUpperCase()"></td>
                                 <td><input type="text" name="valor_unit[]" class="valor-unit" placeholder="R$ 00,00" title="Digite apenas o valor e a vírgula."></td>
-                                <td><input type="number" name="quantidade[]" class="quantidade" min="1"></td>
+                                <td><input type="text" name="quantidade[]" class="quantidade" pattern="^\d{1,3}(,\d{1,3})?$" inputmode="decimal" placeholder="0,00"></td>
                                 <td><input type="text" name="total[]" class="total" readonly></td>
                             </tr>
                         </tbody>
@@ -187,13 +187,11 @@
         }
         // enter passa pro proximo item
         document.addEventListener('keydown', function (e) {
-            // Verifica se a tecla pressionada foi Enter
             if (e.key === 'Enter') {
                 const formElements = Array.from(document.querySelectorAll('input, select, textarea, button'));
                 const index = formElements.indexOf(document.activeElement);
                 if (index > -1) {
-                    e.preventDefault(); // Impede o comportamento padrão (submeter o formulário)
-                    // Foca no próximo elemento, se existir
+                    e.preventDefault(); 
                     const next = formElements[index + 1];
                     if (next) {
                         next.focus();
@@ -210,7 +208,6 @@
             tabela.style.display = 'block';
             tabela.scrollIntoView({ behavior: 'smooth' });
         }
-        // voltar da tabela de dados
         function voltar() {
             const tabela = document.getElementById('tabela-dados');
             const box = document.querySelector('.box');
@@ -402,8 +399,8 @@
                     const linha = e.target.closest('tr');
                     const valorStr = linha.querySelector('.valor-unit').value.replace(/[^\d,]/g, '').replace(',', '.');
                     const valor = parseFloat(valorStr) || 0;
-                    const quantidade = parseFloat(linha.querySelector('.quantidade').value) || 0;
-                    const total = (valor * quantidade).toFixed(2).replace('.', ',');
+                    const quantidadeStr = linha.querySelector('.quantidade').value.replace(',', '.');
+                    const quantidade = parseFloat(quantidadeStr) || 0;                    const total = (valor * quantidade).toFixed(2).replace('.', ',');
                     linha.querySelector('.total').value = 'R$ ' + total;
                     atualizarTotalNota();
                 }

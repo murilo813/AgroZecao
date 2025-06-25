@@ -328,7 +328,7 @@ button.visualizar-dados:focus {
 .tabela-gastos th:nth-child(9), .tabela-gastos td:nth-child(9) { width: 5%; }   /* ID Produto */
 .tabela-gastos th:nth-child(10), .tabela-gastos td:nth-child(10) { width: 13%; } /* Produto */
 .tabela-gastos th:nth-child(11), .tabela-gastos td:nth-child(11) { width: 8%; } /* Valor Unit */
-.tabela-gastos th:nth-child(12), .tabela-gastos td:nth-child(12) { width: 4%; text-align: center; } /* Quantidade */
+.tabela-gastos th:nth-child(12), .tabela-gastos td:nth-child(12) { width: 6%; text-align: center; } /* Quantidade */
 .tabela-gastos th:nth-child(13), .tabela-gastos td:nth-child(13) { width: 8%; } /* Total */
 /* Cabeçalho */
 .tabela-gastos th:nth-child(1)  { text-align: center; vertical-align: middle; }  /* Placa */
