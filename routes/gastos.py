@@ -65,7 +65,27 @@ def gastos():
         """)
         registros = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
-        dados = [dict(zip(colunas, linha)) for linha in registros]
+        dados = []
+        doc_anterior = None
+
+        for linha in registros:
+            linha_dict = dict(zip(colunas, linha))
+            doc_atual = linha_dict['documento']
+
+            if doc_atual == doc_anterior:
+                linha_dict['placa'] = ''
+                linha_dict['responsavel'] = ''
+                linha_dict['gasto'] = ''
+                linha_dict['onde'] = ''
+                linha_dict['documento'] = ''
+                linha_dict['dia'] = ''
+                linha_dict['valor'] = ''
+                linha_dict['km'] = ''
+                # os campos de produto permanecem
+            else:
+                doc_anterior = doc_atual
+
+            dados.append(linha_dict)
 
         session['notificacoes'] = obter_notificacoes(usuario_logado)
 

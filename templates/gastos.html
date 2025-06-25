@@ -105,48 +105,56 @@
             </form>            
         </div>  
         <div id="tabela-dados" style="display: none; margin-top: 30px;">
-            <h2>Gastos Registrados</h2>
-            <button onclick="voltar()">Voltar</button>
-            <table class="tabela-gastos">
-                <thead>
-                    <tr>
-                        <th>Placa</th>
-                        <th>Responsável</th>
-                        <th>Gasto</th>
-                        <th>Fornecedor</th>
-                        <th>Doc</th>
-                        <th>Data</th>
-                        <th>Total</th>
-                        <th>KM</th>
-                        <th>ID Prod</th>
-                        <th>Produto</th>
-                        <th>Valor</th>
-                        <th>QTD</th>
-                        <th>Total Prod</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% set doc_anterior = '' %}
-                    {% for linha in dados %}
+            <div class="titulo-container">
+                <button onclick="voltar()">Voltar</button>
+                <h2>Gastos Registrados</h2>
+            </div>
+            <div class="tabela-container">
+                <table class="tabela-gastos">
+                    <thead>
                         <tr>
-                            <td>{{ '' if linha.documento == doc_anterior else linha.placa }}</td>
-                            <td>{{ '' if linha.documento == doc_anterior else linha.responsavel }}</td>
-                            <td>{{ '' if linha.documento == doc_anterior else linha.gasto }}</td>
-                            <td>{{ '' if linha.documento == doc_anterior else linha.onde }}</td>
-                            <td>{{ '' if linha.documento == doc_anterior else linha.documento }}</td>
-                            <td>{{ '' if linha.documento == doc_anterior else linha.dia }}</td>
-                            <td>{{ '' if linha.documento == doc_anterior else ("R$ {:.2f}".format(linha.valor|float).replace('.', ',')) }}</td>
-                            <td>{{ '' if linha.documento == doc_anterior else linha.km }}</td>
+                            <th>Placa</th>
+                            <th>Responsável</th>
+                            <th>Gasto</th>
+                            <th>Fornecedor</th>
+                            <th>Doc</th>
+                            <th>Data</th>
+                            <th>Total</th>
+                            <th>KM</th>
+                            <th>ID Prod</th>
+                            <th>Produto</th>
+                            <th>Valor</th>
+                            <th>QTD</th>
+                            <th>Total Prod</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for linha in dados %}
+                        <tr>
+                            <td>{{ linha.placa }}</td>
+                            <td>{{ linha.responsavel }}</td>
+                            <td>{{ linha.gasto }}</td>
+                            <td>{{ linha.onde }}</td>
+                            <td>{{ linha.documento }}</td>
+                            <td>{{ linha.dia }}</td>
+                            <td>
+                                {% if linha.valor %}
+                                    {{ "R$ {:.2f}".format(linha.valor|float).replace('.', ',') }}
+                                {% else %}
+                                    <!-- para nao exibir R$0,00 quando o valor vier vazio-->
+                                {% endif %}
+                            </td>
+                            <td>{{ linha.km }}</td>
                             <td>{{ linha.id_pro }}</td>
                             <td>{{ linha.produto }}</td>
                             <td>{{ "R$ {:.2f}".format(linha.valor_unit|float).replace('.', ',') }}</td>
                             <td>{{ linha.quantidade }}</td>
                             <td>{{ "R$ {:.2f}".format(linha.total|float).replace('.', ',') }}</td>
                         </tr>
-                        {% set doc_anterior = linha.documento %}
-                    {% endfor %}
-                </tbody>
-            </table>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <script>
