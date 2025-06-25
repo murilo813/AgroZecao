@@ -68,6 +68,11 @@
                     <label for="valor">Valor:</label>
                     <input type="text" id="valor" name="valor" placeholder="R$ 00,00" readonly>
                 </div>
+
+                <div class="form-group">
+                    <label for="desconto">Desconto:</label>
+                    <input type="text" id="desconto" name="desconto" placeholder="R$ 00,00">
+                </div>
             
                 <div class="form-group">
                     <label for="km">KM:</label>
@@ -107,6 +112,14 @@
         <div id="tabela-dados" style="display: none; margin-top: 30px;">
             <div class="titulo-container">
                 <button onclick="voltar()">Voltar</button>
+
+                <select id="filtro-placa" onchange="filtrarPorPlaca()" style="margin-left: 20px;">
+                    <option value="">Todas as Placas</option>
+                    {% for placa, responsavel in vinculos.items() %}
+                        <option value="{{ placa }}">{{ placa }} - {{ responsavel }}</option>
+                    {% endfor %}
+                </select>
+
                 <h2>Gastos Registrados</h2>
             </div>
             <div class="tabela-container">
@@ -130,21 +143,21 @@
                     </thead>
                     <tbody>
                         {% for linha in dados %}
-                        <tr>
-                            <td>{{ linha.placa }}</td>
-                            <td>{{ linha.responsavel }}</td>
-                            <td>{{ linha.gasto }}</td>
-                            <td>{{ linha.onde }}</td>
-                            <td>{{ linha.documento }}</td>
-                            <td>{{ linha.dia }}</td>
+                        <tr data-placa="{{ linha.placa }}">
+                            <td>{{ linha.placa_exibir }}</td>
+                            <td>{{ linha.responsavel_exibir }}</td>
+                            <td>{{ linha.gasto_exibir }}</td>
+                            <td>{{ linha.onde_exibir }}</td>
+                            <td>{{ linha.documento_exibir }}</td>
+                            <td>{{ linha.dia_exibir }}</td>
                             <td>
-                                {% if linha.valor %}
-                                    {{ "R$ {:.2f}".format(linha.valor|float).replace('.', ',') }}
+                                {% if linha.valor_exibir %}
+                                    {{ "R$ {:.2f}".format(linha.valor_exibir|float).replace('.', ',') }}
                                 {% else %}
                                     <!-- para nao exibir R$0,00 quando o valor vier vazio-->
                                 {% endif %}
                             </td>
-                            <td>{{ linha.km }}</td>
+                            <td>{{ linha.km_exibir }}</td>
                             <td>{{ linha.id_pro }}</td>
                             <td>{{ linha.produto }}</td>
                             <td>{{ "R$ {:.2f}".format(linha.valor_unit|float).replace('.', ',') }}</td>
@@ -158,6 +171,36 @@
         </div>
     </div>
     <script>
+        // filtro
+        function filtrarPorPlaca() {
+            const filtro = document.getElementById("filtro-placa").value;
+            const linhas = document.querySelectorAll(".tabela-gastos tbody tr");
+
+            linhas.forEach(linha => {
+                const placa = linha.getAttribute("data-placa");
+                if (!filtro || placa === filtro) {
+                    linha.style.display = "";
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+        }
+        // enter passa pro proximo item
+        document.addEventListener('keydown', function (e) {
+            // Verifica se a tecla pressionada foi Enter
+            if (e.key === 'Enter') {
+                const formElements = Array.from(document.querySelectorAll('input, select, textarea, button'));
+                const index = formElements.indexOf(document.activeElement);
+                if (index > -1) {
+                    e.preventDefault(); // Impede o comportamento padrão (submeter o formulário)
+                    // Foca no próximo elemento, se existir
+                    const next = formElements[index + 1];
+                    if (next) {
+                        next.focus();
+                    }
+                }
+            }
+        });
         // tabela de dados
         function mostrarTabela() {
             const tabela = document.getElementById('tabela-dados');
@@ -176,118 +219,9 @@
             box.style.display = 'block';
             box.scrollIntoView({ behavior: 'smooth' });
         }
-        // selects dinamicos
-        document.addEventListener('DOMContentLoaded', function () {
-            const choicesInstances = {}; 
 
-            ['#onde', '#placa', '#responsavel'].forEach(selector => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    choicesInstances[selector] = new Choices(element, {
-                        searchEnabled: true,
-                        itemSelectText: '',
-                        placeholder: true,
-                        placeholderValue: 'Selecione uma opção',
-                        shouldSort: false,
-                        position: 'bottom',
-                        searchPlaceholderValue: 'Pesquisar...',
-                    });
-                }
-            });
 
-            const vinculos = {{ vinculos | tojson }};
-            const placaSelect = document.getElementById('placa');
-            const responsavelSelect = document.getElementById('responsavel');
-            const placaChoices = choicesInstances['#placa'];
-            const responsavelChoices = choicesInstances['#responsavel'];
-
-            placaSelect.addEventListener('change', () => {
-                const placaSelecionada = placaSelect.value;
-                if (vinculos[placaSelecionada]) {
-                    responsavelChoices.setChoiceByValue(vinculos[placaSelecionada]);
-                }
-            });
-
-            responsavelSelect.addEventListener('change', () => {
-                const responsavelSelecionado = responsavelSelect.value;
-                const placaCorrespondente = Object.keys(vinculos).find(placa => vinculos[placa] === responsavelSelecionado);
-                if (placaCorrespondente) {
-                    placaChoices.setChoiceByValue(placaCorrespondente);
-                }
-            });
-        });
-        // NOVA LINHA
-        function adicionarLinha() {
-            const tabela = document.getElementById('tabela-produtos').getElementsByTagName('tbody')[0];
-            const novaLinha = tabela.rows[0].cloneNode(true);
-
-            Array.from(novaLinha.querySelectorAll('input')).forEach(input => {
-                input.value = '';
-            });
-
-            const novoValorUnit = novaLinha.querySelector('.valor-unit');
-            formatarComoMoeda(novoValorUnit);
-
-            tabela.appendChild(novaLinha);
-        }
-        function adicionarLinha() {
-            const tabela = document.getElementById('tabela-produtos').getElementsByTagName('tbody')[0];
-            const novaLinha = tabela.rows[0].cloneNode(true);
-
-            Array.from(novaLinha.querySelectorAll('input')).forEach(input => {
-                input.value = '';
-            });
-
-            formatarComoMoeda(novaLinha.querySelector('.valor-unit'));
-
-            tabela.appendChild(novaLinha);
-        }
-        const inputValor = document.getElementById('valor');
-
-        inputValor.addEventListener('input', function(e) {
-            let valor = e.target.value.replace(/[^0-9,]/g, '');
-            
-            const partes = valor.split(',');
-            if (partes.length > 2) {
-                valor = partes[0] + ',' + partes.slice(1).join('');
-            }
-
-            e.target.value = valor;
-        });
-
-        inputValor.addEventListener('blur', function() {
-            let valor = inputValor.value;
-
-            valor = valor.replace(',', '.');
-
-            valor = parseFloat(valor).toLocaleString('pt-BR', { 
-                style: 'currency', 
-                currency: 'BRL',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-
-            inputValor.value = valor;
-        });
-        
-        // Atualiza automaticamente o campo "total" quando valor unit ou quantidade mudam
-        document.addEventListener('input', function (e) {
-            if (e.target.classList.contains('valor-unit') || e.target.classList.contains('quantidade')) {
-                const linha = e.target.closest('tr');
-
-                const valorStr = linha.querySelector('.valor-unit').value.replace(/[^\d,]/g, '').replace(',', '.');
-                const valor = parseFloat(valorStr) || 0;
-
-                const quantidade = parseFloat(linha.querySelector('.quantidade').value) || 0;
-
-                const total = (valor * quantidade).toFixed(2).replace('.', ',');
-
-                linha.querySelector('.total').value = 'R$ ' + total;
-
-                atualizarTotalNota();
-            }
-        });
-        // soma os valores dos produtos
+        // Somar total da nota
         function atualizarTotalNota() {
             const totais = document.querySelectorAll('.total');
             let soma = 0;
@@ -297,14 +231,27 @@
                 soma += valor;
             });
 
-            document.getElementById('valor').value = soma.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            const inputDesconto = document.getElementById('desconto');
+            let desconto = 0;
+
+            if (inputDesconto) {
+                desconto = parseFloat(inputDesconto.value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+            }
+
+            const valorFinal = soma - desconto;
+
+            const inputValor = document.getElementById('valor');
+            if (inputValor) {
+                inputValor.value = valorFinal.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
         }
-        // formata o "valor" dos produtos
+
+        // Formatar valores como moeda (reutilizável)
         function formatarComoMoeda(input) {
             input.addEventListener('input', function(e) {
                 let valor = e.target.value.replace(/[^0-9,]/g, '');
@@ -329,18 +276,138 @@
             });
         }
 
-        document.querySelectorAll('.valor-unit').forEach(input => {
-            formatarComoMoeda(input);
-        });
+        // Formatar desconto
+        function formatarMoeda(input) {
+            input.addEventListener('input', function (e) {
+                let valor = e.target.value.replace(/\D/g, '');
+                valor = (valor / 100).toFixed(2) + '';
+                valor = valor.replace('.', ',');
+                valor = 'R$ ' + valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                e.target.value = valor;
+            });
 
-        // KM
-        const inputKm = document.getElementById('km');
+            input.dispatchEvent(new Event('input'));
+        }
 
-        inputKm.addEventListener('blur', function () {
-            let valor = inputKm.value.replace(/\D/g, ''); 
-            if (valor) {
-                inputKm.value = parseInt(valor).toLocaleString('pt-BR');
+        // Adicionar nova linha à tabela
+        function adicionarLinha() {
+            const tabela = document.getElementById('tabela-produtos').getElementsByTagName('tbody')[0];
+            const novaLinha = tabela.rows[0].cloneNode(true);
+
+            Array.from(novaLinha.querySelectorAll('input')).forEach(input => {
+                input.value = '';
+            });
+
+            const novoValorUnit = novaLinha.querySelector('.valor-unit');
+            formatarComoMoeda(novoValorUnit);
+
+            tabela.appendChild(novaLinha);
+        }
+
+
+        // selects dinamicos
+        document.addEventListener('DOMContentLoaded', function () {
+            const choicesInstances = {};
+
+            ['#onde', '#placa', '#responsavel'].forEach(selector => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    choicesInstances[selector] = new Choices(element, {
+                        searchEnabled: true,
+                        itemSelectText: '',
+                        placeholder: true,
+                        placeholderValue: 'Selecione uma opção',
+                        shouldSort: false,
+                        position: 'bottom',
+                        searchPlaceholderValue: 'Pesquisar...',
+                    });
+                }
+            });
+
+            const vinculos = {{ vinculos | tojson }};
+            const placaSelect = document.getElementById('placa');
+            const responsavelSelect = document.getElementById('responsavel');
+            const placaChoices = choicesInstances['#placa'];
+            const responsavelChoices = choicesInstances['#responsavel'];
+            const inputDesconto = document.getElementById('desconto');
+            const inputValor = document.getElementById('valor');
+            const inputKm = document.getElementById('km');
+
+            if (inputDesconto) formatarMoeda(inputDesconto);
+            if (inputValor) formatarMoeda(inputValor);
+            
+            // formatação do valor
+            if (inputValor) {
+                inputValor.addEventListener('input', function(e) {
+                    let valor = e.target.value.replace(/[^0-9,]/g, '');
+                    const partes = valor.split(',');
+                    if (partes.length > 2) {
+                        valor = partes[0] + ',' + partes.slice(1).join('');
+                    }
+                    e.target.value = valor;
+                });
+
+                inputValor.addEventListener('blur', function () {
+                    let valor = inputValor.value.replace(',', '.');
+                    valor = parseFloat(valor).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    inputValor.value = valor;
+                });
             }
+
+            if (inputDesconto) {
+                inputDesconto.addEventListener('input', atualizarTotalNota);
+            }
+            // formatação do km
+            if (inputKm) {
+                inputKm.addEventListener('blur', function () {
+                    let valor = inputKm.value.replace(/\D/g, '');
+                    if (valor) {
+                        inputKm.value = parseInt(valor).toLocaleString('pt-BR');
+                    }
+                });
+            }
+
+            // Sincroniza os selects placa e responsável
+            if (placaSelect) {
+                placaSelect.addEventListener('change', () => {
+                    const placaSelecionada = placaSelect.value;
+                    if (vinculos[placaSelecionada]) {
+                        responsavelChoices.setChoiceByValue(vinculos[placaSelecionada]);
+                    }
+                });
+            }
+
+            if (responsavelSelect) {
+                responsavelSelect.addEventListener('change', () => {
+                    const responsavelSelecionado = responsavelSelect.value;
+                    const placaCorrespondente = Object.keys(vinculos).find(placa => vinculos[placa] === responsavelSelecionado);
+                    if (placaCorrespondente) {
+                        placaChoices.setChoiceByValue(placaCorrespondente);
+                    }
+                });
+            }
+
+            // Formatação e cálculo automático de totais por linha
+            document.querySelectorAll('.valor-unit').forEach(input => {
+                formatarComoMoeda(input);
+            });
+
+            document.addEventListener('input', function (e) {
+                if (e.target.classList.contains('valor-unit') || e.target.classList.contains('quantidade')) {
+                    const linha = e.target.closest('tr');
+                    const valorStr = linha.querySelector('.valor-unit').value.replace(/[^\d,]/g, '').replace(',', '.');
+                    const valor = parseFloat(valorStr) || 0;
+                    const quantidade = parseFloat(linha.querySelector('.quantidade').value) || 0;
+                    const total = (valor * quantidade).toFixed(2).replace('.', ',');
+                    linha.querySelector('.total').value = 'R$ ' + total;
+                    atualizarTotalNota();
+                }
+            });
         });
     </script>        
 </body>

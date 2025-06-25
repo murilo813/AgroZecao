@@ -73,16 +73,23 @@ def gastos():
             doc_atual = linha_dict['documento']
 
             if doc_atual == doc_anterior:
-                linha_dict['placa'] = ''
-                linha_dict['responsavel'] = ''
-                linha_dict['gasto'] = ''
-                linha_dict['onde'] = ''
-                linha_dict['documento'] = ''
-                linha_dict['dia'] = ''
-                linha_dict['valor'] = ''
-                linha_dict['km'] = ''
-                # os campos de produto permanecem
+                linha_dict['placa_exibir'] = ''
+                linha_dict['responsavel_exibir'] = ''
+                linha_dict['gasto_exibir'] = ''
+                linha_dict['onde_exibir'] = ''
+                linha_dict['documento_exibir'] = ''
+                linha_dict['dia_exibir'] = ''
+                linha_dict['valor_exibir'] = ''
+                linha_dict['km_exibir'] = ''
             else:
+                linha_dict['placa_exibir'] = linha_dict['placa']
+                linha_dict['responsavel_exibir'] = linha_dict['responsavel']
+                linha_dict['gasto_exibir'] = linha_dict['gasto']
+                linha_dict['onde_exibir'] = linha_dict['onde']
+                linha_dict['documento_exibir'] = linha_dict['documento']
+                linha_dict['dia_exibir'] = linha_dict['dia']
+                linha_dict['valor_exibir'] = linha_dict['valor']
+                linha_dict['km_exibir'] = linha_dict['km']
                 doc_anterior = doc_atual
 
             dados.append(linha_dict)
@@ -116,6 +123,7 @@ def registrargastos():
         doc = request.form['documento']
         data = request.form['dia']
         valor_total = request.form['valor'].replace('R$', '').replace('.', '').replace(',', '.').strip()
+        desconto = request.form['desconto'].replace('R$', '').replace('.', '').replace(',', '.').strip()
         km = request.form['km'].replace('.', '').strip()
 
         ids_produto = request.form.getlist('id_pro[]')
@@ -138,8 +146,8 @@ def registrargastos():
             cur.execute("""
                 INSERT INTO gastos (
                     placa, responsavel, tipo_gasto, fornecedor, doc, data, valor_total, km,
-                    id_produto, produto, valor_produto, quantidade, total_produto
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    id_produto, produto, valor_produto, quantidade, total_produto, desconto
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 placa,
                 responsavel,
@@ -153,7 +161,8 @@ def registrargastos():
                 produtos[i],
                 valor_prod,
                 int(qtd),
-                total_prod
+                total_prod,
+                desconto
             ))
 
         conn.commit()
