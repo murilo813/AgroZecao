@@ -17,7 +17,26 @@
                 <h1>Gastos</h1>
                 <button class="visualizar-dados" onclick="mostrarTabela()">Visualizar dados</button>            </div>
             
-            <form action="/registrargastos" method="POST">
+            <form action="/registrargastos" method="POST">            
+                <div class="form-group">
+                    <label for="onde">Fornecedor:</label>
+                    <select id="onde" name="onde" required>
+                        {% for item in fornecedor %}
+                            <option value="{{ item.nome }}">{{ item.nome }} - {{ item.cnpj }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            
+                <div class="form-group">
+                    <label for="documento">Número da nota:</label>
+                    <input type="text" id="documento" name="documento" oninput="this.value = this.value.toUpperCase()" required>
+                </div>
+            
+                <div class="form-group">
+                    <label for="dia">Data:</label>
+                    <input type="date" id="dia" name="dia" required>
+                </div>
+
                 <div class="form-group">
                     <label for="placa">Placa:</label>
                     <select id="placa" name="placa" required>
@@ -43,26 +62,8 @@
                         <option value="MANUTENÇÃO">MANUTENÇÃO</option>
                         <option value="AQUISIÇÃO">AQUISIÇÃO</option>
                         <option value="LAVAÇÃO">LAVAÇÃO</option>
+                        <option value="OUTROS">OUTROS</option>
                     </select>
-                </div>
-            
-                <div class="form-group">
-                    <label for="onde">Fornecedor:</label>
-                    <select id="onde" name="onde" required>
-                        {% for item in fornecedor %}
-                            <option value="{{ item.nome }}">{{ item.nome }} - {{ item.cnpj }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            
-                <div class="form-group">
-                    <label for="documento">Número da nota:</label>
-                    <input type="text" id="documento" name="documento" oninput="this.value = this.value.toUpperCase()" required>
-                </div>
-            
-                <div class="form-group">
-                    <label for="dia">Data:</label>
-                    <input type="date" id="dia" name="dia" required>
                 </div>
 
                 <div class="form-group">
@@ -87,8 +88,8 @@
                             <tr>
                                 <th>ID Pro.</th>
                                 <th>Produto</th>
-                                <th>Valor Unit</th>
                                 <th>Quantidade</th>
+                                <th>Valor Unit</th>
                                 <th>Total</th>
                             </tr>
                         </thead>
@@ -96,8 +97,8 @@
                             <tr>
                                 <td><input type="text" name="id_pro[]"></td>
                                 <td><input type="text" name="produto[]" oninput="this.value = this.value.toUpperCase()"></td>
-                                <td><input type="text" name="valor_unit[]" class="valor-unit" placeholder="R$ 00,00" title="Digite apenas o valor e a vírgula."></td>
                                 <td><input type="text" name="quantidade[]" class="quantidade" pattern="^\d{1,3}(,\d{1,3})?$" inputmode="decimal" placeholder="0,00"></td>
+                                <td><input type="text" name="valor_unit[]" class="valor-unit" placeholder="R$ 00,00" title="Digite apenas o valor e a vírgula."></td>
                                 <td><input type="text" name="total[]" class="total" readonly></td>
                             </tr>
                         </tbody>
