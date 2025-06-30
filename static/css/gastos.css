@@ -182,6 +182,14 @@ input:-webkit-autofill {
   background-color: #ddd !important;
   color: #000 !important;
 }
+#onde option {
+    font-family: monospace;
+}
+
+#onde option::after {
+    content: attr(data-cnpj);
+    color: transparent;
+}
 /*BOTÃO DE VER OS GASTOS REGISTRADOS*/
 button.visualizar-dados {
     position: absolute;

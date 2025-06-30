@@ -46,12 +46,12 @@
                 </div>
             
                 <div class="form-group">
-                <label for="onde">Fornecedor:</label>
-                <select id="onde" name="onde" required>
-                    {% for fornecedor_item in fornecedor %}
-                    <option value="{{ fornecedor_item }}">{{ fornecedor_item }}</option>
-                    {% endfor %}
-                </select>
+                    <label for="onde">Fornecedor:</label>
+                    <select id="onde" name="onde" required>
+                        {% for item in fornecedor %}
+                            <option value="{{ item.nome }}">{{ item.nome }} - {{ item.cnpj }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             
                 <div class="form-group">
@@ -185,6 +185,14 @@
                 }
             });
         }
+        document.addEventListener('DOMContentLoaded', function () {
+            const select = document.getElementById('onde');
+            for (const option of select.options) {
+                const texto = option.textContent;
+                option.setAttribute('data-fulltext', texto); // mantém para busca
+                option.textContent = texto.split(' (')[0];   // isso quebra a busca por CNPJ
+            }
+        });
         // enter passa pro proximo item
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
@@ -400,7 +408,8 @@
                     const valorStr = linha.querySelector('.valor-unit').value.replace(/[^\d,]/g, '').replace(',', '.');
                     const valor = parseFloat(valorStr) || 0;
                     const quantidadeStr = linha.querySelector('.quantidade').value.replace(',', '.');
-                    const quantidade = parseFloat(quantidadeStr) || 0;                    const total = (valor * quantidade).toFixed(2).replace('.', ',');
+                    const quantidade = parseFloat(quantidadeStr) || 0;                    
+                    const total = (valor * quantidade).toFixed(2).replace('.', ',');
                     linha.querySelector('.total').value = 'R$ ' + total;
                     atualizarTotalNota();
                 }

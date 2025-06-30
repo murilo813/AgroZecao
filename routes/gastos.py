@@ -41,9 +41,15 @@ def gastos():
 
         vinculos = {placa: resp for placa, resp in frota}
 
-        cursor.execute("SELECT nome_cliente FROM clientes WHERE tipo_pessoa = 'J' AND perfil_for = true")
+        cursor.execute("""
+            SELECT nome_cliente, cpf_cnpj
+            FROM clientes
+            WHERE tipo_pessoa = 'J'
+            AND perfil_for = true
+            AND nome_cliente ~ '^[^0-9]*[0-9]?[^0-9]*$'
+        """)        
         fornecedor_tuplas = cursor.fetchall()
-        fornecedor = [f[0] for f in fornecedor_tuplas]  
+        fornecedor = [{'nome': f[0], 'cnpj': f[1]} for f in fornecedor_tuplas]
 
         cursor.execute("""
             SELECT
