@@ -101,11 +101,13 @@
                             </tr>
                         </tbody>
                     </table>
-                    <button type="button" onclick="adicionarLinha()">Nova Linha</button>
-                </div>
-            
-                <div class="form-group full-width">
-                    <button type="submit">Registrar</button>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" onclick="adicionarLinha()">Nova Linha</button>
+                            <button type="button" onclick="removerUltimaLinha()">Remover linha</button>
+                        </div>
+                        <button type="submit" style="margin-left: auto;">Registrar</button>
+                    </div>               
                 </div>
             </form>            
         </div>  
@@ -307,6 +309,15 @@
             formatarComoMoeda(novoValorUnit);
 
             tabela.appendChild(novaLinha);
+        }
+        // remover nova linha da tabela
+        function removerUltimaLinha() {
+            const tabela = document.querySelector("#tabela-produtos tbody");
+            const linhas = tabela.querySelectorAll("tr");
+
+            if (linhas.length > 1) {
+                tabela.removeChild(linhas[linhas.length - 1]);
+            }
         }
 
 
