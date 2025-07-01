@@ -77,6 +77,7 @@ def gastos():
 
         for linha in registros:
             linha_dict = dict(zip(colunas, linha))
+            linha_dict = {k: ("" if v is None else v) for k, v in linha_dict.items()}
             doc_atual = linha_dict['documento']
             tipo_gasto_atual = linha_dict['gasto']  
 
