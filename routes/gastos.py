@@ -74,14 +74,16 @@ def gastos():
         dados = []
         doc_anterior = None
         tipo_gasto_anterior = None
+        responsavel_anterior = None
 
         for linha in registros:
             linha_dict = dict(zip(colunas, linha))
             linha_dict = {k: ("" if v is None else v) for k, v in linha_dict.items()}
             doc_atual = linha_dict['documento']
             tipo_gasto_atual = linha_dict['gasto']  
+            responsavel_atual = linha_dict['responsavel']  
 
-            if doc_atual == doc_anterior and tipo_gasto_atual == tipo_gasto_anterior:
+            if doc_atual == doc_anterior and tipo_gasto_atual == tipo_gasto_anterior and responsavel_atual == responsavel_anterior:
                 linha_dict['placa_exibir'] = ''
                 linha_dict['responsavel_exibir'] = ''
                 linha_dict['gasto_exibir'] = ''
@@ -101,6 +103,7 @@ def gastos():
                 linha_dict['km_exibir'] = linha_dict['km']
                 doc_anterior = doc_atual
                 tipo_gasto_anterior = tipo_gasto_atual
+                responsavel_anterior = responsavel_atual
 
             dados.append(linha_dict)
 
