@@ -236,13 +236,6 @@ button.visualizar-dados:focus {
   margin: 14px;
   height: 40px; 
 }
-.titulo-container h2 {
-  margin: 0;
-  margin-bottom: 4px;
-  font-weight: 700;
-  font-size: 1.8rem;
-  color: #222;
-}
 .titulo-container button {
   position: absolute;
   left: 2%;
@@ -260,6 +253,15 @@ button.visualizar-dados:focus {
 .titulo-container select {
   position: absolute;
   left: 8%;
+  bottom: 0;
+  padding: 5px 8px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.titulo-container input {
+  position: absolute;
+  left: 38%;
   bottom: 0;
   padding: 5px 8px;
   font-size: 14px;

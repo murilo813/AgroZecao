@@ -1,13 +1,11 @@
 from flask import Blueprint, render_template, request, session, flash, redirect
-from functions import criar_conexao, obter_notificacoes
+from functions import criar_conexao, obter_notificacoes, liberar_conexao, login_required
 
 estoque_bp = Blueprint('estoque', __name__)
 
 @estoque_bp.route('/estoque')
+@login_required
 def estoque():
-    if 'usuario' not in session:  
-        flash("Você precisa estar logado para acessar a página de Estoque.")
-        return redirect('/login')  
 
     usuario_logado = session['usuario']
 
@@ -43,4 +41,4 @@ def estoque():
         return redirect('/home')
     finally:
         if conexao:
-            conexao.close()
+            liberar_conexao(conexao)

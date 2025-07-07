@@ -1,14 +1,12 @@
 from flask import Blueprint, render_template, request, session, flash, redirect, jsonify
-from functions import criar_conexao, obter_notificacoes
+from functions import criar_conexao, obter_notificacoes, liberar_conexao, login_required
 from datetime import date
 
 gerencia_bp = Blueprint('gerencia', __name__)
 
 @gerencia_bp.route('/gerencia')
-def gerencia():
-    if 'usuario' not in session:  
-        flash("Você precisa estar logado para acessar a página de Gerência.")
-        return redirect('/login')  
+@login_required
+def gerencia(): 
 
     usuario_logado = session['usuario']
 
@@ -61,7 +59,7 @@ def gerencia():
         if cursor:
             cursor.close()
         if conexao:
-            conexao.close()
+            liberar_conexao(conexao)
 
 @gerencia_bp.route('/add_notificacao', methods=['POST'])
 def adicionar_notificacao():
@@ -111,7 +109,7 @@ def adicionar_notificacao():
 
     finally:
         if 'conexao' in locals() and conexao:
-            conexao.close()
+            liberar_conexao(conexao)
 
 @gerencia_bp.route('/cobrancas', methods=['GET'])
 def cobrancas():
@@ -145,3 +143,8 @@ def cobrancas():
     except Exception as e:
         print(f"Erro ao carregar atendimentos: {e}")
         return jsonify({"atendimentos": []})
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao:
+            liberar_conexao(conexao)

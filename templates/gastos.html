@@ -119,14 +119,15 @@
             <div class="titulo-container">
                 <button onclick="voltar()">Voltar</button>
 
-                <select id="filtro-placa" onchange="filtrarPorPlaca()" style="margin-left: 20px;">
+                <select id="filtro-placa" onchange="aplicarFiltros()">
                     <option value="">Todas as Placas</option>
                     {% for placa, responsavel in vinculos.items() %}
                         <option value="{{ placa }}">{{ placa }} - {{ responsavel }}</option>
                     {% endfor %}
                 </select>
 
-                <h2>Gastos Registrados</h2>
+                <input type="text" id="filtro-doc" placeholder="Filtrar por documento..." oninput="aplicarFiltros()">
+
             </div>
             <div class="tabela-container">
                 <table class="tabela-gastos">
@@ -149,7 +150,7 @@
                     </thead>
                     <tbody>
                         {% for linha in dados %}
-                        <tr data-placa="{{ linha.placa }}">
+                        <tr data-placa="{{ linha.placa }}" data-doc="{{ linha.documento }}">
                             <td>{{ linha.placa_exibir }}</td>
                             <td>{{ linha.responsavel_exibir }}</td>
                             <td>{{ linha.gasto_exibir }}</td>
@@ -177,7 +178,48 @@
         </div>
     </div>
     <script>
-        // filtro
+        // junta filtros
+        function aplicarFiltros() {
+            const filtros = {
+                'placa': document.getElementById('filtro-placa')?.value.toLowerCase().trim(),
+                'doc': document.getElementById('filtro-doc')?.value.toLowerCase().trim(),
+            };
+
+            const linhas = document.querySelectorAll('.tabela-gastos tbody tr');
+
+            linhas.forEach(linha => {
+                let mostrar = true;
+
+                for (const campo in filtros) {
+                    const valorFiltro = filtros[campo];
+                    const valorLinha = (linha.getAttribute(`data-${campo}`) || "").toLowerCase();
+
+                    if (valorFiltro && valorLinha !== (valorFiltro)) {
+                        mostrar = false;
+                        break;
+                    }
+                }
+
+                linha.style.display = mostrar ? '' : 'none';
+            });
+        }
+        // filtro por doc
+        function filtrarPorDoc() {
+            const filtroDoc = document.getElementById("filtro-doc").value.toLowerCase();
+            const linhas = document.querySelectorAll(".tabela-gastos tbody tr");
+
+            linhas.forEach(linha => {
+                const doc = (linha.getAttribute("data-doc") || "").toLowerCase();
+
+                // Se o campo estiver vazio ou o doc contiver o texto digitado, exibe
+                if (!filtroDoc || doc.includes(filtroDoc)) {
+                    linha.style.display = "";
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+        }
+        // filtro por placa
         function filtrarPorPlaca() {
             const filtro = document.getElementById("filtro-placa").value;
             const linhas = document.querySelectorAll(".tabela-gastos tbody tr");
@@ -191,12 +233,13 @@
                 }
             });
         }
+        // busca por cnpj em fornecedor para registrar gasto
         document.addEventListener('DOMContentLoaded', function () {
             const select = document.getElementById('onde');
             for (const option of select.options) {
                 const texto = option.textContent;
-                option.setAttribute('data-fulltext', texto); // mantém para busca
-                option.textContent = texto.split(' (')[0];   // isso quebra a busca por CNPJ
+                option.setAttribute('data-fulltext', texto); 
+                option.textContent = texto.split(' (')[0];   
             }
         });
         // enter passa pro proximo item

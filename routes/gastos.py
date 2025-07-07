@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session, flash, redirect
-from functions import criar_conexao, obter_notificacoes
+from functions import criar_conexao, obter_notificacoes, liberar_conexao, login_required
 from datetime import datetime
 import psycopg2
 import os
@@ -7,10 +7,8 @@ import os
 gastos_bp = Blueprint('gastos', __name__)
 
 @gastos_bp.route('/gastos')
+@login_required
 def gastos():
-    if 'usuario' not in session:  
-        flash("Você precisa estar logado para acessar a página de gastos.")
-        return redirect('/login')  
 
     usuario_logado = session['usuario']
 
@@ -123,7 +121,7 @@ def gastos():
         return redirect('/home')
     finally:
         if conexao:
-            conexao.close()
+            liberar_conexao(conexao)
 
 
 @gastos_bp.route('/registrargastos', methods=["POST"])
@@ -142,48 +140,49 @@ def registrargastos():
         ids_produto = request.form.getlist('id_pro[]')
         produtos = request.form.getlist('produto[]')
         valores_unit = request.form.getlist('valor_unit[]')
-        quantidades = request.form.getlist('quantidade[]')  # <- isso estava faltando
+        quantidades = request.form.getlist('quantidade[]')
         totais_produto = request.form.getlist('total[]')
 
-        conn = criar_conexao()
-        cur = conn.cursor()
+        conexao = criar_conexao()
+        with conexao.cursor() as cursor:
+            for i in range(len(produtos)):
+                if not produtos[i].strip():
+                    continue
 
-        for i in range(len(produtos)):
-            if not produtos[i].strip():
-                continue  
+                valor_prod = valores_unit[i].replace('R$', '').replace('.', '').replace(',', '.').strip()
+                total_prod = totais_produto[i].replace('R$', '').replace('.', '').replace(',', '.').strip()
+                qtd = quantidades[i].strip() or '0'
 
-            valor_prod = valores_unit[i].replace('R$', '').replace('.', '').replace(',', '.').strip()
-            total_prod = totais_produto[i].replace('R$', '').replace('.', '').replace(',', '.').strip()
-            qtd = quantidades[i].strip() or '0'
+                cursor.execute("""
+                    INSERT INTO gastos (
+                        placa, responsavel, tipo_gasto, fornecedor, doc, data, valor_total, km,
+                        id_produto, produto, valor_produto, quantidade, total_produto, desconto
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    placa,
+                    responsavel,
+                    tipo_gasto,
+                    fornecedor,
+                    doc,
+                    datetime.strptime(data, '%Y-%m-%d').date(),
+                    valor_total,
+                    int(km) if km else None,
+                    ids_produto[i],
+                    produtos[i],
+                    valor_prod,
+                    qtd,
+                    total_prod,
+                    desconto
+                ))
 
-            cur.execute("""
-                INSERT INTO gastos (
-                    placa, responsavel, tipo_gasto, fornecedor, doc, data, valor_total, km,
-                    id_produto, produto, valor_produto, quantidade, total_produto, desconto
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (
-                placa,
-                responsavel,
-                tipo_gasto,
-                fornecedor,
-                doc,
-                datetime.strptime(data, '%Y-%m-%d').date(),
-                valor_total,
-                int(km) if km else None,
-                ids_produto[i],
-                produtos[i],
-                valor_prod,
-                qtd,  
-                total_prod,
-                desconto
-            ))
+            conexao.commit()
 
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        return redirect('/gastos')  
+        return redirect('/gastos')
 
     except Exception as e:
         print(f"Erro ao registrar gastos: {e}")
         return "Erro ao registrar dados", 500
+
+    finally:
+        if conexao:
+            liberar_conexao(conexao)
