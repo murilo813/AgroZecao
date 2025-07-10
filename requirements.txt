@@ -45,3 +45,4 @@ urllib3==2.2.3
 waitress==3.0.2
 WebOb==1.8.9
 Werkzeug==3.0.4
+flask-limiter==3.12
