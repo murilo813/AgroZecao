@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session, flash, redirect, jsonify
-from functions import criar_conexao
+from functions import criar_conexao, liberar_conexao
 from datetime import date
 
 base_bp = Blueprint('base', __name__)
@@ -28,6 +28,11 @@ def minhascobrancas():
     except Exception as e:
         print(f"Erro ao carregar atendimentos: {e}")
         return jsonify({"atendimentos": []})
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao:
+            liberar_conexao(conexao)
 
 @base_bp.route('/remover_notificacao', methods=['POST'])
 def remover_notificacao():
@@ -67,6 +72,6 @@ def remover_notificacao():
 
         finally:
             if 'conexao' in locals():
-                conexao.close()
+                liberar_conexao(conexao)
 
     return jsonify({"success": False, "error": "Dados inválidos."}), 400

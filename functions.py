@@ -1,16 +1,24 @@
 import psycopg2
-from flask import g
+from psycopg2 import pool
+from flask import g, session, redirect, url_for, flash
 from psycopg2.extras import RealDictCursor
 import os
 from datetime import date
+from functools import wraps
+
+connection_pool = pool.SimpleConnectionPool(
+    1, 20,
+    host=os.getenv('DB_HOST'),
+    database=os.getenv('DB_NAME'),
+    user=os.getenv('DB_USER'),
+    password=os.getenv('DB_PASSWORD')
+)
 
 def criar_conexao():
-    return psycopg2.connect(
-        host=os.getenv('DB_HOST'),
-        database=os.getenv('DB_NAME'),
-        user=os.getenv('DB_USER'),
-        password=os.getenv('DB_PASSWORD')
-    )
+    return connection_pool.getconn()
+
+def liberar_conexao(conexao):
+    connection_pool.putconn(conexao)
 
 def carregar_usuario_por_nome(nome):
     try:
@@ -24,6 +32,15 @@ def carregar_usuario_por_nome(nome):
     except Exception as e:
         print(f"Erro ao carregar usuário: {e}")
         return None
+    
+def login_required(view_func):
+    @wraps(view_func)
+    def wrapped_view(*args, **kwargs):
+        if 'usuario' not in session:
+            flash("Você precisa estar logado para acessar essa página.")
+            return redirect(url_for('login_bp.login'))
+        return view_func(*args, **kwargs)
+    return wrapped_view
 
 def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
     try:
@@ -56,6 +73,8 @@ def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
     except Exception as e:
         print(f"Erro ao carregar atendimentos: {e}")
         return []
+    finally:
+        liberar_conexao(conexao)
 
 def obter_notificacoes(usuario):
     notificacoes = []
@@ -107,6 +126,6 @@ def obter_notificacoes(usuario):
         print(f"Erro ao buscar notificações: {e}")
     finally:
         if 'conexao' in locals():
-            conexao.close()
+            liberar_conexao(conexao)
 
     return notificacoes

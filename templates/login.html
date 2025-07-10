@@ -31,5 +31,24 @@
             </form>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = [
+                {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% for category, message in messages %}
+                        {category: "{{ category }}", message: "{{ message }}"},
+                    {% endfor %}
+                {% endwith %}
+            ];
+
+            if (messages.some(m => m.category === "error")) {
+                const inputs = document.querySelectorAll('#login input, #login_button');
+                inputs.forEach(input => {
+                    input.disabled = true;
+                    input.style.userSelect = 'none';
+                });
+            }
+        });
+    </script>
 </body>
 </html>

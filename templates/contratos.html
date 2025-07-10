@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contratos - Agropecária Zecão ERP</title>
+    <link href="static/css/contratos.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}" />
+    <style>
+      /* Para facilitar testes */
+      .actions button {
+        margin: 0 2px;
+      }
+    </style>
+</head>
+<body>
+    {% include 'base.html' %}
+    <div class="container">
+        <div class="box">
+            <h1>Contratos</h1>
+
+            <table id="contratos_table">
+                <thead>
+                    <tr>
+                        <th>ID Cliente</th>
+                        <th>Nome</th>
+                        <th>Documento</th>
+                        <th>Geração</th>
+                        <th>Vencimento</th>
+                        <th>Valor</th>
+                        <th>Saldo</th>
+                        <th>Tipo</th>
+                        <th class="actions-header"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contrato in lista %}
+                    <tr>
+                        <td>{{ contrato.id_cliente }}</td>
+                        <td>{{ contrato.nome_cliente }}</td>
+                        <td>{{ contrato.documento }}</td>
+                        <td>{{ contrato.data_geracao }}</td>
+                        <td>{{ contrato.data_vencimento }}</td>
+                        <td>{{ contrato.valor_original }}</td>
+                        <td>{{ contrato.saldo_devedor }}</td>
+                        <td>{{ contrato.tipo_contrato }}</td>
+                        <td class="actions-cell">
+                            <div class="actions">
+                                <button class="edit-btn" title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="save-btn" title="Salvar" style="display: none;"><i class="fas fa-check"></i></button>
+                                <button class="cancel-btn" title="Cancelar" style="display: none;"><i class="fas fa-times"></i></button>
+                                <button class="delete-btn" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button id="add-row-btn" style="margin-top: 10px;">Adicionar Linha</button>
+        </div>
+    </div>
+
+    <script>
+    const tableBody = document.getElementById('contratos_table').getElementsByTagName('tbody')[0];
+    const addRowBtn = document.getElementById('add-row-btn');
+
+    function createActionsCell() {
+        const td = document.createElement('td');
+        td.classList.add('actions-cell');
+        const div = document.createElement('div');
+        div.classList.add('actions');
+
+        const editBtn = document.createElement('button');
+        editBtn.classList.add('edit-btn');
+        editBtn.title = 'Editar';
+        editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+
+        const saveBtn = document.createElement('button');
+        saveBtn.classList.add('save-btn');
+        saveBtn.title = 'Salvar';
+        saveBtn.style.display = 'none';
+        saveBtn.innerHTML = '<i class="fas fa-check"></i>';
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.classList.add('cancel-btn');
+        cancelBtn.title = 'Cancelar';
+        cancelBtn.style.display = 'none';
+        cancelBtn.innerHTML = '<i class="fas fa-times"></i>';
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('delete-btn');
+        deleteBtn.title = 'Excluir';
+        deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+
+        div.appendChild(editBtn);
+        div.appendChild(saveBtn);
+        div.appendChild(cancelBtn);
+        div.appendChild(deleteBtn);
+
+        td.appendChild(div);
+        return td;
+    } 
+
+    function enableEdit(row) {
+        row.originalValues = [];
+        for (let i = 0; i < row.cells.length - 1; i++) {
+            const cell = row.cells[i];
+            row.originalValues.push(cell.textContent);
+
+            const input = document.createElement('input');
+            input.value = cell.textContent;
+            input.style.border = 'none';
+            input.style.background = 'transparent';
+            input.style.width = '100%';
+            input.style.font = 'inherit';
+            input.style.padding = '0';
+            input.style.margin = '0';
+            input.style.outline = 'none';
+            input.style.height = '100%';
+            input.style.boxSizing = 'border-box';
+
+            cell.textContent = '';
+            cell.appendChild(input);
+        }
+    }
+
+    function disableEdit(row, save) {
+        for (let i = 0; i < row.cells.length - 1; i++) {
+            const cell = row.cells[i];
+            if (save) {
+            const input = cell.querySelector('input');
+            if (input) {
+                cell.textContent = input.value;
+            }
+            } else {
+            cell.textContent = row.originalValues[i];
+            }
+        }
+        delete row.originalValues;
+    }
+
+
+    function toggleButtons(row, editing) {
+        const editBtn = row.querySelector('.edit-btn');
+        const saveBtn = row.querySelector('.save-btn');
+        const cancelBtn = row.querySelector('.cancel-btn');
+        if (editing) {
+          editBtn.style.display = 'none';
+          saveBtn.style.display = 'inline-block';
+          cancelBtn.style.display = 'inline-block';
+        } else {
+          editBtn.style.display = 'inline-block';
+          saveBtn.style.display = 'none';
+          cancelBtn.style.display = 'none';
+        }
+    }
+
+    tableBody.addEventListener('click', e => {
+        const target = e.target.closest('button');
+        if (!target) return;
+
+        const row = target.closest('tr');
+
+        if (target.classList.contains('edit-btn')) {
+            enableEdit(row);
+            toggleButtons(row, true);
+        } else if (target.classList.contains('save-btn')) {
+            disableEdit(row, true);
+            toggleButtons(row, false);
+            salvarContrato(row);
+        } else if (target.classList.contains('cancel-btn')) {
+            disableEdit(row, false);
+            toggleButtons(row, false);
+        } else if (target.classList.contains('delete-btn')) {
+            if (confirm('Tem certeza que deseja excluir esse contrato?')) {
+                deletarContrato(row);
+            }
+        }
+    });
+
+    addRowBtn.addEventListener('click', () => {
+        const newRow = document.createElement('tr');
+        for (let i = 0; i < 8; i++) {
+            const td = document.createElement('td');
+            td.textContent = '';
+            newRow.appendChild(td);
+        }
+        newRow.appendChild(createActionsCell());
+        tableBody.appendChild(newRow);
+        enableEdit(newRow);
+        toggleButtons(newRow, true);
+    });
+
+    function salvarContrato(row) {
+        const dados = {
+            id_cliente: row.cells[0].textContent.trim(),
+            nome_cliente: row.cells[1].textContent.trim(),
+            documento: row.cells[2].textContent.trim(),
+            data_geracao: row.cells[3].textContent.trim(),
+            data_vencimento: row.cells[4].textContent.trim(),
+            valor_original: row.cells[5].textContent.trim(),
+            saldo_devedor: row.cells[6].textContent.trim(),
+            tipo_contrato: row.cells[7].textContent.trim()
+        };
+
+        fetch('/salvarcontrato', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dados)
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.mensagem);
+        })
+        .catch(err => {
+            console.error('Erro ao salvar contrato:', err);
+        });
+    }
+
+    function deletarContrato(row) {
+        const id_cliente = row.cells[0].textContent.trim();
+
+        fetch('/deletarcontrato', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id_cliente })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.mensagem);
+            row.remove();
+        })
+        .catch(err => {
+            console.error('Erro ao deletar contrato:', err);
+        });
+    }
+    </script>
+</body>
+</html>

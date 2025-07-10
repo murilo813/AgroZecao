@@ -17,23 +17,19 @@
             <h2 id="titulo-h2">{{ session['nomeclatura'] }}</h2>             
         </div>
     </div>
-    <!--<img src="{{ url_for('static', filename='banner.png') }}" alt="banner" class="banner">-->
     <script>
-        /*Animação de entrada do título*/
         document.addEventListener("DOMContentLoaded", function () {
             const tituloH1 = document.getElementById("titulo-h1");
             const tituloH2 = document.getElementById("titulo-h2");
 
-            // Verifica se o login foi feito
             if (sessionStorage.getItem("loginEfetuado") === null) {
-                // Marca o login como efetuado para que não ocorra mais animações
                 sessionStorage.setItem("loginEfetuado", "true");
 
                 tituloH1.classList.add("slidein-h1");
 
                 setTimeout(function () {
                     tituloH2.classList.add("slidein-h2");
-                }, 1000); // Espera 1 segundo antes de iniciar a animação do título 2
+                }, 1000);
             } else {
 
                 tituloH1.style.opacity = "1";

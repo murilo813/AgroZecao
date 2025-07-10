@@ -165,12 +165,10 @@ nav.open ~ .overlay {
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
   z-index: 9999; 
 }
-
 nav.open .overlay-logo {
   opacity: 1;
   visibility: visible;
 }
-
 #rodape-direitos {
   position: fixed;
   bottom: 1%;
@@ -314,7 +312,6 @@ nav.open .overlay-logo {
   font-weight: bold;
   color: #000000;
 }
-
 .modalcontrato::-webkit-scrollbar {
   width: 8px; 
   height: 8px;

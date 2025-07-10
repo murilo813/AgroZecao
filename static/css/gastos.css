@@ -31,110 +31,106 @@ body {
   padding-bottom: 10px; 
 }
 h1 {
-    color: #06c056;
-    position: absolute;
-    top: 8.5%;
-    left: 50%;
-    transform: translateX(-50%);  
-    font-weight: 900; 
-    font-size: 60px; 
-    -webkit-text-stroke: 3px black; 
-    text-shadow: none; 
-  }
-
+  color: #06c056;
+  position: absolute;
+  top: 8.5%;
+  left: 50%;
+  transform: translateX(-50%);  
+  font-weight: 900; 
+  font-size: 60px; 
+  -webkit-text-stroke: 3px black; 
+  text-shadow: none; 
+}
 /*FORMULÁRIO DE INSERIR GASTOS*/
 form {
-    background-color: white;
-    border: 1px solid #ccc;
-    position: relative;
-    top: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    max-width: 90%;
-    max-height: 81%;
-    gap: 20px;
-    overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  position: relative;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  max-width: 90%;
+  max-height: 81%;
+  gap: 20px;
+  overflow-y: auto;
 }
 .form-group {
-    display: flex;
-    flex-direction: column; 
-    width: 30%; 
-    min-width: 200px;
+  display: flex;
+  flex-direction: column; 
+  width: 30%; 
+  min-width: 200px;
 }
 form label {
-    font-size: 18px;
-    margin-bottom: 2px;
-    font-weight: bold;
-    color: black;
+  font-size: 18px;
+  margin-bottom: 2px;
+  font-weight: bold;
+  color: black;
 }
 form input,
 form select,
 form textarea {
-    box-sizing: border-box;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
-    color: black;
-    font-size: 15px;
-    width: 100%;
-    max-height: 50%;
-    height: 42px; 
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: black;
+  font-size: 15px;
+  width: 100%;
+  max-height: 50%;
+  height: 42px; 
 }
 form button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    align-self: flex-end;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  align-self: flex-end;
 }
 form button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 form input:focus,
 form select:focus,
 form textarea:focus {
-    border-color: #007bff;
-    outline: none;
+  border-color: #007bff;
+  outline: none;
 }
-
 /*PRODUTOS DAS NOTAS*/
 .full-width {
-    width: 100%;
+  width: 100%;
 }
 #tabela-produtos {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 10px;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
 }
-
 #tabela-produtos th, #tabela-produtos td {
-    border: 1px solid #ccc;
-    padding: 5px;
-    text-align: center;
+  border: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
 }
-
 #tabela-produtos input {
-    width: 100%;
-    padding: 4px;
-    box-sizing: border-box;
-    border: none;
-    font-size: 15px;
+  width: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+  border: none;
+  font-size: 15px;
 }
 input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 1000px white inset !important;
-    box-shadow: 0 0 0 1000px white inset !important;
-    background-color: white !important;
-    color: black !important;
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  box-shadow: 0 0 0 1000px white inset !important;
+  background-color: white !important;
+  color: black !important;
 }
 /* selects com choice */
 .choices__inner {
@@ -183,37 +179,34 @@ input:-webkit-autofill {
   color: #000 !important;
 }
 #onde option {
-    font-family: monospace;
+  font-family: monospace;
 }
 
 #onde option::after {
-    content: attr(data-cnpj);
-    color: transparent;
+  content: attr(data-cnpj);
+  color: transparent;
 }
 /*BOTÃO DE VER OS GASTOS REGISTRADOS*/
 button.visualizar-dados {
-    position: absolute;
-    bottom: 1%;
-    right: 8%;
-    background-color: #007bff;  
-    color: white;            
-    border: none;              
-    padding: 10px 20px;        
-    border-radius: 4px;        
-    cursor: pointer;           
-    font-size: 14px;           
-    transition: background-color 0.3s ease; 
+  position: absolute;
+  bottom: 1%;
+  right: 8%;
+  background-color: #007bff;  
+  color: white;            
+  border: none;              
+  padding: 10px 20px;        
+  border-radius: 4px;        
+  cursor: pointer;           
+  font-size: 14px;           
+  transition: background-color 0.3s ease; 
 }
-
 button.visualizar-dados:hover {
-    background-color: #0056b3;  
+  background-color: #0056b3;  
 }
-
 button.visualizar-dados:focus {
-    outline: none;  
-    border-color: #0056b3;  
+  outline: none;  
+  border-color: #0056b3;  
 }
-
 /* verdados */
 #tabela-dados {
   position: absolute;
@@ -227,7 +220,7 @@ button.visualizar-dados:focus {
 #tabela-dados button:hover {
   background-color: #0056b3;
 }
-
+/* caixa de filtros */
 .titulo-container {
   position: relative;
   display: flex;
@@ -235,13 +228,6 @@ button.visualizar-dados:focus {
   align-items: center;
   margin: 14px;
   height: 40px; 
-}
-.titulo-container h2 {
-  margin: 0;
-  margin-bottom: 4px;
-  font-weight: 700;
-  font-size: 1.8rem;
-  color: #222;
 }
 .titulo-container button {
   position: absolute;
@@ -266,7 +252,16 @@ button.visualizar-dados:focus {
   border-radius: 5px;
   border: 1px solid #ccc;
 }
-
+.titulo-container input {
+  position: absolute;
+  left: 38%;
+  bottom: 0;
+  padding: 5px 8px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+/*  */
 .tabela-container {
   max-height: 85%;       
   overflow-y: auto;       
@@ -330,7 +325,7 @@ button.visualizar-dados:focus {
 .tabela-gastos th:nth-child(3), .tabela-gastos td:nth-child(3) { width: 9%; }   /* Gasto */
 .tabela-gastos th:nth-child(4), .tabela-gastos td:nth-child(4) { width: 24%; }  /* Fornecedor */
 .tabela-gastos th:nth-child(5), .tabela-gastos td:nth-child(5) { width: 5%; text-align: center; }   /* Documento */
-.tabela-gastos th:nth-child(6), .tabela-gastos td:nth-child(6) { width: 7%; }   /* Data */
+.tabela-gastos th:nth-child(6), .tabela-gastos td:nth-child(6) { width: 8%; }   /* Data */
 .tabela-gastos th:nth-child(7), .tabela-gastos td:nth-child(7) { width: 8%; }   /* Valor */
 .tabela-gastos th:nth-child(8), .tabela-gastos td:nth-child(8) { width: 7%; }   /* KM */
 .tabela-gastos th:nth-child(9), .tabela-gastos td:nth-child(9) { width: 5%; }   /* ID Produto */

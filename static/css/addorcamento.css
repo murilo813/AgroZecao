@@ -10,13 +10,11 @@ body {
   align-items: flex-start;
   height: 100vh;
 }
-
 .container-form {
   background-color: white;
   margin-top: 40px;
   padding: 30px;
 }
-
 h1 {
   color: #06c056;
   font-size: 40px;
@@ -26,31 +24,26 @@ h1 {
   -webkit-text-stroke: 2px black; 
   text-shadow: none; 
 }
-
 .orcamento-info-top {
   margin-bottom: 25px;
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-
 .orcamento-row {
   display: flex;
   justify-content: space-between;
   gap: 15px;
 }
-
 .info-box {
   width: 100%;
 }
-
 label {
   font-weight: bold;
   font-size: 15px;
   display: block;
   margin-bottom: 5px;
 }
-
 input[type="text"],
 input[type="number"],
 input[type="date"] {
@@ -60,27 +53,22 @@ input[type="date"] {
   border-radius: 6px;
   font-size: 15px;
 }
-
 /* Tabela de produtos */
 .orcamento-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 15px;
 }
-
 .orcamento-table th,
 .orcamento-table td {
   border: 1px solid #ddd;
   padding: 5px;
   text-align: center;
 }
-
-
 .orcamento-table th {
   background-color: #f4f4f4;
   font-weight: bold;
 }
-
 .orcamento-table td input {
   width: 100%;
   padding: 1px;
@@ -89,7 +77,6 @@ input[type="date"] {
   background: transparent;
   outline: none;
 }
-
 /* Botões principais */
 button {
   width: 100%;
@@ -118,25 +105,20 @@ button {
 .add-button:hover {
   background-color: #218838; 
 }
-
 #adicionarProduto:hover {
   background-color: #048a43;
 }
-
 button[type="submit"] {
   background-color: #06c056;
   color: white;
 }
-
 button[type="submit"]:hover {
   background-color: #048a43;
 }
-
 button[type="button"] {
   background-color: #d9534f;
   color: white;
 }
-
 button[type="button"]:hover {
   background-color: #b52b27;
 }

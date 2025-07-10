@@ -5,16 +5,13 @@ from psycopg2 import connect, sql
 from psycopg2.extras import RealDictCursor
 import psycopg2
 import json
-from functions import carregar_atendimentos, criar_conexao, obter_notificacoes
+from functions import carregar_atendimentos, criar_conexao, obter_notificacoes, login_required, liberar_conexao
 
 consulta_bp = Blueprint('consulta', __name__)
 
 @consulta_bp.route('/consulta', methods=['GET', 'POST'])
+@login_required
 def consulta():
-    if 'usuario' not in session:  
-        flash("Você precisa estar logado para acessar a consulta.")
-        return redirect('/login')  
-
     usuario_logado = session['usuario']
     session['notificacoes'] = obter_notificacoes(usuario_logado)
 
@@ -50,7 +47,7 @@ def consulta():
         if cursor:
             cursor.close()
         if conexao:
-            conexao.close()
+            liberar_conexao(conexao)
 
     if cpf_url:
         cpf_selecionado = cpf_url  
@@ -331,7 +328,7 @@ def consulta():
 
         finally:
             if 'conexao' in locals():
-                conexao.close()
+                liberar_conexao(conexao)
 
     return render_template('consulta.html', notificacoes=session['notificacoes'])
 
@@ -502,4 +499,4 @@ def adicionar_observacao():
 
     finally:
         if 'conexao' in locals() and conexao:
-            conexao.close()
+            liberar_conexao(conexao)

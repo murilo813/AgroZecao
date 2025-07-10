@@ -1,15 +1,13 @@
 from flask import Blueprint, session, flash, redirect, render_template, request, jsonify
-from functions import criar_conexao, obter_notificacoes
+from functions import criar_conexao, obter_notificacoes, liberar_conexao, login_required
 from datetime import date
 from psycopg2.extras import RealDictCursor
 
 home_bp = Blueprint('home', __name__)
 
 @home_bp.route('/home')
+@login_required
 def home():
-    if 'usuario' not in session:
-        flash('Você precisa estar logado para acessar esta página.')
-        return redirect ('/login')
 
     usuario_logado = session['usuario']
 
@@ -32,7 +30,7 @@ def home():
         nomeclatura = 'Usuário'
     finally:
         if conexao:
-            conexao.close()
+            liberar_conexao(conexao)
 
     session['notificacoes'] = obter_notificacoes(usuario_logado)
 
