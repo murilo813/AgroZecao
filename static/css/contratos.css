@@ -1,0 +1,127 @@
+@charset "UTF-8";
+body {
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.box {
+  background-color: #ffffff;
+  padding: 20px;
+  padding-right: 1px;
+  padding-top: 40px;
+  text-align: center;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  padding-bottom: 10px;
+}
+h1 {
+  margin-top: 2%;
+}
+table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse; 
+}
+thead {
+  background-color: #f2f2f2;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
+  position: relative;
+}
+thead tr th:last-child {
+  background-color: white !important;
+  border: none !important;
+  padding: 0 !important;
+  width: 5% !important;
+}
+
+tbody tr td:last-child {
+  background-color: white !important;
+  border: none !important;
+  padding: 0 !important;
+  width: 5% !important;
+}
+td input {
+  width: 100%;
+  font: inherit;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  height: 100%;
+  box-sizing: border-box;
+}
+td {
+  overflow: hidden;
+}
+th {
+  background-color: #e2e2e2;
+  font-weight: bold;
+}
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+tr:hover {
+  background-color: #e0f7fa;
+}
+tr {
+  height: 48px;
+}
+.actions-header,
+.actions-cell {
+  width: 60px !important;
+  min-width: 60px !important;
+  max-width: 60px !important;
+  padding: 0 !important;
+  text-align: center;
+}
+.actions {
+  display: flex;
+  gap: 4px;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.actions button {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.actions button:hover {
+  color: #000;
+}
+#add-row-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #2e86de;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  align-self: flex-start;
+}
+#add-row-btn:hover {
+  background-color: #1b4f72;
+}

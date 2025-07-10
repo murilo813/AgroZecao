@@ -48,7 +48,6 @@ h1 {
 .slidein-h1 {
   animation: slidein-h1 1s ease-out forwards;
 }
-
 h2 {
   color: #06c056;
   font-weight: 900;

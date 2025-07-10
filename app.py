@@ -12,7 +12,7 @@ app.config.from_object(Config)
 app.permanent_session_lifetime = timedelta(days=7)
 
 app.config.update(
-    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SECURE=os.environ.get('FLASK_ENV') == 'production',
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax'
 )
@@ -28,6 +28,7 @@ def register_blueprints():
     from routes.gastos import gastos_bp
     from routes.addorcamento import addorcamento_bp
     from routes.base import base_bp
+    from routes.contratos import contratos_bp
 
     app.register_blueprint(login_bp)
     app.register_blueprint(home_bp)
@@ -37,6 +38,7 @@ def register_blueprints():
     app.register_blueprint(gastos_bp)
     app.register_blueprint(addorcamento_bp)
     app.register_blueprint(base_bp)
+    app.register_blueprint(contratos_bp)
 
 register_blueprints()
 

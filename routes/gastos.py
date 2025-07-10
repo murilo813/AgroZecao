@@ -65,7 +65,7 @@ def gastos():
                 quantidade,
                 total_produto AS total
             FROM gastos
-            ORDER BY documento, id_pro
+            ORDER BY data
         """)
         registros = cursor.fetchall()
         colunas = [desc[0] for desc in cursor.description]
