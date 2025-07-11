@@ -333,6 +333,7 @@ def consulta():
     return render_template('consulta.html', notificacoes=session['notificacoes'])
 
 @consulta_bp.route('/salvar_obs_notas', methods=['POST'])
+@login_required
 def salvar_obs_notas():
     try:
         data = request.get_json()
@@ -365,6 +366,7 @@ def salvar_obs_notas():
         return jsonify({"status": "erro"}), 500
 
 @consulta_bp.route('/add_observation', methods=['POST'])
+@login_required
 def adicionar_observacao():
     try:
         cliente_valor = request.form.get('cliente')

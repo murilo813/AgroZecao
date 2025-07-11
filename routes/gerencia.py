@@ -62,6 +62,7 @@ def gerencia():
             liberar_conexao(conexao)
 
 @gerencia_bp.route('/add_notificacao', methods=['POST'])
+@login_required
 def adicionar_notificacao():
     try:
         usuario = request.form.get('usuario')
@@ -112,6 +113,7 @@ def adicionar_notificacao():
             liberar_conexao(conexao)
 
 @gerencia_bp.route('/cobrancas', methods=['GET'])
+@login_required
 def cobrancas():
     try:
         conexao = criar_conexao()

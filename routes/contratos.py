@@ -42,6 +42,7 @@ def contratos():
                 tipo_contrato
             FROM contratos
             WHERE id_empresa = %s
+            ORDER BY saldo_devedor
         """.strip()
 
         cursor.execute(query, (id_empresa,))

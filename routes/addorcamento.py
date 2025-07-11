@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from functions import obter_notificacoes
+from functions import obter_notificacoes, login_required
 
 addorcamento_bp = Blueprint('addorcamento', __name__, template_folder='templates')
 
 @addorcamento_bp.route('/addorcamento', methods=['GET', 'POST'])
+@login_required
 def add_orcamento():
     if request.method == 'POST':
         produtor = request.form['produtor']

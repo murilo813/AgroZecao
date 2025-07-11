@@ -125,6 +125,7 @@ def gastos():
 
 
 @gastos_bp.route('/registrargastos', methods=["POST"])
+@login_required
 def registrargastos():
     try:
         placa = request.form['placa']
