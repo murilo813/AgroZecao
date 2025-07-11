@@ -7,11 +7,11 @@ import psycopg2
 import json
 from functions import carregar_atendimentos, criar_conexao, obter_notificacoes, login_required, liberar_conexao
 
-consulta_bp = Blueprint('consulta', __name__)
+financeiro_bp = Blueprint('financeiro', __name__)
 
-@consulta_bp.route('/consulta', methods=['GET', 'POST'])
+@financeiro_bp.route('/financeiro', methods=['GET', 'POST'])
 @login_required
-def consulta():
+def financeiro():
     usuario_logado = session['usuario']
     session['notificacoes'] = obter_notificacoes(usuario_logado)
 
@@ -30,7 +30,7 @@ def consulta():
 
         cursor.execute("""
             SELECT 1 FROM acessos
-            WHERE usuario_id = %s AND setor_id = 2
+            WHERE usuario_id = %s AND (setor_id = 2 OR setor_id = 6)
         """, (usuario_id,))
 
         if not cursor.fetchone():  
@@ -287,7 +287,7 @@ def consulta():
                     clientes = [(cpf_cliente, nome_cliente)] + clientes_relacionados
 
                     return render_template(
-                        'consulta.html',
+                        'financeiro.html',
                         clientes=clientes,
                         cliente_detalhes=cliente_detalhes,
                         clientes_relacionados_detalhes=clientes_relacionados_detalhes,
@@ -297,7 +297,7 @@ def consulta():
                     )
 
                     flash("Cliente não encontrado para o CPF selecionado.")
-                    return render_template('consulta.html')
+                    return render_template('financeiro.html')
 
             query = """
                 SELECT cpf_cnpj, nome_cliente, responsavel, bairro
@@ -317,22 +317,22 @@ def consulta():
                     clientes_unicos.append((cpf, nome, responsavel, bairro))
                     
             if clientes_unicos:
-                return render_template('consulta.html', notificacoes=session['notificacoes'], data_hoje=data_hoje, clientes=clientes_unicos, atendimentos=atendimentos)
+                return render_template('financeiro.html', notificacoes=session['notificacoes'], data_hoje=data_hoje, clientes=clientes_unicos, atendimentos=atendimentos)
 
-            return render_template('consulta.html', notificacoes=session['notificacoes'])
+            return render_template('financeiro.html', notificacoes=session['notificacoes'])
 
         except Exception as e:
             print(f"Erro na consulta: {e}")
             flash("Ocorreu um erro na consulta.")
-            return render_template('consulta.html')
+            return render_template('financeiro.html')
 
         finally:
             if 'conexao' in locals():
                 liberar_conexao(conexao)
 
-    return render_template('consulta.html', notificacoes=session['notificacoes'])
+    return render_template('financeiro.html', notificacoes=session['notificacoes'])
 
-@consulta_bp.route('/salvar_obs_notas', methods=['POST'])
+@financeiro_bp.route('/salvar_obs_notas', methods=['POST'])
 @login_required
 def salvar_obs_notas():
     try:
@@ -368,7 +368,7 @@ def salvar_obs_notas():
         if conexao:
             liberar_conexao(conexao)
 
-@consulta_bp.route('/add_observation', methods=['POST'])
+@financeiro_bp.route('/add_observation', methods=['POST'])
 @login_required
 def adicionar_observacao():
     try:

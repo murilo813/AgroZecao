@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agropecuária Zecão ERP</title>
+    <link href="{{ url_for('static', filename='css/financeiro.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+</head>
+<body>
+    {% include 'base.html' %}
+    <div class="container">
+        <div class="box">
+            <div id="tituloConsulta">
+                <h1>Consultar Cliente</h1>
+            </div>
+            <form method="POST" action="/financeiro">
+                <label class="nome-cpf" for="nome">NOME:</label>
+                <input type="text" id="nome" name="nome">
+                <label class="nome-cpf" for="nome">CPF ou ID:</label>
+                <input type="text" id="cpf" name="cpf_selecionado" value="{{ request.args.get('cpf_cnpj', '') }}">
+                <button type="submit" class="botao-pesquisar">Pesquisar</button>
+            </form>           
+            <div>    
+                {% if clientes and not cliente_detalhes %}
+                    <thead>
+                        <table class="cabeçalho">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>Responsável</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </thead>
+                    <div class="lista-clientes-container">
+                        <ul>
+                            {% for cliente in clientes %}
+                                <li>
+                                    <form method="POST" action="/financeiro">
+                                        <input type="hidden" name="cpf_selecionado" value="{{ cliente[0] }}">
+                                        <button type="submit">
+                                            <div class="cliente-info">
+                                                <span>{{ cliente[1] }}</span> 
+                                                <span>{{ cliente[0] }}</span>
+                                                <span>{{ cliente[2] }}</span> 
+                                            </div>
+                                        </button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul> 
+                    </div>                 
+                {% endif %}
+                {% if cliente_detalhes %} 
+                    <div>
+                        <h2>Detalhes do Cliente</h2>
+                        <div class="detalhes-cliente">
+                            <div class="detalhes">
+                                <table class="tabela-detalhes">
+                                    <thead>
+                                        <tr>
+                                            <th>NOME</th>
+                                            <th>CPF</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ cliente_detalhes['nome'] }}</td>
+                                            <td>{{ cliente_detalhes['cpf'] }}</td>
+                                        </tr>
+                                        {% for cliente_relacionado in clientes_relacionados_detalhes %}
+                                            {% if cliente_relacionado['nome'] != cliente_detalhes['nome'] %}
+                                                <tr>
+                                                    <td>{{ cliente_relacionado['nome'] }}</td>
+                                                    <td>{{ cliente_relacionado['cpf'] }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>                       
+                            <div class="caixa-atendimentos">
+                                <h3 id="atendimentosrota">Atendimentos Realizados</h3>                               
+                                {% if atendimentos and atendimentos|length > 0 %}
+                                    <table id="tabela-atendimentos">
+                                        <thead>
+                                            <tr>
+                                                <th>Usuário</th>
+                                                <th>Nome do Cliente</th>
+                                                <th>Data</th>
+                                                <th>Observação</th>                                                    
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for atendimento in atendimentos %}
+                                                <tr>
+                                                    <td>{{ atendimento.usuario }}</td>
+                                                    <td>{{ atendimento.nome_cliente }}</td>                                               
+                                                    <td>{{ atendimento.data_atendimento }}</td>
+                                                    <td>{{ atendimento.observacao }}</td>                                                                                  
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                    <p>Nenhum atendimento encontrado.</p>
+                                {% endif %}
+                                <button class="add-button" onclick="toggleObservationForm()">+</button>
+                            </div>                          
+                            <div id="observationForm" class="hidden">
+                                <form id="formObservation" method="POST" action="/add_observation">
+                                    <label for="cliente">Selecionar Cliente:</label>
+                                    <select id="cliente" name="cliente" required>
+                                        {% for cliente in clientes %}
+                                            <option value="{{ cliente[0] }}|{{ cliente[1] }}">{{ cliente[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <label for="observation">Observação:</label>
+                                    <textarea id="observation" name="observation" required></textarea>
+
+                                    <label for="date">Data:</label>
+                                    <input type="date" id="date" name="date" required>
+
+                                    <label for="agendamento">Agendar Atendimento:</label>
+                                    <input type="date" id="agendamento" name="agendamento">
+
+                                    <button type="submit">Registrar</button>
+                                </form>
+                                <button type="button" onclick="toggleObservationForm()">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Pendências</h4>
+                    <div id="painel-container" style="position: fixed; top: 53%; left: 40px; right: 40px; display: flex; flex-direction: column; gap: 2px; z-index: 10;"> 
+                        <div class="cheques-container minimized" id="cheques-container">
+                            <div id="cheques-header" class="cheques-header" onclick="togglecheques()">
+                                <span class="seta2">&#9650;</span> 
+                                <span class="titulo-cheques">Cheques em Aberto</span>
+                            </div>
+                            <table class="cheques_a_receber">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>Nome</th>
+                                        <th>CPF</th>
+                                        <th>DOC</th>
+                                        <th>OBS</th>
+                                        <th>Correntista</th> 
+                                        <th>Recebimento</th>
+                                        <th>Bom para</th>
+                                        <th>Valor</th>
+                                        <th>À Receber</th>  
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% set todas_notas = [] %}
+                                    {% for nota in cliente_detalhes.notas | selectattr("tipo", "equalto", "CHEQUE")%}
+                                        {% set _ = todas_notas.append({
+                                            "empresa": nota.empresa,
+                                            "nome": cliente_detalhes['nome'],
+                                            "cpf": cliente_detalhes['cpf'],
+                                            "nota": nota.nota,
+                                            "obs": nota.obs,
+                                            "parcela": nota.parcela,  
+                                            "data_venda": nota.data_venda,
+                                            "data_vencimento": nota.data_vencimento,
+                                            "valor_original": nota.valor_original,
+                                            "saldo_devedor": nota.saldo_devedor
+                                        }) %}
+                                    {% endfor %}
+                                    {% for cliente_relacionado in clientes_relacionados_detalhes %}
+                                        {% for nota in cliente_relacionado["notas"] | selectattr("tipo", "equalto", "CHEQUE") %}
+                                            {% set _ = todas_notas.append({
+                                                "empresa": nota.empresa,
+                                                "nome": cliente_relacionado['nome'],
+                                                "cpf": cliente_relacionado['cpf'],
+                                                "nota": nota.nota,
+                                                "obs": nota.obs,
+                                                "parcela": nota.parcela,  
+                                                "data_venda": nota.data_venda,
+                                                "data_vencimento": nota.data_vencimento,
+                                                "valor_original": nota.valor_original,
+                                                "saldo_devedor": nota.saldo_devedor
+                                            }) %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for nota in todas_notas|sort(attribute="data_vencimento") %}
+                                        <tr>
+                                            <td>{{ nota.empresa }}</td>
+                                            <td>{{ nota.nome }}</td>
+                                            <td>{{ nota.cpf }}</td>
+                                            <td>{{ nota.nota }}</td>
+                                            <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" /></td>
+                                            <td>{{ nota.parcela }}</td>
+                                            <td>{{ nota.data_venda }}</td>
+                                            <td>
+                                                <span style="color: {% if nota.data_vencimento and nota.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
+                                                    {{ nota.data_vencimento.strftime('%d/%m/%Y') if nota.data_vencimento else 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td class="valor" style="color: {% if nota.valor_original < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>                                        <td class="valor" style="color: {% if nota.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="notas-container minimized" id="notas-container">
+                            <div id="notas-header" class="notas-header" onclick="toggleNotas()">
+                                <span class="seta">&#9650;</span> 
+                                <span class="titulo-notas">Notas em Aberto</span>
+                            </div>
+                            <table class="contas_a_receber">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>Nome</th>
+                                        <th>CPF</th>
+                                        <th>NFe</th>
+                                        <th>OBS</th>
+                                        <th>Parcela</th> 
+                                        <th>Venda</th>
+                                        <th>Vencimento</th>
+                                        <th>Valor</th>
+                                        <th>À Receber</th>  
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% set todas_notas = [] %}
+                                    {% for nota in cliente_detalhes.notas | selectattr("tipo", "equalto", "NOTA")%}
+                                        {% set _ = todas_notas.append({
+                                            "empresa": nota.empresa,
+                                            "nome": cliente_detalhes['nome'],
+                                            "cpf": cliente_detalhes['cpf'],
+                                            "nota": nota.nota,
+                                            "obs": nota.obs,
+                                            "parcela": nota.parcela,  
+                                            "data_venda": nota.data_venda,
+                                            "data_vencimento": nota.data_vencimento,
+                                            "valor_original": nota.valor_original,
+                                            "saldo_devedor": nota.saldo_devedor
+                                        }) %}
+                                    {% endfor %}
+                                    {% for cliente_relacionado in clientes_relacionados_detalhes %}
+                                        {% for nota in cliente_relacionado["notas"] | selectattr("tipo", "equalto", "NOTA") %}
+                                            {% set _ = todas_notas.append({
+                                                "empresa": nota.empresa,
+                                                "nome": cliente_relacionado['nome'],
+                                                "cpf": cliente_relacionado['cpf'],
+                                                "nota": nota.nota,
+                                                "obs": nota.obs,
+                                                "parcela": nota.parcela,  
+                                                "data_venda": nota.data_venda,
+                                                "data_vencimento": nota.data_vencimento,
+                                                "valor_original": nota.valor_original,
+                                                "saldo_devedor": nota.saldo_devedor
+                                            }) %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for nota in todas_notas|sort(attribute="data_vencimento") %}
+                                        <tr>
+                                            <td>{{ nota.empresa }}</td>
+                                            <td>{{ nota.nome }}</td>
+                                            <td>{{ nota.cpf }}</td>
+                                            <td>{{ nota.nota }}</td>
+                                            <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" /></td>
+                                            <td>{{ nota.parcela }}</td>
+                                            <td>{{ nota.data_venda }}</td>
+                                            <td>
+                                                <span style="color: {% if nota.data_vencimento and nota.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
+                                                    {{ nota.data_vencimento.strftime('%d/%m/%Y') if nota.data_vencimento else 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td class="valor" style="color: {% if nota.valor_original < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>                                        <td class="valor" style="color: {% if nota.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% if cliente_detalhes['notas'] %}
+                        <div class="total-a-receber" id="total-a-receber">
+                            <h5>Total a Receber: R$ {{ cliente_detalhes['total_a_receber'] }}</h5>
+                        </div>
+                    {% endif %}
+                {% endif %}                  
+            </div>
+        </div>    
+    </div>
+    <script>
+        // container de notas
+        function toggleNotas() {
+            const notas = document.getElementById("notas-container");
+            const cheques = document.getElementById("cheques-container");
+
+            const estaMinimizado = notas.classList.contains("minimized");
+
+            cheques.classList.add("minimized");
+            cheques.classList.remove("ativo");
+
+            if (estaMinimizado) {
+                notas.classList.remove("minimized");
+                notas.classList.add("ativo");
+                notas.style.order = "2";
+                cheques.style.order = "1";
+            } else {
+                notas.classList.add("minimized");
+                notas.classList.remove("ativo");
+            }
+        }
+        // container de cheques
+        function togglecheques() {
+            const notas = document.getElementById("notas-container");
+            const cheques = document.getElementById("cheques-container");
+
+            const estaMinimizado = cheques.classList.contains("minimized");
+
+            notas.classList.add("minimized");
+            notas.classList.remove("ativo");
+
+            if (estaMinimizado) {
+                cheques.classList.remove("minimized");
+                cheques.classList.add("ativo");
+                cheques.style.order = "2";
+                notas.style.order = "1";
+            } else {
+                cheques.classList.add("minimized");
+                cheques.classList.remove("ativo");
+            }
+        }
+        // cache
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById("notas-container");
+            if (!container) return; // sai do script se não for a página certa
+
+            const obsInputs = container.querySelectorAll('input[name="observacao"]');
+
+            obsInputs.forEach(input => {
+                const parentRow = input.closest("tr");
+                const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
+                const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
+                const key = `obs-${empresa}-${nota}`;
+
+                // Carrega do localStorage se já existir
+                if (localStorage.getItem(key)) {
+                    input.value = localStorage.getItem(key);
+                    input.setAttribute("title", input.value);
+                }
+
+                // Atualiza localStorage ao digitar
+                input.addEventListener("input", function () {
+                    localStorage.setItem(key, input.value);
+                    input.setAttribute("title", input.value);
+                });
+            });
+
+            async function enviarObs() {
+                const obsInputs = container.querySelectorAll('input[name="observacao"]');
+                const obsData = Array.from(obsInputs).map(input => {
+                    const parentRow = input.closest("tr");
+                    const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
+                    const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
+                    return {
+                        empresa: empresa,
+                        nota: nota,
+                        observacao: input.value
+                    };
+                });
+
+                try {
+                    await fetch('/salvar_obs_notas', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ obs_notas: obsData })
+                    });
+                    console.log('Observações enviadas com sucesso!');
+                } catch (error) {
+                    console.error('Erro ao enviar observações:', error);
+                }
+            }
+
+            // Enviar e limpar localStorage ao sair da página
+            window.addEventListener('beforeunload', function () {
+                const obsInputs = container.querySelectorAll('input[name="observacao"]');
+                const obsData = Array.from(obsInputs).map(input => {
+                    const parentRow = input.closest("tr");
+                    const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
+                    const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
+                    return {
+                        empresa: empresa,
+                        nota: nota,
+                        observacao: input.value
+                    };
+                });
+
+                const blob = new Blob([JSON.stringify({ obs_notas: obsData })], {
+                    type: 'application/json'
+                });
+                navigator.sendBeacon('/salvar_obs_notas', blob);
+
+                // Remove todas as observações salvas no localStorage
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith("obs-")) {
+                        localStorage.removeItem(key);
+                    }
+                });
+            });
+        });
+
+        /*modal de observação dos atendimentos*/
+        function toggleObservationForm() {
+            const form = document.getElementById('observationForm');
+            form.classList.toggle('hidden');
+    
+            if (form.classList.contains('hidden')) {
+                const formObservation = document.getElementById('formObservation');
+                formObservation.reset();
+            }
+        } 
+        /*Carrega e exibe os atendimentos dinamicamente*/
+        async function carregarAtendimentos() {
+            try {
+                const response = await fetch('/get_atendimentos', { method: 'GET' });
+                if (response.ok) {
+                    const data = await response.json();
+                    const tabelaAtendimentos = document.getElementById('tabela-atendimentos').getElementsByTagName('tbody')[0];
+                    tabelaAtendimentos.innerHTML = ''; 
+                    
+                    data.atendimentos.forEach(atendimento => {
+                        const novaLinha = document.createElement('tr');
+                        novaLinha.innerHTML = `
+                            <td>${atendimento.cpf_cnpj}</td>
+                            <td>${atendimento.nome_cliente}</td>
+                            <td>${atendimento.data_atendimento}</td>
+                            <td>${atendimento.observacao}</td>
+                        `;
+                        tabelaAtendimentos.appendChild(novaLinha);
+                    });
+                } else {
+                    const error = await response.json();
+                    console.error('Erro ao carregar atendimentos:', error.error || 'Erro desconhecido');
+                }
+            } catch (error) {
+                console.error('Erro inesperado ao carregar atendimentos:', error);
+            }
+        }
+        /*Adicionar nova cobrança*/
+        const formObservation = document.getElementById('formObservation');
+        const submitButton = formObservation.querySelector('button[type="submit"]');
+        const inputsToWatch = ['cliente', 'observation', 'date'];
+    
+        formObservation.addEventListener('submit', async function (e) {
+            e.preventDefault();
+    
+            const formData = new FormData(this);
+    
+            submitButton.disabled = true;
+    
+            try {
+                const response = await fetch('/add_observation', {
+                    method: 'POST',
+                    body: formData,
+                });
+    
+                if (response.ok) {
+                    await response.json(); 
+                    window.location.reload(); 
+                } else {
+                    const error = await response.json();
+                    alert(`Erro: ${error.error || 'Erro desconhecido'}`);
+                }
+    
+                toggleObservationForm();
+            } catch (error) {
+                console.error('Erro inesperado:', error);
+                alert('Erro ao processar a solicitação.');
+            }
+        });
+    
+        inputsToWatch.forEach(id => {
+            const input = document.getElementById(id);
+            input.addEventListener('input', () => {
+                submitButton.disabled = false;
+            });
+        });
+        /*Carrega cobranças*/
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM totalmente carregado, iniciando carregamento dos atendimentos...');
+            carregarAtendimentos();
+        });
+        /*Navegação e seleção de linhas na tabela*/
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM totalmente carregado, iniciando navegação e seleção...');
+            const tabela = document.querySelector('.contas_a_receber tbody');
+            let selectedRow = null; 
+            let currentScrollTop = tabela.scrollTop; 
+
+            document.addEventListener('keydown', function (event) {
+                const rows = Array.from(tabela.querySelectorAll('tr'));
+
+                if (!rows.length) return; 
+
+                if (event.key === 'ArrowDown') {
+                    if (selectedRow === null) {
+                        selectedRow = rows[0]; 
+                    } else {
+                        const currentIndex = rows.indexOf(selectedRow);
+                        if (currentIndex < rows.length - 1) {
+                            selectedRow = rows[currentIndex + 1];
+                        }
+                    }
+                } else if (event.key === 'ArrowUp') {
+                    if (selectedRow !== null) {
+                        const currentIndex = rows.indexOf(selectedRow);
+                        if (currentIndex > 0) {
+                            selectedRow = rows[currentIndex - 1];
+                        }
+                    }
+                }
+
+                rows.forEach(row => row.classList.remove('selected-row'));
+                if (selectedRow) {
+                    selectedRow.classList.add('selected-row');
+                    tabela.scrollTop = currentScrollTop; 
+                }
+            });
+
+            tabela.addEventListener('click', function (event) {
+                const clickedRow = event.target.closest('tr');
+                if (!clickedRow) return;
+
+                selectedRow = clickedRow;
+
+                const rows = Array.from(tabela.querySelectorAll('tr'));
+                rows.forEach(row => row.classList.remove('selected-row'));
+                selectedRow.classList.add('selected-row');
+
+                tabela.scrollTop = currentScrollTop;
+            });
+
+            tabela.addEventListener('scroll', function () {
+                currentScrollTop = tabela.scrollTop;
+            });
+        });    
+        /*Esconder título da consulta com base em uma variável*/
+        document.addEventListener("DOMContentLoaded", function () {
+            const tituloConsulta = document.getElementById("tituloConsulta");
+
+            {% if cliente_detalhes %}
+                tituloConsulta.style.display = "none";
+            {% endif %}
+        });
+    </script>      
+</body>
+</html>

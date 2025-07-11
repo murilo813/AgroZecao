@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Contratos - Agropecária Zecão ERP</title>
-    <link href="static/css/contratos.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contratos.css') }}">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -16,44 +16,47 @@
     <div class="container">
         <div class="box">
             <h1>Contratos</h1>
-
-            <table id="contratos_table">
-                <thead>
-                    <tr>
-                        <th>ID Cliente</th>
-                        <th>Nome</th>
-                        <th>Documento</th>
-                        <th>Geração</th>
-                        <th>Vencimento</th>
-                        <th>Valor</th>
-                        <th>Saldo</th>
-                        <th>Tipo</th>
-                        <th class="actions-header"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for contrato in lista %}
-                    <tr data-id="{{ contrato.id }}" class="{% if contrato.saldo_devedor|float == 0 %}linha-quitada{% endif %}">
-                        <td>{{ contrato.id_cliente }}</td>
-                        <td>{{ contrato.nome_cliente }}</td>
-                        <td>{{ contrato.documento }}</td>
-                        <td>{{ contrato.data_geracaof }}</td>
-                        <td>{{ contrato.data_vencimentof }}</td>
-                        <td>{{ "{:.2f}".format(contrato.valor_original|float).replace('.', ',') }}</td>
-                        <td>{{ "{:.2f}".format(contrato.saldo_devedor|float).replace('.', ',') }}</td>
-                        <td>{{ contrato.tipo_contrato }}</td>
-                        <td class="actions-cell">
-                            <div class="actions">
-                                <button class="edit-btn" title="Editar"><i class="fas fa-edit"></i></button>
-                                <button class="save-btn" title="Salvar" style="display: none;"><i class="fas fa-check"></i></button>
-                                <button class="cancel-btn" title="Cancelar" style="display: none;"><i class="fas fa-times"></i></button>
-                                <button class="delete-btn" title="Excluir"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="tabela-container">
+                <div id="contratos_table">
+                    <table id="contratos_table">
+                        <thead>
+                            <tr>
+                                <th>ID Cliente</th>
+                                <th>Nome</th>
+                                <th>Documento</th>
+                                <th>Geração</th>
+                                <th>Vencimento</th>
+                                <th>Valor</th>
+                                <th>Saldo</th>
+                                <th>Tipo</th>
+                                <th class="actions-header"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contrato in lista %}
+                            <tr data-id="{{ contrato.id }}" class="{% if contrato.saldo_devedor|float == 0 %}linha-quitada{% endif %}">
+                                <td>{{ contrato.id_cliente }}</td>
+                                <td>{{ contrato.nome_cliente }}</td>
+                                <td>{{ contrato.documento }}</td>
+                                <td>{{ contrato.data_geracaof }}</td>
+                                <td>{{ contrato.data_vencimentof }}</td>
+                                <td>{{ "{:.2f}".format(contrato.valor_original|float).replace('.', ',') }}</td>
+                                <td>{{ "{:.2f}".format(contrato.saldo_devedor|float).replace('.', ',') }}</td>
+                                <td>{{ contrato.tipo_contrato }}</td>
+                                <td class="actions-cell">
+                                    <div class="actions">
+                                        <button class="edit-btn" title="Editar"><i class="fas fa-edit"></i></button>
+                                        <button class="save-btn" title="Salvar" style="display: none;"><i class="fas fa-check"></i></button>
+                                        <button class="cancel-btn" title="Cancelar" style="display: none;"><i class="fas fa-times"></i></button>
+                                        <button class="delete-btn" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <button id="add-row-btn" style="margin-top: 10px;">Adicionar Linha</button>
         </div>
     </div>

@@ -5,13 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Agropecuária Zecão ERP</title>
-
-    <link rel="stylesheet" href="static/css/base.css" />
-
-    <link
-      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css">
   </head>
   <body>
     <nav>
@@ -20,7 +15,7 @@
         <span class="logo-name">Agrozecão</span>
         <div class="nav-buttons">
           <a class="nav-button" href="home">Início</a>
-          <a class="nav-button" href="consulta">Financeiro</a>
+          <a class="nav-button" href="financeiro">Financeiro</a>
           <a class="nav-button" href="gerencia">Gerência</a>
           <a class="nav-button" href="estoque">Estoque</a>
           <a class="nav-button" href="gastos">Gastos</a>
@@ -128,7 +123,7 @@
                     <p>{{ notificacao[1] }}</p>  
                     <p>{{ notificacao[2] }}</p>  
                     {% if notificacao|length > 4 %} 
-                      <a href="{{ url_for('consulta.consulta', cpf_cnpj=notificacao[3]) }}" class="btn-ver-notas">Ver</a>
+                      <a href="{{ url_for('financeiro.financeiro', cpf_cnpj=notificacao[3]) }}" class="btn-ver-notas">Ver</a>
                     {% endif %}
 
                     <button class="close-btn" onclick="removerNotificacao('{{ notificacao[-1] }}', this)">X</button>
