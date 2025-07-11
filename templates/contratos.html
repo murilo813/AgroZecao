@@ -10,12 +10,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}" />
-    <style>
-      /* Para facilitar testes */
-      .actions button {
-        margin: 0 2px;
-      }
-    </style>
 </head>
 <body>
     {% include 'base.html' %}
@@ -39,14 +33,14 @@
                 </thead>
                 <tbody>
                     {% for contrato in lista %}
-                    <tr>
+                    <tr data-id="{{ contrato.id }}" class="{% if contrato.saldo_devedor|float == 0 %}linha-quitada{% endif %}">
                         <td>{{ contrato.id_cliente }}</td>
                         <td>{{ contrato.nome_cliente }}</td>
                         <td>{{ contrato.documento }}</td>
-                        <td>{{ contrato.data_geracao }}</td>
-                        <td>{{ contrato.data_vencimento }}</td>
-                        <td>{{ contrato.valor_original }}</td>
-                        <td>{{ contrato.saldo_devedor }}</td>
+                        <td>{{ contrato.data_geracaof }}</td>
+                        <td>{{ contrato.data_vencimentof }}</td>
+                        <td>{{ "{:.2f}".format(contrato.valor_original|float).replace('.', ',') }}</td>
+                        <td>{{ "{:.2f}".format(contrato.saldo_devedor|float).replace('.', ',') }}</td>
                         <td>{{ contrato.tipo_contrato }}</td>
                         <td class="actions-cell">
                             <div class="actions">
@@ -112,7 +106,27 @@
             row.originalValues.push(cell.textContent);
 
             const input = document.createElement('input');
-            input.value = cell.textContent;
+            input.value = cell.textContent.toUpperCase();
+
+            if (i === 3 || i === 4) {
+                formatarDataInput(input);
+            }
+            else if (i === 5 || i === 6) {
+                input.addEventListener('keypress', (event) => {
+                    if (event.key === '.') {
+                        event.preventDefault();
+                    }
+                });
+                input.addEventListener('input', () => {
+                    input.value = input.value.replace(/\./g, ',');
+                });
+            }
+            else {
+                input.addEventListener('input', () => {
+                    input.value = input.value.toUpperCase();
+                });
+            }
+
             input.style.border = 'none';
             input.style.background = 'transparent';
             input.style.width = '100%';
@@ -127,6 +141,8 @@
             cell.appendChild(input);
         }
     }
+
+
 
     function disableEdit(row, save) {
         for (let i = 0; i < row.cells.length - 1; i++) {
@@ -197,6 +213,7 @@
 
     function salvarContrato(row) {
         const dados = {
+            id: row.dataset.id,
             id_cliente: row.cells[0].textContent.trim(),
             nome_cliente: row.cells[1].textContent.trim(),
             documento: row.cells[2].textContent.trim(),
@@ -224,14 +241,14 @@
     }
 
     function deletarContrato(row) {
-        const id_cliente = row.cells[0].textContent.trim();
+        const id = row.dataset.id;
 
         fetch('/deletarcontrato', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id_cliente })
+            body: JSON.stringify({ id })
         })
         .then(res => res.json())
         .then(data => {
@@ -240,6 +257,25 @@
         })
         .catch(err => {
             console.error('Erro ao deletar contrato:', err);
+        });
+    }
+
+    function formatarDataInput(input) {
+        input.addEventListener('input', () => {
+            let val = input.value;
+            val = val.replace(/\D/g, '');
+
+            if (val.length > 8) {
+                val = val.substr(0,8);
+            }
+
+            if (val.length > 4) {
+                val = val.replace(/^(\d{2})(\d{2})(\d{1,4})$/, '$1/$2/$3');
+            } else if (val.length > 2) {
+                val = val.replace(/^(\d{2})(\d{1,2})$/, '$1/$2');
+            }
+
+            input.value = val;
         });
     }
     </script>

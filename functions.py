@@ -25,10 +25,10 @@ def carregar_usuario_por_nome(nome):
         conexao = criar_conexao()
         cursor = conexao.cursor()
         
-        cursor.execute("SELECT senha FROM usuarios WHERE nome = %s", (nome,))
+        cursor.execute("SELECT id, id_empresa, senha FROM usuarios WHERE nome = %s", (nome,))
         usuario = cursor.fetchone()
 
-        return usuario[0] if usuario else None  
+        return usuario  
     except Exception as e:
         print(f"Erro ao carregar usuário: {e}")
         return None
