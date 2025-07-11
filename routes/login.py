@@ -19,17 +19,25 @@ def login():
         senha = request.form.get('password', '').strip()
         remember = request.form.get('remember_me')
 
-        senha_hash = carregar_usuario_por_nome(nome)
+        usuario = carregar_usuario_por_nome(nome)
 
-        if senha_hash and check_password_hash(senha_hash, senha):
-            session.permanent = True if remember else False
-            session['usuario'] = nome
-            return redirect('/home')
-        else:
-            flash('Nome de usuário ou senha incorretos. Por favor, tente novamente.')
-            return redirect('/login')
+        if usuario:
+            usuario_id = usuario[0]
+            id_empresa = usuario[1]
+            senha_hash = usuario[2]
+
+            if check_password_hash(senha_hash, senha):
+                session.permanent = True if remember else False
+                session['usuario'] = nome
+                session['usuario_id'] = usuario_id
+                session['id_empresa'] = id_empresa
+                return redirect('/home')
+
+        flash('Nome de usuário ou senha incorretos. Por favor, tente novamente.')
+        return redirect('/login')
 
     return render_template('login.html')
+
 
 @login_bp.route('/logout')
 def logout():

@@ -125,3 +125,6 @@ tr {
 #add-row-btn:hover {
   background-color: #1b4f72;
 }
+.linha-quitada {
+    background-color: #d9fdd3 !important; /* verde bem claro */
+}
