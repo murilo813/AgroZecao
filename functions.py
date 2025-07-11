@@ -38,7 +38,7 @@ def login_required(view_func):
     def wrapped_view(*args, **kwargs):
         if 'usuario' not in session:
             flash("Você precisa estar logado para acessar essa página.")
-            return redirect(url_for('login_bp.login'))
+            return redirect(url_for('login.login'))
         return view_func(*args, **kwargs)
     return wrapped_view
 

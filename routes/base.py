@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, request, session, flash, redirect, jsonify
-from functions import criar_conexao, liberar_conexao
+from functions import criar_conexao, liberar_conexao, login_required
 from datetime import date
 
 base_bp = Blueprint('base', __name__)
 
 @base_bp.route('/minhascobrancas', methods=['GET'])
+@login_required
 def minhascobrancas():
     try:
         conexao = criar_conexao()
@@ -35,6 +36,7 @@ def minhascobrancas():
             liberar_conexao(conexao)
 
 @base_bp.route('/remover_notificacao', methods=['POST'])
+@login_required
 def remover_notificacao():
     data = request.json
 
