@@ -32,6 +32,11 @@ def carregar_usuario_por_nome(nome):
     except Exception as e:
         print(f"Erro ao carregar usuário: {e}")
         return None
+    finally:
+        if cursor:
+            cursor.close()
+        if conexao:
+            liberar_conexao(conexao)
     
 def login_required(view_func):
     @wraps(view_func)
