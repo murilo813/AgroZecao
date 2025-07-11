@@ -364,6 +364,9 @@ def salvar_obs_notas():
     except Exception as e:
         print("Erro ao salvar observações via sendBeacon:", e)
         return jsonify({"status": "erro"}), 500
+    finally:
+        if conexao:
+            liberar_conexao(conexao)
 
 @consulta_bp.route('/add_observation', methods=['POST'])
 @login_required
