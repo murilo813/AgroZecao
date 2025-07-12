@@ -38,10 +38,10 @@
                                 <td>{{ contrato.id_cliente }}</td>
                                 <td>{{ contrato.nome_cliente }}</td>
                                 <td>{{ contrato.documento }}</td>
-                                <td>{{ contrato.data_geracaof }}</td>
-                                <td>{{ contrato.data_vencimentof }}</td>
-                                <td>{{ "{:.2f}".format(contrato.valor_original|float).replace('.', ',') }}</td>
-                                <td>{{ "{:.2f}".format(contrato.saldo_devedor|float).replace('.', ',') }}</td>
+                                <td>{{ contrato.data_geracaof if contrato.data_geracaof else '' }}</td>
+                                <td>{{ contrato.data_vencimentof if contrato.data_vencimentof else '' }}</td>
+                                <td>{{ "{:,.2f}".format(contrato.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
+                                <td>{{ "{:,.2f}".format(contrato.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
                                 <td>{{ contrato.tipo_contrato }}</td>
                                 <td class="actions-cell">
                                     <div class="actions">

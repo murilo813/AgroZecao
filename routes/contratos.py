@@ -78,8 +78,16 @@ def salvarcontrato():
         cursor = conexao.cursor()
 
         dados = request.get_json()
-        valor = dados['valor_original'].replace(',', '.').strip()
-        saldo = dados['saldo_devedor'].replace(',', '.').strip()
+        if dados['data_geracao'] == "":
+            data1 = None
+        else:
+            data1 = dados['data_geracao']
+        if dados['data_vencimento'] == "":
+            data2 = None
+        else:
+            data2 = dados['data_vencimento']
+        valor = dados['valor_original'].replace('.', '').replace(',', '.').strip()
+        saldo = dados['saldo_devedor'].replace('.', '').replace(',', '.').strip()
         id_empresa = session.get('id_empresa')
         contrato_id = dados.get('id')
 
@@ -99,8 +107,8 @@ def salvarcontrato():
                 dados['id_cliente'],
                 dados['nome_cliente'],
                 dados['documento'],
-                dados['data_geracao'],
-                dados['data_vencimento'],
+                data1,
+                data2,
                 valor,
                 saldo,
                 dados['tipo_contrato'],
