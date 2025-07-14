@@ -26,7 +26,7 @@ def contratos():
 
         if not acesso:
             flash("Você não tem acesso a essa área.")
-            return redirect('/home')
+            return redirect('/financeiro')
 
         session['notificacoes'] = obter_notificacoes(usuario_logado)
 
@@ -78,8 +78,16 @@ def salvarcontrato():
         cursor = conexao.cursor()
 
         dados = request.get_json()
-        valor = dados['valor_original'].replace(',', '.').strip()
-        saldo = dados['saldo_devedor'].replace(',', '.').strip()
+        if dados['data_geracao'] == "":
+            data1 = None
+        else:
+            data1 = dados['data_geracao']
+        if dados['data_vencimento'] == "":
+            data2 = None
+        else:
+            data2 = dados['data_vencimento']
+        valor = dados['valor_original'].replace('.', '').replace(',', '.').strip()
+        saldo = dados['saldo_devedor'].replace('.', '').replace(',', '.').strip()
         id_empresa = session.get('id_empresa')
         contrato_id = dados.get('id')
 
@@ -99,8 +107,8 @@ def salvarcontrato():
                 dados['id_cliente'],
                 dados['nome_cliente'],
                 dados['documento'],
-                dados['data_geracao'],
-                dados['data_vencimento'],
+                data1,
+                data2,
                 valor,
                 saldo,
                 dados['tipo_contrato'],
@@ -138,31 +146,6 @@ def salvarcontrato():
     except Exception as e:
         print("Erro ao salvar contrato:", e)
         return jsonify({'mensagem': 'Erro ao salvar contrato.'}), 500
-    finally:
-        if conexao:
-            liberar_conexao(conexao)
-
-@contratos_bp.route('/deletarcontrato', methods=['POST'])
-@login_required
-def deletarcontrato():
-    conexao = None
-    try:
-        conexao = criar_conexao()
-        cursor = conexao.cursor()
-
-        dados = request.get_json()
-        contrato_id = dados.get('id')
-
-        cursor.execute("""
-            DELETE FROM contratos WHERE id = %s
-        """, (contrato_id,))
-
-        conexao.commit()
-        return jsonify({'mensagem': 'Contrato excluído com sucesso!'})
-
-    except Exception as e:
-        print("Erro ao deletar contrato:", e)
-        return jsonify({'mensagem': 'Erro ao deletar contrato.'}), 500
     finally:
         if conexao:
             liberar_conexao(conexao)

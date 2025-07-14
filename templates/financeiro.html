@@ -21,7 +21,17 @@
                 <label class="nome-cpf" for="nome">CPF ou ID:</label>
                 <input type="text" id="cpf" name="cpf_selecionado" value="{{ request.args.get('cpf_cnpj', '') }}">
                 <button type="submit" class="botao-pesquisar">Pesquisar</button>
-            </form>           
+                <a href="/contratos" class="btn">Contratos</a>
+            </form>   
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <script>
+                        {% for message in messages %}
+                            alert("{{ message }}");
+                        {% endfor %}
+                    </script>
+                {% endif %}
+            {% endwith %}        
             <div>    
                 {% if clientes and not cliente_detalhes %}
                     <thead>
