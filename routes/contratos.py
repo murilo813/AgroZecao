@@ -26,7 +26,7 @@ def contratos():
 
         if not acesso:
             flash("Você não tem acesso a essa área.")
-            return redirect('/home')
+            return redirect('/financeiro')
 
         session['notificacoes'] = obter_notificacoes(usuario_logado)
 

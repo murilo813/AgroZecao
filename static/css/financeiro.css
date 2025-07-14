@@ -65,8 +65,22 @@ h4 {
     color: #000000;
 }
 button.botao-pesquisar {
+    all: unset; /* remove o estilo padrao do navegador */
+    display: inline-block;
     position: relative;
     top: 90%;
+    padding: 2px 14px;
+    background-color: #06c056;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+}
+
+button.botao-pesquisar:hover {
+    background-color: #037a37;
 }
 label {
     position: relative;
@@ -76,7 +90,20 @@ input {
     position: relative;
     top: 90%;
 }
-
+.btn {
+    position: relative;
+    top: 90%;
+    padding: 2px 14px;
+    background-color: #06c056;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn:hover {
+  background-color: #037a37;
+}
 /*LISTA DE CLIENTES DA PESQUISA*/
 .cabeçalho {
     position: relative;
