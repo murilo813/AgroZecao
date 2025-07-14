@@ -149,28 +149,3 @@ def salvarcontrato():
     finally:
         if conexao:
             liberar_conexao(conexao)
-
-@contratos_bp.route('/deletarcontrato', methods=['POST'])
-@login_required
-def deletarcontrato():
-    conexao = None
-    try:
-        conexao = criar_conexao()
-        cursor = conexao.cursor()
-
-        dados = request.get_json()
-        contrato_id = dados.get('id')
-
-        cursor.execute("""
-            DELETE FROM contratos WHERE id = %s
-        """, (contrato_id,))
-
-        conexao.commit()
-        return jsonify({'mensagem': 'Contrato excluído com sucesso!'})
-
-    except Exception as e:
-        print("Erro ao deletar contrato:", e)
-        return jsonify({'mensagem': 'Erro ao deletar contrato.'}), 500
-    finally:
-        if conexao:
-            liberar_conexao(conexao)
