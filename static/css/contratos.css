@@ -158,7 +158,7 @@ tr {
 }
 #contratos_table th:nth-child(2),
 #contratos_table td:nth-child(2) {
-  width: 30%;
+  width: 33%;
 }
 #contratos_table th:nth-child(3),
 #contratos_table td:nth-child(3) {
@@ -188,5 +188,5 @@ tr {
 }
 #contratos_table th:nth-child(9),
 #contratos_table td:nth-child(9) {
-  width: 8%;
+  width: 5%;
 }

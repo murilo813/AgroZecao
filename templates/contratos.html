@@ -48,7 +48,6 @@
                                         <button class="edit-btn" title="Editar"><i class="fas fa-edit"></i></button>
                                         <button class="save-btn" title="Salvar" style="display: none;"><i class="fas fa-check"></i></button>
                                         <button class="cancel-btn" title="Cancelar" style="display: none;"><i class="fas fa-times"></i></button>
-                                        <button class="delete-btn" title="Excluir"><i class="fas fa-trash-alt"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -88,15 +87,9 @@
         cancelBtn.style.display = 'none';
         cancelBtn.innerHTML = '<i class="fas fa-times"></i>';
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.classList.add('delete-btn');
-        deleteBtn.title = 'Excluir';
-        deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-
         div.appendChild(editBtn);
         div.appendChild(saveBtn);
         div.appendChild(cancelBtn);
-        div.appendChild(deleteBtn);
 
         td.appendChild(div);
         return td;
@@ -194,10 +187,6 @@
         } else if (target.classList.contains('cancel-btn')) {
             disableEdit(row, false);
             toggleButtons(row, false);
-        } else if (target.classList.contains('delete-btn')) {
-            if (confirm('Tem certeza que deseja excluir esse contrato?')) {
-                deletarContrato(row);
-            }
         }
     });
 
