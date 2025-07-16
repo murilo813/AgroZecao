@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="km">KM:</label>
+                    <label for="km">KM/HR:</label>
                     <input id="km" name="km" placeholder="0000" title="">
                 </div>
 
@@ -305,7 +305,7 @@
             }
         }
 
-        // Formatar valores como moeda (reutilizável)
+        // Formatar valores como moeda 
         function formatarComoMoeda(input) {
             input.addEventListener('input', function(e) {
                 let valor = e.target.value.replace(/[^0-9,]/g, '');
@@ -332,19 +332,6 @@
                     }
                 }
             });
-        }
-
-        // Formatar desconto
-        function formatarMoeda(input) {
-            input.addEventListener('input', function (e) {
-                let valor = e.target.value.replace(/\D/g, '');
-                valor = (valor / 100).toFixed(2) + '';
-                valor = valor.replace('.', ',');
-                valor = 'R$ ' + valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                e.target.value = valor;
-            });
-
-            input.dispatchEvent(new Event('input'));
         }
 
         // Adicionar nova linha à tabela
@@ -400,8 +387,8 @@
             const inputValor = document.getElementById('valor');
             const inputKm = document.getElementById('km');
 
-            if (inputDesconto) formatarMoeda(inputDesconto);
-            if (inputValor) formatarMoeda(inputValor);
+            if (inputDesconto) formatarComoMoeda(inputDesconto);
+            if (inputValor) formatarComoMoeda(inputValor);
             
             // formatação do valor
             if (inputValor) {
@@ -414,16 +401,20 @@
                     e.target.value = valor;
                 });
 
-                inputValor.addEventListener('blur', function () {
-                    let valor = inputValor.value.replace(',', '.');
-                    valor = parseFloat(valor).toLocaleString('pt-BR', {
+            inputValor.addEventListener('blur', function () {
+                let valor = inputValor.value.replace(/[^\d,]/g, '').replace(',', '.'); // limpa para número float
+                let numero = parseFloat(valor);
+                if (!isNaN(numero)) {
+                    inputValor.value = numero.toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL',
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     });
-                    inputValor.value = valor;
-                });
+                } else {
+                    inputValor.value = ''; 
+                }
+            });
             }
 
             if (inputDesconto) {
