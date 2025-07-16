@@ -127,6 +127,9 @@ def gastos():
 @gastos_bp.route('/registrargastos', methods=["POST"])
 @login_required
 def registrargastos():
+
+    usuario_logado = session['usuario']
+
     try:
         placa = request.form['placa']
         responsavel = request.form['responsavel']
@@ -157,8 +160,8 @@ def registrargastos():
                 cursor.execute("""
                     INSERT INTO gastos (
                         placa, responsavel, tipo_gasto, fornecedor, doc, data, valor_total, km,
-                        id_produto, produto, valor_produto, quantidade, total_produto, desconto
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        id_produto, produto, valor_produto, quantidade, total_produto, desconto, usuario
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     placa,
                     responsavel,
@@ -173,7 +176,8 @@ def registrargastos():
                     valor_prod,
                     qtd,
                     total_prod,
-                    desconto
+                    desconto,
+                    usuario_logado
                 ))
 
             conexao.commit()
