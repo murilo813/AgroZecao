@@ -134,3 +134,110 @@ def obter_notificacoes(usuario):
             liberar_conexao(conexao)
 
     return notificacoes
+
+def obter_gastos(usuario_logado):
+    try:
+        conexao = criar_conexao()
+        cursor = conexao.cursor()
+
+        cursor.execute("SELECT id FROM usuarios WHERE nome = %s", (usuario_logado,))
+        usuario_id = cursor.fetchone()
+
+        if not usuario_id:
+            flash("Usuário não encontrado.")
+            return redirect('/login')
+
+        usuario_id = usuario_id[0]  
+
+        cursor.execute("SELECT 1 FROM acessos WHERE usuario_id = %s AND setor_id = 5", (usuario_id,))
+        tem_acesso = cursor.fetchone()
+
+        if not tem_acesso:
+            return render_template('home.html', erro_gastos=True)  
+
+        cursor.execute("SELECT placa, responsavel FROM frota ORDER BY placa")
+        frota = cursor.fetchall()  
+
+        placas = sorted(list(set([f[0] for f in frota])))
+        responsaveis = sorted(list(set([f[1] for f in frota])))
+
+        vinculos = {placa: resp for placa, resp in frota}
+
+        cursor.execute("""
+            SELECT nome_cliente, cpf_cnpj
+            FROM clientes
+            WHERE tipo_pessoa = 'J'
+            AND perfil_for = true
+            AND nome_cliente ~ '^[^0-9]*[0-9]?[^0-9]*$'
+        """)        
+        fornecedor_tuplas = cursor.fetchall()
+        fornecedor = [{'nome': f[0], 'cnpj': f[1]} for f in fornecedor_tuplas]
+
+        cursor.execute("""
+            SELECT
+                placa,
+                responsavel,
+                tipo_gasto AS gasto,
+                fornecedor AS onde,
+                doc AS documento,
+                TO_CHAR(data, 'DD/MM/YYYY') AS dia,
+                valor_total AS valor,
+                km,
+                id_produto AS id_pro,
+                produto,
+                valor_produto AS valor_unit,
+                quantidade,
+                total_produto AS total
+            FROM gastos
+            ORDER BY data
+        """)
+        registros = cursor.fetchall()
+        colunas = [desc[0] for desc in cursor.description]
+        dados = []
+        doc_anterior = None
+        tipo_gasto_anterior = None
+        responsavel_anterior = None
+
+        for linha in registros:
+            linha_dict = dict(zip(colunas, linha))
+            linha_dict = {k: ("" if v is None else v) for k, v in linha_dict.items()}
+            doc_atual = linha_dict['documento']
+            tipo_gasto_atual = linha_dict['gasto']  
+            responsavel_atual = linha_dict['responsavel']  
+
+            if doc_atual == doc_anterior and tipo_gasto_atual == tipo_gasto_anterior and responsavel_atual == responsavel_anterior:
+                linha_dict['placa_exibir'] = ''
+                linha_dict['responsavel_exibir'] = ''
+                linha_dict['gasto_exibir'] = ''
+                linha_dict['onde_exibir'] = ''
+                linha_dict['documento_exibir'] = ''
+                linha_dict['dia_exibir'] = ''
+                linha_dict['valor_exibir'] = ''
+                linha_dict['km_exibir'] = ''
+            else:
+                linha_dict['placa_exibir'] = linha_dict['placa']
+                linha_dict['responsavel_exibir'] = linha_dict['responsavel']
+                linha_dict['gasto_exibir'] = linha_dict['gasto']
+                linha_dict['onde_exibir'] = linha_dict['onde']
+                linha_dict['documento_exibir'] = linha_dict['documento']
+                linha_dict['dia_exibir'] = linha_dict['dia']
+                linha_dict['valor_exibir'] = linha_dict['valor']
+                linha_dict['km_exibir'] = linha_dict['km']
+                doc_anterior = doc_atual
+                tipo_gasto_anterior = tipo_gasto_atual
+                responsavel_anterior = responsavel_atual
+
+            dados.append(linha_dict)
+
+        return {
+            'placas': placas,
+            'responsaveis': responsaveis,
+            'vinculos': vinculos,
+            'fornecedor': fornecedor,
+            'dados': dados
+        }, None
+
+    except Exception as e:
+        return None, str(e)
+    finally:
+        liberar_conexao(conexao)
