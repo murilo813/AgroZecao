@@ -317,15 +317,19 @@
             });
 
             input.addEventListener('blur', function() {
-                let valor = input.value.replace(',', '.');
+                let valor = input.value.replace(/[^\d,]/g, '').replace(',', '.');
                 if (valor) {
-                    valor = parseFloat(valor).toLocaleString('pt-BR', { 
-                        style: 'currency', 
-                        currency: 'BRL',
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                    input.value = valor;
+                    valor = parseFloat(valor).toFixed(2);
+                    if (!isNaN(valor)) {
+                        input.value = parseFloat(valor).toLocaleString('pt-BR', { 
+                            style: 'currency', 
+                            currency: 'BRL',
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                    } else {
+                        input.value = '';
+                    }
                 }
             });
         }
