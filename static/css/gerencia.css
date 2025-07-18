@@ -348,6 +348,10 @@ h1 {
 .visualizar-dados i {
   margin-right: 10px; 
 }
+.visualizar-dados:hover {
+  background-color: #45a049;
+  transform: translateY(-5px);
+}
 /* verdados */
 #tabela-dados {
   position: absolute;
