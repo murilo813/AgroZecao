@@ -106,6 +106,9 @@ def financeiro():
                 lista_clientes_detalhes = []
                 data_hoje = date.today()
 
+                cpfs = [c[0] for c in clientes]
+                atendimentos_combinados = carregar_atendimentos(cpfs)
+
                 for cliente in clientes:
                     cpf_cliente = cliente[0]
                     nome_cliente = cliente[1]
@@ -113,53 +116,78 @@ def financeiro():
 
                     query_notas = """
                         SELECT
-                            cr.empresa,
-                            cr.nota,
-                            cr.parcela,
-                            cr.data_venda,
-                            cr.data_vencimento,
-                            cr.valor_original,
-                            cr.saldo_devedor,
-                            cr.tipo
-                        FROM contas_a_receber cr
-                        WHERE cr.cpf_cnpj = %s AND cr.data_base = %s
+                            id_empresa,
+                            nota,
+                            parcela,
+                            data_venda,
+                            data_vencimento,
+                            valor_original,
+                            saldo_devedor,
+                            obs
+                        FROM contas_a_receber 
+                        WHERE cpf_cnpj = %s AND data_base = %s
+                        ORDER BY data_vencimento
                     """
+
+                    query_contratos = """
+                        SELECT 
+                            id_empresa,
+                            documento,
+                            data_geracao,
+                            data_vencimento,
+                            valor_original,
+                            saldo_devedor,
+                            tipo_contrato,
+                            obs
+                        FROM contratos
+                        WHERE cpf_cnpj = %s AND data_base = %s AND saldo_devedor <> 0.00 
+                        ORDER BY data_vencimento
+                    """
+
+                    query_cheques = """
+                        SELECT
+                            id_empresa,
+                            documento,
+                            correntista,
+                            recebimento,
+                            bom_para,
+                            valor_original,
+                            saldo_devedor,
+                            obs
+                        FROM cheques
+                        WHERE cpf_cnpj = %s AND data_base = %s
+                        ORDER BY bom_para
+                    """
+
                     cursor.execute(query_notas, (cpf_cliente, data_hoje))
                     notas = cursor.fetchall()
 
-                    cpfs = list({c[0] for c in clientes})
-                    atendimentos_combinados = carregar_atendimentos(cpfs)
+                    cursor.execute(query_contratos, (cpf_cliente, data_hoje))
+                    contratos = cursor.fetchall
 
-                    atendimentos_deduplicados = list({
-                        f"{a['cpf_cnpj']}_{a['data_atendimento']}": a
-                        for a in atendimentos_combinados
-                    }.values())
+                    cursor.execute(query_cheques, (cpf_cliente, data_hoje))
+
+                    atendimentos_cliente = [
+                        a for a in atendimentos_combinados if a['cpf_cnpj'] == cpf_cliente
+                    ]
 
                     cliente_detalhes = {
                         "cpf": cpf_cliente,
                         "nome": nome_cliente,
                         "bairro": bairro_cliente,
-                        "notas": sorted(
-                            [
-                                {
-                                    "empresa": nota[0],
-                                    "nota": nota[1],
-                                    "parcela": nota[2],
-                                    "data_venda": nota[3].strftime('%d/%m/%Y') if nota[3] else None,  
-                                    "data_vencimento": nota[4],  
-                                    "valor_original": float(nota[5]) if nota[5] else 0.0,
-                                    "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
-                                    "tipo": nota[7]
-                                }
-                                for nota in notas
-                            ],
-                            key=lambda x: (
-                                x["data_vencimento"].year if x["data_vencimento"] else 9999,  
-                                x["data_vencimento"].month if x["data_vencimento"] else 12,   
-                                x["data_vencimento"].day if x["data_vencimento"] else 31
-                            )
-                        ),
-                        "atendimentos": atendimentos_deduplicados
+                        "notas": [
+                            {
+                                "empresa": nota[0],
+                                "nota": nota[1],
+                                "parcela": nota[2],
+                                "data_venda": nota[3].strftime('%d/%m/%Y') if nota[3] else None,  
+                                "data_vencimento": nota[4],  
+                                "valor_original": float(nota[5]) if nota[5] else 0.0,
+                                "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
+                            }
+                            for nota in notas
+                        ],
+                        "atendimentos": atendimentos_cliente
                     }
 
                     lista_clientes_detalhes.append(cliente_detalhes)

@@ -153,7 +153,7 @@ def financeiro():
                 if cliente:  
                     query_notas = """
                         SELECT DISTINCT
-                            cr.empresa,
+                            cr.id_empresa,
                             cr.nota,
                             cr.parcela,
                             cr.data_venda,
