@@ -14,6 +14,7 @@ financeiro_bp = Blueprint('financeiro', __name__)
 def financeiro():
     usuario_logado = session['usuario']
     session['notificacoes'] = obter_notificacoes(usuario_logado)
+    id_empresa = session.get('id_empresa')
 
     try:
         conexao = criar_conexao()
@@ -286,8 +287,46 @@ def financeiro():
 
                     clientes = [(cpf_cliente, nome_cliente)] + clientes_relacionados
 
+                    clientes_unicos = {}
+
+                    for c in clientes:
+                        cpf = c[0]
+                        if cpf not in clientes_unicos:
+                            clientes_unicos[cpf] = c
+
+                    clientes_unicos_lista = list(clientes_unicos.values())
+
+                    lista_contratos = []
+                    for cliente in clientes_unicos_lista:
+                        if cliente:
+                            query = """
+                                SELECT id_empresa,
+                                    nome_cliente, 
+                                    cpf_cnpj,
+                                    documento, 
+                                    data_geracao,
+                                    data_vencimento,
+                                    valor_original, 
+                                    saldo_devedor, 
+                                    tipo_contrato
+                                FROM contratos
+                                WHERE id_empresa = %s AND nome_cliente = %s
+                                ORDER BY saldo_devedor
+                            """.strip()
+
+                            cursor.execute(query, (id_empresa, cliente[1]))
+                            colunas = [desc[0] for desc in cursor.description]
+                            contratos = cursor.fetchall()
+
+                            for linha in contratos:
+                                linha_dict = dict(zip(colunas, linha))
+                                lista_contratos.append(linha_dict)
+                            
+                    cursor.close()
+
                     return render_template(
                         'financeiro.html',
+                        lista=lista_contratos,
                         clientes=clientes,
                         cliente_detalhes=cliente_detalhes,
                         clientes_relacionados_detalhes=clientes_relacionados_detalhes,

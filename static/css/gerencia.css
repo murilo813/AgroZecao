@@ -41,40 +41,51 @@ h1 {
   -webkit-text-stroke: 3px black; 
   text-shadow: none; 
 }
-table {
+.cobranca-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
-th, td {
+
+.cobranca-table th,
+.cobranca-table td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
-th {
+
+.cobranca-table th {
   background-color: #f4f4f4;
   font-weight: bold;
 }
-th:nth-child(1), td:nth-child(1) {
-  width: 40%; 
+
+.cobranca-table th:nth-child(1),
+.cobranca-table td:nth-child(1) {
+  width: 40%;
 }
 
-th:nth-child(2), td:nth-child(2) {
-  width: 50%; 
+.cobranca-table th:nth-child(2),
+.cobranca-table td:nth-child(2) {
+  width: 50%;
 }
 
-th:nth-child(3), td:nth-child(3) {
-  width: 10%; 
+.cobranca-table th:nth-child(3),
+.cobranca-table td:nth-child(3) {
+  width: 10%;
 }
-td {
+
+.cobranca-table td {
   font-size: 13px;
 }
-tr:hover {
+
+.cobranca-table tr:hover {
   background-color: #f9f9f9;
 }
-tbody tr:last-child td {
+
+.cobranca-table tbody tr:last-child td {
   border-bottom: none;
 }
+
 /*BOTÕES*/
 .buttons-container {
   display: flex;
@@ -118,7 +129,7 @@ tbody tr:last-child td {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   z-index: 1000; 
 }
-select {
+.select-mensagem {
   margin-bottom: 10px;
   width: 100%;
   padding: 5px;
@@ -318,4 +329,160 @@ select {
 }
 .btn-addorcamento:hover {
   background-color: #058d40;;
+}
+
+/*GASTOS*/
+.visualizar-dados {
+  display: flex;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 200px; 
+}
+.visualizar-dados i {
+  margin-right: 10px; 
+}
+/* verdados */
+#tabela-dados {
+  position: absolute;
+  top: 5% !important;
+  height: 88%;
+  max-width: 98%;
+  margin-bottom: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+#tabela-dados button:hover {
+  background-color: #0056b3;
+}
+/* caixa de filtros */
+.filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 14px;
+  margin-left: 50px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+.filtros-container button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.filtros-container input,
+.filtros-container select {
+  padding: 5px 8px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.filtros-container label {
+  font-size: 14px;
+  margin-right: 4px;
+}
+/*  */
+.tabela-container {
+  max-height: 85%;       
+  overflow-y: auto;       
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.tabela-gastos {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.8rem; 
+}
+.tabela-gastos thead th {
+  position: sticky;
+  top: 0;
+  background-color: #4e5255;
+  color: white;
+  z-index: 1;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+.tabela-gastos th,
+.tabela-gastos td {
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ccc; 
+  overflow-wrap: break-word;
+  vertical-align: top;
+}
+.tabela-gastos th:last-child,
+.tabela-gastos td:last-child {
+  border-right: none;
+}
+.tabela-gastos td {
+  text-align: left !important;
+  font-size: 0.8rem;
+}
+.tabela-gastos th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  background-color: #aaaaaa;
+  color: black;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  user-select: none;
+}
+.tabela-gastos tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+.tabela-gastos tbody tr:hover {
+  background-color: #e6f0ff;
+}
+/* Ajustes de largura */
+.tabela-gastos th:nth-child(1), .tabela-gastos td:nth-child(1) { width: 6%; }   /* Placa */
+.tabela-gastos th:nth-child(2), .tabela-gastos td:nth-child(2) { width: 8%; text-align: center; }   /* Responsável */
+.tabela-gastos th:nth-child(3), .tabela-gastos td:nth-child(3) { width: 9%; }   /* Gasto */
+.tabela-gastos th:nth-child(4), .tabela-gastos td:nth-child(4) { width: 24%; }  /* Fornecedor */
+.tabela-gastos th:nth-child(5), .tabela-gastos td:nth-child(5) { width: 5%; text-align: center; }   /* Documento */
+.tabela-gastos th:nth-child(6), .tabela-gastos td:nth-child(6) { width: 8%; }   /* Data */
+.tabela-gastos th:nth-child(7), .tabela-gastos td:nth-child(7) { width: 8%; }   /* Valor */
+.tabela-gastos th:nth-child(8), .tabela-gastos td:nth-child(8) { width: 7%; }   /* KM */
+.tabela-gastos th:nth-child(9), .tabela-gastos td:nth-child(9) { width: 5%; }   /* ID Produto */
+.tabela-gastos th:nth-child(10), .tabela-gastos td:nth-child(10) { width: 13%; } /* Produto */
+.tabela-gastos th:nth-child(11), .tabela-gastos td:nth-child(11) { width: 8%; } /* Valor Unit */
+.tabela-gastos th:nth-child(12), .tabela-gastos td:nth-child(12) { width: 5%; text-align: center; } /* Quantidade */
+.tabela-gastos th:nth-child(13), .tabela-gastos td:nth-child(13) { width: 8%; } /* Total */
+/* Cabeçalho */
+.tabela-gastos th:nth-child(1)  { text-align: center; vertical-align: middle; }  /* Placa */
+.tabela-gastos th:nth-child(2)  { vertical-align: middle; } /* Responsável */
+.tabela-gastos th:nth-child(3)  { text-align: center; vertical-align: middle; }  /* Gasto */
+.tabela-gastos th:nth-child(4)  { text-align: center; vertical-align: middle; }  /* Fornecedor */
+.tabela-gastos th:nth-child(5)  { vertical-align: middle; } /* Documento */
+.tabela-gastos th:nth-child(6)  { text-align: center; vertical-align: middle; }  /* Data */
+.tabela-gastos th:nth-child(7)  { text-align: center; vertical-align: middle; }  /* Valor */
+.tabela-gastos th:nth-child(8)  { text-align: center; vertical-align: middle; }  /* KM */
+.tabela-gastos th:nth-child(9)  { text-align: center; vertical-align: middle; }  /* ID Produto */
+.tabela-gastos th:nth-child(10) { text-align: left; vertical-align: middle; } /* Produto */
+.tabela-gastos th:nth-child(11) { text-align: center; vertical-align: middle; }  /* Valor Unit */
+.tabela-gastos th:nth-child(12) { vertical-align: middle; }  /* Quantidade */
+.tabela-gastos th:nth-child(13) { text-align: center; vertical-align: middle; }  /* Total */
+/* Dados */
+.tabela-gastos td:nth-child(4) {
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
 }

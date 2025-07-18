@@ -116,8 +116,10 @@
             </form>            
         </div>  
         <div id="tabela-dados" style="display: none; margin-top: 30px;">
-            <div class="titulo-container">
+            <div class="filtros-container">
                 <button onclick="voltar()">Voltar</button>
+
+                <input type="text" id="filtro-doc" placeholder="Filtrar por documento..." oninput="aplicarFiltros()">
 
                 <select id="filtro-placa" onchange="aplicarFiltros()">
                     <option value="">Todas as Placas</option>
@@ -126,7 +128,18 @@
                     {% endfor %}
                 </select>
 
-                <input type="text" id="filtro-doc" placeholder="Filtrar por documento..." oninput="aplicarFiltros()">
+                <select id="filtro-gasto" onchange="aplicarFiltros()">
+                    <option value="">Todos os Gastos</option>
+                    {% for gasto in gastos %}
+                        <option value="{{ gasto }}">{{ gasto }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="filtro-data-inicio">Data Início:</label>
+                <input type="date" id="filtro-data-inicio" onchange="aplicarFiltros()">
+
+                <label for="filtro-data-fim">Data Fim:</label>
+                <input type="date" id="filtro-data-fim" onchange="aplicarFiltros()">
 
             </div>
             <div class="tabela-container">
@@ -150,7 +163,7 @@
                     </thead>
                     <tbody>
                         {% for linha in dados %}
-                        <tr data-placa="{{ linha.placa }}" data-doc="{{ linha.documento }}">
+                        <tr data-placa="{{ linha.placa }}" data-doc="{{ linha.documento }}" data-data="{{ linha.dia }}" data-gasto="{{ linha.gasto }}">
                             <td>{{ linha.placa_exibir }}</td>
                             <td>{{ linha.responsavel_exibir }}</td>
                             <td>{{ linha.gasto_exibir }}</td>
@@ -178,26 +191,43 @@
         </div>
     </div>
     <script>
-        // junta filtros
+        // Aplica filtros
         function aplicarFiltros() {
-            const filtros = {
-                'placa': document.getElementById('filtro-placa')?.value.toLowerCase().trim(),
-                'doc': document.getElementById('filtro-doc')?.value.toLowerCase().trim(),
-            };
+            const filtroPlaca = document.getElementById('filtro-placa')?.value.toLowerCase().trim();
+            const filtroDoc = document.getElementById('filtro-doc')?.value.toLowerCase().trim();
+            const filtroGasto = document.getElementById('filtro-gasto')?.value.toLowerCase().trim();            const dataInicio = document.getElementById('filtro-data-inicio')?.value;
+            const dataFim = document.getElementById('filtro-data-fim')?.value;
 
             const linhas = document.querySelectorAll('.tabela-gastos tbody tr');
 
             linhas.forEach(linha => {
+                const placa = (linha.getAttribute('data-placa') || '').toLowerCase();
+                const doc = (linha.getAttribute('data-doc') || '').toLowerCase();
+                const gasto = (linha.getAttribute('data-gasto') || '').toLowerCase();
+                const data = linha.getAttribute('data-data'); 
+
                 let mostrar = true;
 
-                for (const campo in filtros) {
-                    const valorFiltro = filtros[campo];
-                    const valorLinha = (linha.getAttribute(`data-${campo}`) || "").toLowerCase();
+                if (filtroPlaca && placa !== filtroPlaca) {
+                    mostrar = false;
+                }
 
-                    if (valorFiltro && valorLinha !== (valorFiltro)) {
-                        mostrar = false;
-                        break;
-                    }
+                if (filtroDoc && !doc.includes(filtroDoc)) {
+                    mostrar = false;
+                }
+
+                if (filtroGasto && gasto !== filtroGasto) {
+                    mostrar = false;
+                }
+
+                const [dia, mes, ano] = (data || '').split('/');
+                const dataFormatada = `${ano}-${mes}-${dia}`; 
+
+                if (dataInicio && dataFormatada < dataInicio) {
+                    mostrar = false;
+                }
+                if (dataFim && dataFormatada > dataFim) {
+                    mostrar = false;
                 }
 
                 linha.style.display = mostrar ? '' : 'none';

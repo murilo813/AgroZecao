@@ -15,13 +15,14 @@
             <h1>Gerenciamento</h1>
             <div class="buttons-container">
 
-                <button class="btn-principal" data-action="orcamentos">
+                <!--<button class="btn-principal" data-action="orcamentos">
                     <i class="fas fa-file-alt"></i> Orçamentos
-                </button>                
+                </button>   -->             
 
-                <button class="btn-principal">
-                    <i class="fas fa-boxes"></i> Estoque
-                </button>
+                <button class="visualizar-dados" onclick="mostrarTabela()">
+                    <i class="fas fa-car"></i> Gastos
+                </button>           
+                
 
                 <button id="cobrancaBtn" class="btn-principal">
                     <i class="fas fa-file-invoice"></i> Cobranças
@@ -31,7 +32,7 @@
                     <i class="fas fa-envelope"></i> Mensagem
                 </button>
             </div>
-            <div class="box" id="orcamentosContent" style="display: none;">
+            <div class="boxorcamento" id="orcamentosContent" style="display: none;">
                 <h2>Orçamentos</h2>
                 <div class="orcamento-info">
                     <div class="orcamento-col">
@@ -91,8 +92,7 @@
                 <button class="btn-voltar" id="voltarBtn">Voltar</button>
                 <a href="{{ url_for('addorcamento.add_orcamento') }}" class="btn-addorcamento">
                     <i class="fas fa-plus"></i> Novo Orçamento
-                </a>
-                             
+                </a>         
             </div>
             
 
@@ -100,7 +100,7 @@
                 <div class="modal_conteudo">
                     <span id="fecharmodal" class="fechar">&times;</span>
                     <h2>Cobranças do Dia</h2>
-                    <table>
+                    <table class="cobranca-table">
                         <thead>
                             <tr>
                                 <th>Cliente</th>
@@ -118,7 +118,7 @@
                 <form id="formTogle" method="POST" action="/add_notificacao">
                     <span id="fechartogle" class="fechar">&times;</span>
                     <label for="usuario">Usuario:</label>
-                    <select id="usuario" name="usuario">
+                    <select class="select-mensagem" id="usuario" name="usuario">
                         {% for usuario in usuarios %}
                             <option value="{{ usuario }}">{{ usuario }}</option>]
                         {% endfor %}
@@ -130,10 +130,197 @@
                     <button type="submit" class="btn-enviar">Enviar</button>
                 </form>
             </div>
+        </div>
+        <div id="tabela-dados" style="display: none; margin-top: 30px;">
+            <div class="filtros-container">
+                <button onclick="voltar()">Voltar</button>
 
+                <input type="text" id="filtro-doc" placeholder="Filtrar por documento..." oninput="aplicarFiltros()">
+
+                <select id="filtro-placa" onchange="aplicarFiltros()">
+                    <option value="">Todas as Placas</option>
+                    {% for placa, responsavel in vinculos.items() %}
+                        <option value="{{ placa }}">{{ placa }} - {{ responsavel }}</option>
+                    {% endfor %}
+                </select>
+
+                <select id="filtro-gasto" onchange="aplicarFiltros()">
+                    <option value="">Todos os Gastos</option>
+                    {% for gasto in gastos %}
+                        <option value="{{ gasto }}">{{ gasto }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="filtro-data-inicio">Data Início:</label>
+                <input type="date" id="filtro-data-inicio" onchange="aplicarFiltros()">
+
+                <label for="filtro-data-fim">Data Fim:</label>
+                <input type="date" id="filtro-data-fim" onchange="aplicarFiltros()">
+
+            </div>
+            <div class="tabela-container">
+                <table class="tabela-gastos">
+                    <thead>
+                        <tr>
+                            <th>Placa</th>
+                            <th>Responsável</th>
+                            <th>Gasto</th>
+                            <th>Fornecedor</th>
+                            <th>Doc</th>
+                            <th>Data</th>
+                            <th>Total</th>
+                            <th>KM</th>
+                            <th>ID Prod</th>
+                            <th>Produto</th>
+                            <th>Valor</th>
+                            <th>QTD</th>
+                            <th>Total Prod</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for linha in dados %}
+                        <tr data-placa="{{ linha.placa }}" data-doc="{{ linha.documento }}" data-data="{{ linha.dia }}" data-gasto="{{ linha.gasto }}">
+                            <td>{{ linha.placa_exibir }}</td>
+                            <td>{{ linha.responsavel_exibir }}</td>
+                            <td>{{ linha.gasto_exibir }}</td>
+                            <td>{{ linha.onde_exibir }}</td>
+                            <td>{{ linha.documento_exibir }}</td>
+                            <td>{{ linha.dia_exibir }}</td>
+                            <td>
+                                {% if linha.valor_exibir %}
+                                    {{ "R$ {:.2f}".format(linha.valor_exibir|float).replace('.', ',') }}
+                                {% else %}
+                                    <!-- para nao exibir R$0,00 quando o valor vier vazio-->
+                                {% endif %}
+                            </td>
+                            <td>{{ linha.km_exibir }}</td>
+                            <td>{{ linha.id_pro }}</td>
+                            <td>{{ linha.produto }}</td>
+                            <td>{{ "R$ {:.2f}".format(linha.valor_unit|float).replace('.', ',') }}</td>
+                            <td>{{ linha.quantidade }}</td>
+                            <td>{{ "R$ {:.2f}".format(linha.total|float).replace('.', ',') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <script>
+        // GASTOS
+        // Aplica filtros
+        function aplicarFiltros() {
+            const filtroPlaca = document.getElementById('filtro-placa')?.value.toLowerCase().trim();
+            const filtroDoc = document.getElementById('filtro-doc')?.value.toLowerCase().trim();
+            const filtroGasto = document.getElementById('filtro-gasto')?.value.toLowerCase().trim();            const dataInicio = document.getElementById('filtro-data-inicio')?.value;
+            const dataFim = document.getElementById('filtro-data-fim')?.value;
+
+            const linhas = document.querySelectorAll('.tabela-gastos tbody tr');
+
+            linhas.forEach(linha => {
+                const placa = (linha.getAttribute('data-placa') || '').toLowerCase();
+                const doc = (linha.getAttribute('data-doc') || '').toLowerCase();
+                const gasto = (linha.getAttribute('data-gasto') || '').toLowerCase();
+                const data = linha.getAttribute('data-data'); 
+
+                let mostrar = true;
+
+                if (filtroPlaca && placa !== filtroPlaca) {
+                    mostrar = false;
+                }
+
+                if (filtroDoc && !doc.includes(filtroDoc)) {
+                    mostrar = false;
+                }
+
+                if (filtroGasto && gasto !== filtroGasto) {
+                    mostrar = false;
+                }
+
+                const [dia, mes, ano] = (data || '').split('/');
+                const dataFormatada = `${ano}-${mes}-${dia}`; 
+
+                if (dataInicio && dataFormatada < dataInicio) {
+                    mostrar = false;
+                }
+                if (dataFim && dataFormatada > dataFim) {
+                    mostrar = false;
+                }
+
+                linha.style.display = mostrar ? '' : 'none';
+            });
+        }
+        // filtro por doc
+        function filtrarPorDoc() {
+            const filtroDoc = document.getElementById("filtro-doc").value.toLowerCase();
+            const linhas = document.querySelectorAll(".tabela-gastos tbody tr");
+
+            linhas.forEach(linha => {
+                const doc = (linha.getAttribute("data-doc") || "").toLowerCase();
+
+                // Se o campo estiver vazio ou o doc contiver o texto digitado, exibe
+                if (!filtroDoc || doc.includes(filtroDoc)) {
+                    linha.style.display = "";
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+        }
+        // filtro por placa
+        function filtrarPorPlaca() {
+            const filtro = document.getElementById("filtro-placa").value;
+            const linhas = document.querySelectorAll(".tabela-gastos tbody tr");
+
+            linhas.forEach(linha => {
+                const placa = linha.getAttribute("data-placa");
+                if (!filtro || placa === filtro) {
+                    linha.style.display = "";
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+        }
+        // busca por cnpj em fornecedor para registrar gasto
+        document.addEventListener('DOMContentLoaded', function () {
+            const select = document.getElementById('onde');
+            for (const option of select.options) {
+                const texto = option.textContent;
+                option.setAttribute('data-fulltext', texto); 
+                option.textContent = texto.split(' (')[0];   
+            }
+        });
+        // enter passa pro proximo item
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                const formElements = Array.from(document.querySelectorAll('input, select, textarea, button'));
+                const index = formElements.indexOf(document.activeElement);
+                if (index > -1) {
+                    e.preventDefault(); 
+                    const next = formElements[index + 1];
+                    if (next) {
+                        next.focus();
+                    }
+                }
+            }
+        });
+        // tabela de dados
+        function mostrarTabela() {
+            const tabela = document.getElementById('tabela-dados');
+            const box = document.querySelector('.box');
+
+            box.style.display = 'none';
+            tabela.style.display = 'block';
+            tabela.scrollIntoView({ behavior: 'smooth' });
+        }
+        function voltar() {
+            const tabela = document.getElementById('tabela-dados');
+            const box = document.querySelector('.box');
+
+            tabela.style.display = 'none';
+            box.style.display = 'block';
+            box.scrollIntoView({ behavior: 'smooth' });
+        }
+
         /*MODAL DE COBRANÇAS*/
         const modal = document.getElementById("cobrancamodal");
         const btnAbrir = document.getElementById("cobrancaBtn");

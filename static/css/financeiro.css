@@ -65,7 +65,7 @@ h4 {
     color: #000000;
 }
 button.botao-pesquisar {
-    all: unset; /* remove o estilo padrao do navegador */
+    all: unset; 
     display: inline-block;
     position: relative;
     top: 90%;
@@ -525,7 +525,174 @@ input {
     background-color: #f0f8ff; 
     outline: 2px solid #007bff; 
 }
+/*LISTA DOS contratos DO CLIENTE*/
+.contratos-header {
+    position: sticky;
+    top: 0;
+    z-index: 3; 
+    background-color: #4e5255;
+    color: white;
+    padding: 8px 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.seta3 {
+    margin-right: 10px;
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+.contratos-container.minimized .seta3 {
+    transform: rotate(180deg);
+}
+.contratos-container.minimized table,
+.contratos-container.minimized .total-a-receber {
+    display: none;
+}
+.notas-container.ativo .notas-header,
+.contratos-container.ativo .contratos-header {
+    color: #00aaff; 
+    font-weight: bold;
+}
 
+.contratos-container {
+    top: 62%;
+    right: 40px;
+    left: 40px;
+    margin-top: 0; 
+    border-bottom: 2px solid #ccc;
+    border-radius: 5px; 
+    padding: 0px; 
+    background-color: #f9f9f9; 
+    max-height: 32vh; 
+    overflow-y: auto; 
+    box-sizing: border-box; 
+}
+.contratos-container::-webkit-scrollbar {
+    width: 10px;
+}
+.contratos-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.contratos-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+.contratos-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.contratos_a_receber {
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0;
+}
+.contratos_a_receber thead th {
+    position: sticky;
+    top: 34px; 
+    z-index: 2;
+    background-color: #4e5255;
+    color: #fff;
+    text-align: center;
+    padding: 6px 12px;
+    border-bottom: 2px solid #2c2f33;
+    border-top: 2px solid #2c2f33;
+    border-left: 2px solid #2c2f33;
+}
+.contratos_a_receber th, .contratos_a_receber td {
+    border-left: 1px solid #2c2f33;
+}
+.contratos_a_receber th:nth-child(1) {
+    width: 1%; 
+}
+.contratos_a_receber th:nth-child(2) {
+    width: 17%; 
+}
+.contratos_a_receber th:nth-child(4) {
+    width: 5%; 
+}
+.contratos_a_receber th:nth-child(5) {
+    width: 10%; 
+    text-align: center;
+}
+.contratos_a_receber th:nth-child(9) {
+    width: 10%; 
+    text-align: left;
+}
+.contratos_a_receber th:nth-child(10) {
+    width: 10%; 
+    text-align: left;
+}
+.contratos_a_receber tbody td {
+    padding: 6px 12px;
+    text-align: center; 
+    border-bottom: 2px solid #a8abad; 
+    border-left: 1px solid #a8abad; 
+}
+.contratos_a_receber td:nth-child(5) {
+    width: 10%; 
+    text-align: center;
+}
+.contratos_a_receber td:nth-child(9) {
+    width: 10%; 
+    text-align: left;
+}
+.contratos_a_receber td:nth-child(10) {
+    width: 10%; 
+    text-align: left;
+}
+.contratos_a_receber tbody tr:nth-child(odd) {
+    background-color: #f2f2f2; 
+}
+.contratos_a_receber tbody tr:hover {
+    background-color: #e6f7ff; 
+}
+.contratos_a_receber td, .contratos_a_receber th {
+    word-wrap: break-word; 
+}
+.contratos-container::-webkit-scrollbar {
+    width: 10px; 
+}
+.contratos-container::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+.contratos-container::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 5px;
+}
+.contratos-container::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+.tabela-contratos {
+    width: 100%; 
+    border-collapse: collapse; 
+    margin: 0; 
+}
+.tabela-contratos th, .tabela-contratos td {
+    padding: 8px; 
+    border: 1px solid #ddd; 
+    text-align: center; 
+    word-wrap: break-word; 
+}
+.tabela-contratos tr:nth-child(even) {
+    background-color: #f9f9f9; 
+}
+.tabela-contratos tr:hover {
+    background-color: #ddd; 
+}
+.contratos_a_receber tr[style] {
+    color: red;
+}
+.contratos_a_receber td, .contratos_a_receber th {
+    word-wrap: break-word; 
+}
+.selected-row {
+    background-color: #f0f8ff; 
+    outline: 2px solid #007bff; 
+}
 
 
 /*TOTAL A RECEBER*/

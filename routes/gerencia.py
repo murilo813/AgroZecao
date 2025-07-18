@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session, flash, redirect, jsonify
-from functions import criar_conexao, obter_notificacoes, liberar_conexao, login_required
+from functions import criar_conexao, obter_gastos, obter_notificacoes, liberar_conexao, login_required
 from datetime import date
 
 gerencia_bp = Blueprint('gerencia', __name__)
@@ -9,13 +9,13 @@ gerencia_bp = Blueprint('gerencia', __name__)
 def gerencia(): 
 
     usuario_logado = session['usuario']
+    resultado, erro = obter_gastos(usuario_logado) 
 
+    if erro:
+        flash(erro)
+        return redirect('/gerencia')
     try:
         conexao = criar_conexao()
-        if not conexao:
-            flash("Erro ao conectar ao banco de dados.")
-            return redirect('/gerencia')
-
         cursor = conexao.cursor()
 
         cursor.execute("SELECT id_empresa FROM usuarios WHERE nome = %s", (usuario_logado,))
@@ -44,10 +44,16 @@ def gerencia():
         """, (usuario_id,))
 
         session['notificacoes'] = obter_notificacoes(usuario_logado)
-
         if cursor.fetchone():  
-            return render_template('gerencia.html', usuarios=usuarios, notificacoes=session['notificacoes'])  
-
+            return render_template('gerencia.html', 
+                                    usuarios=usuarios, 
+                                    notificacoes=session['notificacoes'],
+                                    placas=resultado['placas'],
+                                    responsaveis=resultado['responsaveis'],
+                                    vinculos=resultado['vinculos'],
+                                    fornecedor=resultado['fornecedor'],
+                                    dados=resultado['dados'],
+                                    gastos=resultado['gastos'])
         else:
             return render_template('home.html', erro_gerencia=True)  
 
@@ -150,3 +156,22 @@ def cobrancas():
             cursor.close()
         if conexao:
             liberar_conexao(conexao)
+
+@gerencia_bp.route('/gerencia/gastos', methods=['GET'])
+@login_required
+def obter_gastos_route():
+    usuario_logado = session.get('usuario')
+    if not usuario_logado:
+        return jsonify({"error": "Usuário não logado"}), 401
+
+    try:
+        resultado, erro = obter_gastos(usuario_logado)
+        if erro:
+            return jsonify({"error": erro}), 500
+        
+        # resultado já deve ser uma lista de dicts, prontos para json
+        return jsonify({"dados": resultado})
+
+    except Exception as e:
+        print(f"Erro ao obter gastos: {e}")
+        return jsonify({"error": "Erro interno"}), 500
