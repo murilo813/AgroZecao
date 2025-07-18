@@ -24,7 +24,8 @@ def gastos():
                            responsaveis=resultado['responsaveis'],
                            vinculos=resultado['vinculos'],
                            fornecedor=resultado['fornecedor'],
-                           dados=resultado['dados'])
+                           dados=resultado['dados'],
+                           gastos=resultado['gastos'])
 
 @gastos_bp.route('/registrargastos', methods=["POST"])
 @login_required

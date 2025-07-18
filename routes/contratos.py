@@ -91,6 +91,13 @@ def salvarcontrato():
         id_empresa = session.get('id_empresa')
         contrato_id = dados.get('id')
 
+        cursor.execute("""
+                SELECT cpf_cnpj
+                FROM clientes
+                WHERE id_cliente = %s
+            """, (dados['id_cliente'],))
+        cpf_cnpj = cursor.fetchone()
+
         if contrato_id:
             cursor.execute("""
                 UPDATE contratos SET
@@ -101,7 +108,8 @@ def salvarcontrato():
                     data_vencimento = %s,
                     valor_original = %s,
                     saldo_devedor = %s,
-                    tipo_contrato = %s
+                    tipo_contrato = %s,
+                    cpf_cnpj = %s
                 WHERE id = %s 
             """, (
                 dados['id_cliente'],
@@ -112,6 +120,7 @@ def salvarcontrato():
                 valor,
                 saldo,
                 dados['tipo_contrato'],
+                cpf_cnpj,
                 contrato_id
             ))
         else:
@@ -125,9 +134,10 @@ def salvarcontrato():
                     valor_original,
                     saldo_devedor,
                     tipo_contrato,
-                    id_empresa
+                    id_empresa,
+                    cpf_cnpj
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 dados['id_cliente'],
                 dados['nome_cliente'],
@@ -137,7 +147,8 @@ def salvarcontrato():
                 valor,
                 saldo,
                 dados['tipo_contrato'],
-                id_empresa
+                id_empresa,
+                cpf_cnpj
             ))
         
         conexao.commit()

@@ -228,13 +228,16 @@ def obter_gastos(usuario_logado):
                 responsavel_anterior = responsavel_atual
 
             dados.append(linha_dict)
+        
+        gastos_unicos = sorted(set([linha['gasto'] for linha in dados if linha['gasto']]))
 
         return {
             'placas': placas,
             'responsaveis': responsaveis,
             'vinculos': vinculos,
             'fornecedor': fornecedor,
-            'dados': dados
+            'dados': dados,
+            'gastos': gastos_unicos
         }, None
 
     except Exception as e:

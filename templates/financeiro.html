@@ -146,6 +146,55 @@
                     </div>
                     <h4>Pendências</h4>
                     <div id="painel-container" style="position: fixed; top: 53%; left: 40px; right: 40px; display: flex; flex-direction: column; gap: 2px; z-index: 10;"> 
+                        <div class="contratos-container minimized" id="contratos-container">
+                            <div id="contratos-header" class="contratos-header" onclick="togglecontratos()">
+                                <span class="seta3">&#9650;</span> 
+                                <span class="titulo-contratos">Contratos em Aberto</span>
+                            </div>
+                            <table class="contratos_a_receber">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>Nome</th>
+                                        <th>CPF</th>
+                                        <th>DOC</th>
+                                        <th>OBS</th> 
+                                        <th>Geração</th>
+                                        <th>Vencimento</th>
+                                        <th>Valor</th>
+                                        <th>À Receber</th> 
+                                        <th>Tipo</th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% set todos_contratos = lista %}
+                                    {% for contrato in todos_contratos | sort(attribute="data_vencimento") %}
+                                        <tr>
+                                            <td>{{ contrato.id_empresa }}</td>
+                                            <td>{{ contrato.nome_cliente }}</td>
+                                            <td>{{ contrato.cpf_cnpj }}</td>
+                                            <td>{{ contrato.documento }}</td>
+                                            <td>
+                                                <input id="obs" name="observacao" value="{{ contrato.obs if contrato.obs is defined else '' | e }}" title="{{ contrato.obs if contrato.obs is defined else '' }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" />
+                                            </td>
+                                            <td>{{ contrato.data_geracao.strftime('%d/%m/%Y') }}</td>
+                                            <td>
+                                                <span style="color: {% if contrato.data_vencimento and contrato.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
+                                                    {{ contrato.data_vencimento.strftime('%d/%m/%Y') if contrato.data_vencimento else 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td class="valor" style="color: {% if contrato.valor_original < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(contrato.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>
+                                            <td class="valor" style="color: {% if contrato.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                                R$ {{ '{:,.2f}'.format(contrato.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>
+                                            <td>{{ contrato.tipo_contrato }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                         <div class="cheques-container minimized" id="cheques-container">
                             <div id="cheques-header" class="cheques-header" onclick="togglecheques()">
                                 <span class="seta2">&#9650;</span> 
@@ -307,41 +356,78 @@
         </div>    
     </div>
     <script>
+        // container dos contratos
+        function togglecontratos() {
+            const notas = document.getElementById("notas-container");
+            const cheques = document.getElementById("cheques-container");
+            const contratos = document.getElementById("contratos-container");
+
+            const estaMinimizado = contratos.classList.contains("minimized");
+
+            // Minimiza os outros dois
+            notas.classList.add("minimized");
+            notas.classList.remove("ativo");
+
+            cheques.classList.add("minimized");
+            cheques.classList.remove("ativo");
+
+            if (estaMinimizado) {
+                contratos.classList.remove("minimized");
+                contratos.classList.add("ativo");
+                contratos.style.order = "2";
+                notas.style.order = "1";
+                cheques.style.order = "1";
+            } else {
+                contratos.classList.add("minimized");
+                contratos.classList.remove("ativo");
+            }
+        }        
         // container de notas
         function toggleNotas() {
             const notas = document.getElementById("notas-container");
             const cheques = document.getElementById("cheques-container");
+            const contratos = document.getElementById("contratos-container");
 
             const estaMinimizado = notas.classList.contains("minimized");
 
             cheques.classList.add("minimized");
             cheques.classList.remove("ativo");
 
+            contratos.classList.add("minimized");
+            contratos.classList.remove("ativo");
+
             if (estaMinimizado) {
                 notas.classList.remove("minimized");
                 notas.classList.add("ativo");
                 notas.style.order = "2";
                 cheques.style.order = "1";
+                contratos.style.order = "1";
             } else {
                 notas.classList.add("minimized");
                 notas.classList.remove("ativo");
             }
         }
+
         // container de cheques
         function togglecheques() {
             const notas = document.getElementById("notas-container");
             const cheques = document.getElementById("cheques-container");
+            const contratos = document.getElementById("contratos-container");
 
             const estaMinimizado = cheques.classList.contains("minimized");
 
             notas.classList.add("minimized");
             notas.classList.remove("ativo");
 
+            contratos.classList.add("minimized");
+            contratos.classList.remove("ativo");
+
             if (estaMinimizado) {
                 cheques.classList.remove("minimized");
                 cheques.classList.add("ativo");
                 cheques.style.order = "2";
                 notas.style.order = "1";
+                contratos.style.order = "1";
             } else {
                 cheques.classList.add("minimized");
                 cheques.classList.remove("ativo");
@@ -349,41 +435,52 @@
         }
         // cache
         document.addEventListener("DOMContentLoaded", function () {
-            const container = document.getElementById("notas-container");
-            if (!container) return; // sai do script se não for a página certa
+            const containersIds = ["notas-container", "cheques-container", "contratos-container"];
+            
+            containersIds.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (!container) return; // pula se container não existe
 
-            const obsInputs = container.querySelectorAll('input[name="observacao"]');
+                const obsInputs = container.querySelectorAll('input[name="observacao"]');
 
-            obsInputs.forEach(input => {
-                const parentRow = input.closest("tr");
-                const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
-                const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
-                const key = `obs-${empresa}-${nota}`;
+                obsInputs.forEach(input => {
+                    const parentRow = input.closest("tr");
+                    const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
+                    const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
+                    const key = `obs-${empresa}-${nota}`;
 
-                // Carrega do localStorage se já existir
-                if (localStorage.getItem(key)) {
-                    input.value = localStorage.getItem(key);
-                    input.setAttribute("title", input.value);
-                }
+                    // Carrega do localStorage se já existir
+                    if (localStorage.getItem(key)) {
+                        input.value = localStorage.getItem(key);
+                        input.setAttribute("title", input.value);
+                    }
 
-                // Atualiza localStorage ao digitar
-                input.addEventListener("input", function () {
-                    localStorage.setItem(key, input.value);
-                    input.setAttribute("title", input.value);
+                    // Atualiza localStorage ao digitar
+                    input.addEventListener("input", function () {
+                        localStorage.setItem(key, input.value);
+                        input.setAttribute("title", input.value);
+                    });
                 });
             });
 
             async function enviarObs() {
-                const obsInputs = container.querySelectorAll('input[name="observacao"]');
-                const obsData = Array.from(obsInputs).map(input => {
-                    const parentRow = input.closest("tr");
-                    const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
-                    const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
-                    return {
-                        empresa: empresa,
-                        nota: nota,
-                        observacao: input.value
-                    };
+                let obsData = [];
+
+                containersIds.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (!container) return;
+
+                    const obsInputs = container.querySelectorAll('input[name="observacao"]');
+                    obsData = obsData.concat(Array.from(obsInputs).map(input => {
+                        const parentRow = input.closest("tr");
+                        const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
+                        const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
+                        return {
+                            empresa: empresa,
+                            nota: nota,
+                            observacao: input.value
+                        };
+                    }));
                 });
 
                 try {
@@ -402,16 +499,23 @@
 
             // Enviar e limpar localStorage ao sair da página
             window.addEventListener('beforeunload', function () {
-                const obsInputs = container.querySelectorAll('input[name="observacao"]');
-                const obsData = Array.from(obsInputs).map(input => {
-                    const parentRow = input.closest("tr");
-                    const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
-                    const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
-                    return {
-                        empresa: empresa,
-                        nota: nota,
-                        observacao: input.value
-                    };
+                let obsData = [];
+
+                containersIds.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (!container) return;
+
+                    const obsInputs = container.querySelectorAll('input[name="observacao"]');
+                    obsData = obsData.concat(Array.from(obsInputs).map(input => {
+                        const parentRow = input.closest("tr");
+                        const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
+                        const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
+                        return {
+                            empresa: empresa,
+                            nota: nota,
+                            observacao: input.value
+                        };
+                    }));
                 });
 
                 const blob = new Blob([JSON.stringify({ obs_notas: obsData })], {
@@ -427,6 +531,7 @@
                 });
             });
         });
+
 
         /*modal de observação dos atendimentos*/
         function toggleObservationForm() {

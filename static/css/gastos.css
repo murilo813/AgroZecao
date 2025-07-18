@@ -83,8 +83,7 @@ form textarea {
   color: black;
   font-size: 15px;
   width: 100%;
-  max-height: 50%;
-  height: 42px; 
+  height: 35px; 
 }
 form button {
   background-color: #007bff;
@@ -221,45 +220,37 @@ button.visualizar-dados:focus {
   background-color: #0056b3;
 }
 /* caixa de filtros */
-.titulo-container {
-  position: relative;
+.filtros-container {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 10px;
   margin: 14px;
-  height: 40px; 
+  margin-left: 50px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
-.titulo-container button {
-  position: absolute;
-  left: 2%;
-  bottom: 0;
+.filtros-container button {
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 5px 18px;
-  font-size: 1rem;
+  padding: 6px 14px;
+  font-size: 0.95rem;
   border-radius: 6px;
   cursor: pointer;
-  margin-bottom: 0;
   transition: background-color 0.3s ease;
 }
-.titulo-container select {
-  position: absolute;
-  left: 8%;
-  bottom: 0;
+.filtros-container input,
+.filtros-container select {
   padding: 5px 8px;
   font-size: 14px;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
-.titulo-container input {
-  position: absolute;
-  left: 38%;
-  bottom: 0;
-  padding: 5px 8px;
+.filtros-container label {
   font-size: 14px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  margin-right: 4px;
 }
 /*  */
 .tabela-container {
