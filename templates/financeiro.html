@@ -33,18 +33,17 @@
                 {% endif %}
             {% endwith %}        
             <div>    
-                {% if clientes and not cliente_detalhes %}
-                    <thead>
-                        <table class="cabeçalho">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>CPF</th>
-                                    <th>Responsável</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </thead>
+                {% if clientes and not lista_clientes_detalhes|length %}
+                    <table class="cabeçalho">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Responsável</th>
+                            </tr>
+                        </thead>
+                    </table>
+
                     <div class="lista-clientes-container">
                         <ul>
                             {% for cliente in clientes %}
@@ -64,7 +63,7 @@
                         </ul> 
                     </div>                 
                 {% endif %}
-                {% if cliente_detalhes %} 
+                {% if lista_clientes_detalhes %} 
                     <div>
                         <h2>Detalhes do Cliente</h2>
                         <div class="detalhes-cliente">
@@ -77,49 +76,44 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>{{ cliente_detalhes['nome'] }}</td>
-                                            <td>{{ cliente_detalhes['cpf'] }}</td>
-                                        </tr>
-                                        {% for cliente_relacionado in clientes_relacionados_detalhes %}
-                                            {% if cliente_relacionado['nome'] != cliente_detalhes['nome'] %}
-                                                <tr>
-                                                    <td>{{ cliente_relacionado['nome'] }}</td>
-                                                    <td>{{ cliente_relacionado['cpf'] }}</td>
-                                                </tr>
-                                            {% endif %}
+                                        {% for cliente in clientes %}
+                                            <tr>
+                                                <td>{{ cliente[1] }}</td>
+                                                <td>{{ cliente[0] }}</td>
+                                            </tr>
                                         {% endfor %}
                                     </tbody>
                                 </table>
                             </div>                       
                             <div class="caixa-atendimentos">
-                                <h3 id="atendimentosrota">Atendimentos Realizados</h3>                               
-                                {% if atendimentos and atendimentos|length > 0 %}
-                                    <table id="tabela-atendimentos">
-                                        <thead>
-                                            <tr>
-                                                <th>Usuário</th>
-                                                <th>Nome do Cliente</th>
-                                                <th>Data</th>
-                                                <th>Observação</th>                                                    
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for atendimento in atendimentos %}
+                                <h3 id="atendimentosrota">Atendimentos Realizados</h3> 
+                                <p id="msg-sem-atendimento">Nenhum atendimento encontrado.</p>
+                                {% for cliente in lista_clientes_detalhes %}
+                                    {% if cliente.atendimentos %}
+                                        <table id="tabela-atendimentos">
+                                            <thead>
                                                 <tr>
-                                                    <td>{{ atendimento.usuario }}</td>
-                                                    <td>{{ atendimento.nome_cliente }}</td>                                               
-                                                    <td>{{ atendimento.data_atendimento }}</td>
-                                                    <td>{{ atendimento.observacao }}</td>                                                                                  
+                                                    <th>Usuário</th>
+                                                    <th>Nome do Cliente</th>
+                                                    <th>Data</th>
+                                                    <th>Observação</th>                                                    
                                                 </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                {% else %}
-                                    <p>Nenhum atendimento encontrado.</p>
-                                {% endif %}
+                                            </thead>
+                                            <tbody>
+                                                {% for atendimento in cliente.atendimentos %}
+                                                    <tr>
+                                                        <td>{{ atendimento.usuario or 'N/A' }}</td>
+                                                        <td>{{ atendimento.nome_cliente or 'N/A' }}</td>                                               
+                                                        <td>{{ atendimento.data_atendimento or 'N/A' }}</td>
+                                                        <td>{{ atendimento.observacao or 'Sem observação' }}</td>                                                                                  
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% endif %}
+                                {% endfor %}
                                 <button class="add-button" onclick="toggleObservationForm()">+</button>
-                            </div>                          
+                            </div>                         
                             <div id="observationForm" class="hidden">
                                 <form id="formObservation" method="POST" action="/add_observation">
                                     <label for="cliente">Selecionar Cliente:</label>
@@ -145,7 +139,7 @@
                         </div>
                     </div>
                     <h4>Pendências</h4>
-                    <div id="painel-container" style="position: fixed; top: 53%; left: 40px; right: 40px; display: flex; flex-direction: column; gap: 2px; z-index: 10;"> 
+                    <div id="painel-container"> 
                         <div class="contratos-container minimized" id="contratos-container">
                             <div id="contratos-header" class="contratos-header" onclick="togglecontratos()">
                                 <span class="seta3">&#9650;</span> 
@@ -167,31 +161,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% set todos_contratos = lista %}
-                                    {% for contrato in todos_contratos | sort(attribute="data_vencimento") %}
-                                        <tr>
-                                            <td>{{ contrato.id_empresa }}</td>
-                                            <td>{{ contrato.nome_cliente }}</td>
-                                            <td>{{ contrato.cpf_cnpj }}</td>
-                                            <td>{{ contrato.documento }}</td>
-                                            <td>
-                                                <input id="obs" name="observacao" value="{{ contrato.obs if contrato.obs is defined else '' | e }}" title="{{ contrato.obs if contrato.obs is defined else '' }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" />
-                                            </td>
-                                            <td>{{ contrato.data_geracao.strftime('%d/%m/%Y') }}</td>
-                                            <td>
-                                                <span style="color: {% if contrato.data_vencimento and contrato.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
-                                                    {{ contrato.data_vencimento.strftime('%d/%m/%Y') if contrato.data_vencimento else 'N/A' }}
-                                                </span>
-                                            </td>
-                                            <td class="valor" style="color: {% if contrato.valor_original < 0 %}green{% else %}black{% endif %};">
-                                                R$ {{ '{:,.2f}'.format(contrato.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                            </td>
-                                            <td class="valor" style="color: {% if contrato.saldo_devedor < 0 %}green{% else %}black{% endif %};">
-                                                R$ {{ '{:,.2f}'.format(contrato.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                            </td>
-                                            <td>{{ contrato.tipo_contrato }}</td>
-                                        </tr>
+                                {% for cliente in lista_clientes_detalhes %}
+                                    {% for contrato in cliente.contratos %}
+                                    <tr>
+                                        <td>{{ contrato.empresa }}</td>
+                                        <td>{{ cliente.nome }}</td>
+                                        <td>{{ cliente.cpf }}</td>
+                                        <td>{{ contrato.documento }}</td>
+                                        <td>
+                                        <input id="obs" name="observacao" value="{{ contrato.obs | default('') | e }}" title="{{ contrato.obs | default('') }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" />
+                                        </td>
+                                        <td>{{ contrato.data_geracao }}</td>
+                                        <td>
+                                        <span style="color: {% if contrato.data_vencimento and contrato.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
+                                            {{ contrato.data_vencimento if contrato.data_vencimento else 'N/A' }}
+                                        </span>
+                                        </td>
+                                        <td class="valor" style="color: {% if contrato.valor_original < 0 %}green{% else %}black{% endif %};">
+                                        R$ {{ '{:,.2f}'.format(contrato.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                        </td>
+                                        <td class="valor" style="color: {% if contrato.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                        R$ {{ '{:,.2f}'.format(contrato.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                        </td>
+                                        <td>{{ contrato.tipo_contrato }}</td>
+                                    </tr>
                                     {% endfor %}
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -216,57 +211,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% set todas_notas = [] %}
-                                    {% for nota in cliente_detalhes.notas | selectattr("tipo", "equalto", "CHEQUE")%}
-                                        {% set _ = todas_notas.append({
-                                            "empresa": nota.empresa,
-                                            "nome": cliente_detalhes['nome'],
-                                            "cpf": cliente_detalhes['cpf'],
-                                            "nota": nota.nota,
-                                            "obs": nota.obs,
-                                            "parcela": nota.parcela,  
-                                            "data_venda": nota.data_venda,
-                                            "data_vencimento": nota.data_vencimento,
-                                            "valor_original": nota.valor_original,
-                                            "saldo_devedor": nota.saldo_devedor
-                                        }) %}
+                                {% for cliente in lista_clientes_detalhes %}
+                                    {% for cheque in cliente.cheques %}
+                                    <tr>
+                                        <td>{{ cheque.empresa }}</td>
+                                        <td>{{ cliente.nome }}</td>
+                                        <td>{{ cliente.cpf }}</td>
+                                        <td>{{ cheque.documento }}</td>
+                                        <td>
+                                        <input id="obs" name="observacao" value="{{ cheque.obs | default('') | e }}" title="{{ cheque.obs | default('') }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" />
+                                        </td>
+                                        <td>{{ cheque.correntista }}</td>
+                                        <td>{{ cheque.recebimento }}</td>
+                                        <td>
+                                        <span style="color: {% if cheque.bom_para and cheque.bom_para < data_hoje %}red{% else %}black{% endif %};">
+                                            {{ cheque.bom_para if cheque.bom_para else 'N/A' }}
+                                        </span>
+                                        </td>
+                                        <td class="valor" style="color: {% if cheque.valor_original < 0 %}green{% else %}black{% endif %};">
+                                        R$ {{ '{:,.2f}'.format(cheque.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                        </td>
+                                        <td class="valor" style="color: {% if cheque.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                        R$ {{ '{:,.2f}'.format(cheque.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                        </td>
+                                    </tr>
                                     {% endfor %}
-                                    {% for cliente_relacionado in clientes_relacionados_detalhes %}
-                                        {% for nota in cliente_relacionado["notas"] | selectattr("tipo", "equalto", "CHEQUE") %}
-                                            {% set _ = todas_notas.append({
-                                                "empresa": nota.empresa,
-                                                "nome": cliente_relacionado['nome'],
-                                                "cpf": cliente_relacionado['cpf'],
-                                                "nota": nota.nota,
-                                                "obs": nota.obs,
-                                                "parcela": nota.parcela,  
-                                                "data_venda": nota.data_venda,
-                                                "data_vencimento": nota.data_vencimento,
-                                                "valor_original": nota.valor_original,
-                                                "saldo_devedor": nota.saldo_devedor
-                                            }) %}
-                                        {% endfor %}
-                                    {% endfor %}
-                                    {% for nota in todas_notas|sort(attribute="data_vencimento") %}
-                                        <tr>
-                                            <td>{{ nota.empresa }}</td>
-                                            <td>{{ nota.nome }}</td>
-                                            <td>{{ nota.cpf }}</td>
-                                            <td>{{ nota.nota }}</td>
-                                            <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" /></td>
-                                            <td>{{ nota.parcela }}</td>
-                                            <td>{{ nota.data_venda }}</td>
-                                            <td>
-                                                <span style="color: {% if nota.data_vencimento and nota.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
-                                                    {{ nota.data_vencimento.strftime('%d/%m/%Y') if nota.data_vencimento else 'N/A' }}
-                                                </span>
-                                            </td>
-                                            <td class="valor" style="color: {% if nota.valor_original < 0 %}green{% else %}black{% endif %};">
-                                                R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                            </td>                                        <td class="valor" style="color: {% if nota.saldo_devedor < 0 %}green{% else %}black{% endif %};">
-                                                R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                            </td>                                    </tr>
-                                    {% endfor %}
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -292,29 +262,16 @@
                                 </thead>
                                 <tbody>
                                     {% set todas_notas = [] %}
-                                    {% for nota in cliente_detalhes.notas | selectattr("tipo", "equalto", "NOTA")%}
-                                        {% set _ = todas_notas.append({
-                                            "empresa": nota.empresa,
-                                            "nome": cliente_detalhes['nome'],
-                                            "cpf": cliente_detalhes['cpf'],
-                                            "nota": nota.nota,
-                                            "obs": nota.obs,
-                                            "parcela": nota.parcela,  
-                                            "data_venda": nota.data_venda,
-                                            "data_vencimento": nota.data_vencimento,
-                                            "valor_original": nota.valor_original,
-                                            "saldo_devedor": nota.saldo_devedor
-                                        }) %}
-                                    {% endfor %}
-                                    {% for cliente_relacionado in clientes_relacionados_detalhes %}
-                                        {% for nota in cliente_relacionado["notas"] | selectattr("tipo", "equalto", "NOTA") %}
+                                    {# Junta as notas de todos os clientes da lista #}
+                                    {% for cliente in lista_clientes_detalhes %}
+                                        {% for nota in cliente.notas %}
                                             {% set _ = todas_notas.append({
                                                 "empresa": nota.empresa,
-                                                "nome": cliente_relacionado['nome'],
-                                                "cpf": cliente_relacionado['cpf'],
+                                                "nome": cliente.nome,
+                                                "cpf": cliente.cpf,
                                                 "nota": nota.nota,
                                                 "obs": nota.obs,
-                                                "parcela": nota.parcela,  
+                                                "parcela": nota.parcela,
                                                 "data_venda": nota.data_venda,
                                                 "data_vencimento": nota.data_vencimento,
                                                 "valor_original": nota.valor_original,
@@ -322,13 +279,17 @@
                                             }) %}
                                         {% endfor %}
                                     {% endfor %}
+                                    
                                     {% for nota in todas_notas|sort(attribute="data_vencimento") %}
                                         <tr>
                                             <td>{{ nota.empresa }}</td>
                                             <td>{{ nota.nome }}</td>
                                             <td>{{ nota.cpf }}</td>
                                             <td>{{ nota.nota }}</td>
-                                            <td><input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" /></td>
+                                            <td>
+                                                <input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" 
+                                                    style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" />
+                                            </td>
                                             <td>{{ nota.parcela }}</td>
                                             <td>{{ nota.data_venda }}</td>
                                             <td>
@@ -338,24 +299,32 @@
                                             </td>
                                             <td class="valor" style="color: {% if nota.valor_original < 0 %}green{% else %}black{% endif %};">
                                                 R$ {{ '{:,.2f}'.format(nota.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                            </td>                                        <td class="valor" style="color: {% if nota.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                            </td>
+                                            <td class="valor" style="color: {% if nota.saldo_devedor < 0 %}green{% else %}black{% endif %};">
                                                 R$ {{ '{:,.2f}'.format(nota.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                            </td>                                    </tr>
+                                            </td>
+                                        </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    {% if cliente_detalhes['notas'] %}
-                        <div class="total-a-receber" id="total-a-receber">
-                            <h5>Total a Receber: R$ {{ cliente_detalhes['total_a_receber'] }}</h5>
-                        </div>
-                    {% endif %}
+                    <div class="total-a-receber" id="total-a-receber">
+                        <h5>Total a Receber: R$ {{ '{:,.2f}'.format(total_a_receber|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</h5>
+                    </div>
                 {% endif %}                  
             </div>
         </div>    
     </div>
     <script>
+        // mensagem de sem atendimentos
+        window.addEventListener('DOMContentLoaded', () => {
+            const tabelas = document.querySelectorAll('#tabela-atendimentos tbody tr');
+            const msg = document.getElementById('msg-sem-atendimento');
+            if (tabelas.length > 0) {
+                msg.style.display = 'none';
+            }
+        });
         // container dos contratos
         function togglecontratos() {
             const notas = document.getElementById("notas-container");
@@ -672,7 +641,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const tituloConsulta = document.getElementById("tituloConsulta");
 
-            {% if cliente_detalhes %}
+            {% if lista_clientes_detalhes %}
                 tituloConsulta.style.display = "none";
             {% endif %}
         });

@@ -54,7 +54,7 @@ h3 {
 }
 h4 {
     position: absolute;
-    bottom: 48vh; 
+    bottom: 50vh; 
     left: 43%;
     margin: 0 auto; 
     font-size: 25px; 
@@ -191,6 +191,16 @@ input {
 .lista-clientes-container button:hover {
     background-color: #888a8b;
 }
+#painel-container {
+    position: fixed;
+    top: 50%;
+    left: 40px;
+    right: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 10;
+}
 /*LISTA DAS NOTAS DO CLIENTE*/
 .notas-header {
     position: sticky;
@@ -215,8 +225,7 @@ input {
 .notas-container.minimized .seta {
     transform: rotate(180deg);
 }
-.notas-container.minimized table,
-.notas-container.minimized .total-a-receber {
+.notas-container.minimized table {
     display: none;
 }
 
@@ -230,7 +239,7 @@ input {
     border-radius: 5px; 
     padding: 0px; 
     background-color: #f9f9f9; 
-    max-height: 32vh; 
+    max-height: 30vh; 
     overflow-y: auto; 
     box-sizing: border-box; 
 }
@@ -381,8 +390,7 @@ input {
 .cheques-container.minimized .seta2 {
     transform: rotate(180deg);
 }
-.cheques-container.minimized table,
-.cheques-container.minimized .total-a-receber {
+.cheques-container.minimized table {
     display: none;
 }
 .notas-container.ativo .notas-header,
@@ -400,7 +408,7 @@ input {
     border-radius: 5px; 
     padding: 0px; 
     background-color: #f9f9f9; 
-    max-height: 32vh; 
+    max-height: 30vh; 
     overflow-y: auto; 
     box-sizing: border-box; 
 }
@@ -549,8 +557,7 @@ input {
 .contratos-container.minimized .seta3 {
     transform: rotate(180deg);
 }
-.contratos-container.minimized table,
-.contratos-container.minimized .total-a-receber {
+.contratos-container.minimized table {
     display: none;
 }
 .notas-container.ativo .notas-header,
@@ -568,7 +575,7 @@ input {
     border-radius: 5px; 
     padding: 0px; 
     background-color: #f9f9f9; 
-    max-height: 32vh; 
+    max-height: 30vh; 
     overflow-y: auto; 
     box-sizing: border-box; 
 }
@@ -694,12 +701,11 @@ input {
     outline: 2px solid #007bff; 
 }
 
-
 /*TOTAL A RECEBER*/
 .total-a-receber {
     position: absolute;
     right: 40px; 
-    bottom: 29px; 
+    bottom: 15px; 
     font-weight: bold;
     color: #333;
     padding: 10px;
