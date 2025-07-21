@@ -124,7 +124,7 @@ def financeiro():
                             saldo_devedor,
                             obs
                         FROM contas_a_receber 
-                        WHERE cpf_cnpj = %s AND data_base = %s
+                        WHERE cpf_cnpj = %s
                         ORDER BY data_vencimento
                     """
 
@@ -139,7 +139,7 @@ def financeiro():
                             tipo_contrato,
                             obs
                         FROM contratos
-                        WHERE cpf_cnpj = %s AND data_base = %s AND saldo_devedor <> 0.00 
+                        WHERE cpf_cnpj = %s AND saldo_devedor <> 0.00 
                         ORDER BY data_vencimento
                     """
 
@@ -154,17 +154,17 @@ def financeiro():
                             saldo_devedor,
                             obs
                         FROM cheques
-                        WHERE cpf_cnpj = %s AND data_base = %s
+                        WHERE cpf_cnpj = %s
                         ORDER BY bom_para
                     """
 
-                    cursor.execute(query_notas, (cpf_cliente, data_hoje))
+                    cursor.execute(query_notas, (cpf_cliente,))
                     notas = cursor.fetchall()
 
-                    cursor.execute(query_contratos, (cpf_cliente, data_hoje))
+                    cursor.execute(query_contratos, (cpf_cliente,))
                     contratos = cursor.fetchall()
 
-                    cursor.execute(query_cheques, (cpf_cliente, data_hoje))
+                    cursor.execute(query_cheques, (cpf_cliente,))
                     cheques = cursor.fetchall()
 
                     atendimentos_cliente = [
@@ -184,7 +184,7 @@ def financeiro():
                                 "data_vencimento": nota[4],  
                                 "valor_original": float(nota[5]) if nota[5] else 0.0,
                                 "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
-                                "obs": nota[7]
+                                "obs": nota[7] if nota[7] is not None else ""
                             }
                             for nota in notas
                         ],
@@ -197,7 +197,7 @@ def financeiro():
                                 "valor_original": float(contrato[4]) if contrato[4] else 0.0,
                                 "saldo_devedor": float(contrato[5]) if contrato[5] else 0.0,
                                 "tipo_contrato": contrato[6],
-                                "obs": contrato[7]
+                                "obs": contrato[7] if contrato[7] is not None else ""
                             }
                             for contrato in contratos
                         ],
@@ -210,7 +210,7 @@ def financeiro():
                                 "bom_para": cheque[4],
                                 "valor_original": float(cheque[5]) if cheque[5] else 0.0,
                                 "saldo_devedor": float(cheque[6]) if cheque[6] else 0.0,
-                                "obs": cheque[7]
+                                "obs": cheque[7] if cheque[7] is not None else ""
                             }
                             for cheque in cheques
                         ],
@@ -251,35 +251,46 @@ def financeiro():
 @financeiro_bp.route('/salvar_obs_notas', methods=['POST'])
 @login_required
 def salvar_obs_notas():
+    data = request.get_json()
+    obs_nota = data.get('observacao')
+    id = data.get('id')
+    tipo = data.get('tipo')
+
     try:
-        data = request.get_json()
-        obs_notas = data.get('obs_notas')  
-
         conexao = criar_conexao()
-        with conexao.cursor() as cursor:
-            for obs in obs_notas:
-                empresa = obs.get("empresa")
-                nota = obs.get("nota")
-                observacao = obs.get("observacao")
+        cursor = conexao.cursor()
 
-                if empresa and nota:
-                    if observacao.strip() != "":
-                        cursor.execute("""
-                            INSERT INTO obs_nota (empresa, nota, obs)
-                            VALUES (%s, %s, %s)
-                            ON CONFLICT (empresa, nota) DO UPDATE SET obs = EXCLUDED.obs
-                        """, (empresa, nota, observacao))
-                    else:
-                        cursor.execute("""
-                            DELETE FROM obs_nota
-                            WHERE empresa = %s AND nota = %s
-                        """, (empresa, nota))
+        if tipo == "nota":
+            query = """
+                UPDATE contas_a_receber
+                SET obs = %s
+                WHERE nota = %s
+            """
+            cursor.execute(query, (obs_nota, id))
 
-            conexao.commit()
+        elif tipo == "contrato":
+            query = """
+                UPDATE contratos
+                SET obs = %s
+                WHERE doc = %s
+            """
+            cursor.execute(query, (obs_nota, id))
+
+        else:
+            query = """
+                UPDATE cheques
+                SET obs = %s
+                WHERE documento = %s
+            """
+            cursor.execute(query, (obs_nota, id))
+
+        conexao.commit()
         return jsonify({"status": "ok"})
+
     except Exception as e:
         print("Erro ao salvar observações via sendBeacon:", e)
         return jsonify({"status": "erro"}), 500
+
     finally:
         if conexao:
             liberar_conexao(conexao)

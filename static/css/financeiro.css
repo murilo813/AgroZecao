@@ -458,6 +458,12 @@ input {
     width: 10%; 
     text-align: center;
 }
+.cheques_a_receber th:nth-child(7) {
+    width: 8%; 
+}
+.cheques_a_receber th:nth-child(8) {
+    width: 8%; 
+}
 .cheques_a_receber th:nth-child(9) {
     width: 10%; 
     text-align: left;

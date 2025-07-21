@@ -148,7 +148,7 @@
                             <table class="contratos_a_receber">
                                 <thead>
                                     <tr>
-                                        <th>Empresa</th>
+                                        <th>Emp</th>
                                         <th>Nome</th>
                                         <th>CPF</th>
                                         <th>DOC</th>
@@ -163,28 +163,36 @@
                                 <tbody>
                                 {% for cliente in lista_clientes_detalhes %}
                                     {% for contrato in cliente.contratos %}
-                                    <tr>
-                                        <td>{{ contrato.empresa }}</td>
-                                        <td>{{ cliente.nome }}</td>
-                                        <td>{{ cliente.cpf }}</td>
-                                        <td>{{ contrato.documento }}</td>
-                                        <td>
-                                        <input id="obs" name="observacao" value="{{ contrato.obs | default('') | e }}" title="{{ contrato.obs | default('') }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" />
-                                        </td>
-                                        <td>{{ contrato.data_geracao }}</td>
-                                        <td>
-                                        <span style="color: {% if contrato.data_vencimento and contrato.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
-                                            {{ contrato.data_vencimento if contrato.data_vencimento else 'N/A' }}
-                                        </span>
-                                        </td>
-                                        <td class="valor" style="color: {% if contrato.valor_original < 0 %}green{% else %}black{% endif %};">
-                                        R$ {{ '{:,.2f}'.format(contrato.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                        </td>
-                                        <td class="valor" style="color: {% if contrato.saldo_devedor < 0 %}green{% else %}black{% endif %};">
-                                        R$ {{ '{:,.2f}'.format(contrato.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                        </td>
-                                        <td>{{ contrato.tipo_contrato }}</td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ contrato.empresa }}</td>
+                                            <td>{{ cliente.nome }}</td>
+                                            <td>{{ cliente.cpf }}</td>
+                                            <td>{{ contrato.documento }}</td>
+                                            <td>
+                                            <input
+                                                id="obs"
+                                                name="observacao"
+                                                data-id="{{ contrato.documento }}"
+                                                data-tipo="contrato"
+                                                value="{{ contrato.obs | default('') | e }}"
+                                                title="{{ contrato.obs | default('') }}"
+                                                style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;"
+                                            />
+                                            </td>
+                                            <td>{{ contrato.data_geracao }}</td>
+                                            <td>
+                                            <span style="color: {% if contrato.data_vencimento and contrato.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
+                                                {{ contrato.data_vencimento if contrato.data_vencimento else 'N/A' }}
+                                            </span>
+                                            </td>
+                                            <td class="valor" style="color: {% if contrato.valor_original < 0 %}green{% else %}black{% endif %};">
+                                            R$ {{ '{:,.2f}'.format(contrato.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>
+                                            <td class="valor" style="color: {% if contrato.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                            R$ {{ '{:,.2f}'.format(contrato.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>
+                                            <td>{{ contrato.tipo_contrato }}</td>
+                                        </tr>
                                     {% endfor %}
                                 {% endfor %}
                                 </tbody>
@@ -198,7 +206,7 @@
                             <table class="cheques_a_receber">
                                 <thead>
                                     <tr>
-                                        <th>Empresa</th>
+                                        <th>Emp</th>
                                         <th>Nome</th>
                                         <th>CPF</th>
                                         <th>DOC</th>
@@ -213,28 +221,36 @@
                                 <tbody>
                                 {% for cliente in lista_clientes_detalhes %}
                                     {% for cheque in cliente.cheques %}
-                                    <tr>
-                                        <td>{{ cheque.empresa }}</td>
-                                        <td>{{ cliente.nome }}</td>
-                                        <td>{{ cliente.cpf }}</td>
-                                        <td>{{ cheque.documento }}</td>
-                                        <td>
-                                        <input id="obs" name="observacao" value="{{ cheque.obs | default('') | e }}" title="{{ cheque.obs | default('') }}" style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" />
-                                        </td>
-                                        <td>{{ cheque.correntista }}</td>
-                                        <td>{{ cheque.recebimento }}</td>
-                                        <td>
-                                        <span style="color: {% if cheque.bom_para and cheque.bom_para < data_hoje %}red{% else %}black{% endif %};">
-                                            {{ cheque.bom_para if cheque.bom_para else 'N/A' }}
-                                        </span>
-                                        </td>
-                                        <td class="valor" style="color: {% if cheque.valor_original < 0 %}green{% else %}black{% endif %};">
-                                        R$ {{ '{:,.2f}'.format(cheque.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                        </td>
-                                        <td class="valor" style="color: {% if cheque.saldo_devedor < 0 %}green{% else %}black{% endif %};">
-                                        R$ {{ '{:,.2f}'.format(cheque.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ cheque.empresa }}</td>
+                                            <td>{{ cliente.nome }}</td>
+                                            <td>{{ cliente.cpf }}</td>
+                                            <td>{{ cheque.documento }}</td>
+                                            <td>
+                                            <input
+                                                id="obs"
+                                                name="observacao"
+                                                data-id="{{ cheque.documento }}"
+                                                data-tipo="cheque"
+                                                value="{{ cheque.obs | default('') | e }}"
+                                                title="{{ cheque.obs | default('') }}"
+                                                style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;"
+                                            />
+                                            </td>
+                                            <td>{{ cheque.correntista }}</td>
+                                            <td>{{ cheque.recebimento }}</td>
+                                            <td>
+                                            <span style="color: {% if cheque.bom_para and cheque.bom_para < data_hoje %}red{% else %}black{% endif %};">
+                                                {{ cheque.bom_para.strftime('%d/%m/%Y') if cheque.bom_para else 'N/A' }}
+                                            </span>
+                                            </td>
+                                            <td class="valor" style="color: {% if cheque.valor_original < 0 %}green{% else %}black{% endif %};">
+                                            R$ {{ '{:,.2f}'.format(cheque.valor_original|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>
+                                            <td class="valor" style="color: {% if cheque.saldo_devedor < 0 %}green{% else %}black{% endif %};">
+                                            R$ {{ '{:,.2f}'.format(cheque.saldo_devedor|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                            </td>
+                                        </tr>
                                     {% endfor %}
                                 {% endfor %}
                                 </tbody>
@@ -248,7 +264,7 @@
                             <table class="contas_a_receber">
                                 <thead>
                                     <tr>
-                                        <th>Empresa</th>
+                                        <th>Emp</th>
                                         <th>Nome</th>
                                         <th>CPF</th>
                                         <th>NFe</th>
@@ -261,34 +277,23 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% set todas_notas = [] %}
-                                    {# Junta as notas de todos os clientes da lista #}
-                                    {% for cliente in lista_clientes_detalhes %}
-                                        {% for nota in cliente.notas %}
-                                            {% set _ = todas_notas.append({
-                                                "empresa": nota.empresa,
-                                                "nome": cliente.nome,
-                                                "cpf": cliente.cpf,
-                                                "nota": nota.nota,
-                                                "obs": nota.obs,
-                                                "parcela": nota.parcela,
-                                                "data_venda": nota.data_venda,
-                                                "data_vencimento": nota.data_vencimento,
-                                                "valor_original": nota.valor_original,
-                                                "saldo_devedor": nota.saldo_devedor
-                                            }) %}
-                                        {% endfor %}
-                                    {% endfor %}
-                                    
-                                    {% for nota in todas_notas|sort(attribute="data_vencimento") %}
+                                {% for cliente in lista_clientes_detalhes %}
+                                    {% for nota in cliente.notas %}
                                         <tr>
                                             <td>{{ nota.empresa }}</td>
-                                            <td>{{ nota.nome }}</td>
-                                            <td>{{ nota.cpf }}</td>
+                                            <td>{{ cliente.nome }}</td>
+                                            <td>{{ cliente.cpf }}</td>
                                             <td>{{ nota.nota }}</td>
                                             <td>
-                                                <input id="obs" name="observacao" value="{{ nota.obs | e }}" title="{{ nota.obs }}" 
-                                                    style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;" />
+                                            <input
+                                                id="obs"
+                                                name="observacao"
+                                                data-id="{{ nota.nota }}"
+                                                data-tipo="nota"
+                                                value="{{ nota.obs | default('') | e }}"
+                                                title="{{ nota.obs | default('') }}"
+                                                style="width: 100%; border: none; outline: none; background: transparent; color: red; font-weight: bold;"
+                                            />
                                             </td>
                                             <td>{{ nota.parcela }}</td>
                                             <td>{{ nota.data_venda }}</td>
@@ -305,6 +310,7 @@
                                             </td>
                                         </tr>
                                     {% endfor %}
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -376,6 +382,25 @@
                 notas.classList.remove("ativo");
             }
         }
+        window.onload = function() {
+            const notas = document.getElementById("notas-container");
+            const cheques = document.getElementById("cheques-container");
+            const contratos = document.getElementById("contratos-container");
+
+            // Deixa notas aberto (remove minimized, adiciona ativo)
+            notas.classList.remove("minimized");
+            notas.classList.add("ativo");
+            notas.style.order = "2";
+
+            // Minimiza os outros dois
+            cheques.classList.add("minimized");
+            cheques.classList.remove("ativo");
+            cheques.style.order = "1";
+
+            contratos.classList.add("minimized");
+            contratos.classList.remove("ativo");
+            contratos.style.order = "1";
+        };
 
         // container de cheques
         function togglecheques() {
@@ -402,105 +427,67 @@
                 cheques.classList.remove("ativo");
             }
         }
-        // cache
-        document.addEventListener("DOMContentLoaded", function () {
-            const containersIds = ["notas-container", "cheques-container", "contratos-container"];
-            
-            containersIds.forEach(containerId => {
-                const container = document.getElementById(containerId);
-                if (!container) return; // pula se container não existe
+        // obs
+        document.querySelectorAll('input[name="observacao"]').forEach(input => {
+            const container = document.createElement('span');
+            container.style.marginLeft = '5px';
+            container.style.display = 'none'; 
 
-                const obsInputs = container.querySelectorAll('input[name="observacao"]');
+            const btnConfirm = document.createElement('button');
+            btnConfirm.textContent = '✔';
+            btnConfirm.style.marginRight = '3px';
+            btnConfirm.title = 'Salvar observação';
 
-                obsInputs.forEach(input => {
-                    const parentRow = input.closest("tr");
-                    const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
-                    const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
-                    const key = `obs-${empresa}-${nota}`;
+            const btnCancel = document.createElement('button');
+            btnCancel.textContent = '✖';
+            btnCancel.title = 'Cancelar edição';
 
-                    // Carrega do localStorage se já existir
-                    if (localStorage.getItem(key)) {
-                        input.value = localStorage.getItem(key);
-                        input.setAttribute("title", input.value);
-                    }
+            container.appendChild(btnConfirm);
+            container.appendChild(btnCancel);
 
-                    // Atualiza localStorage ao digitar
-                    input.addEventListener("input", function () {
-                        localStorage.setItem(key, input.value);
-                        input.setAttribute("title", input.value);
-                    });
-                });
+            input.parentNode.appendChild(container);
+
+            let originalValue = input.value;
+
+            input.addEventListener('input', () => {
+                if (input.value !== originalValue) {
+                    container.style.display = 'inline';
+                } else {
+                    container.style.display = 'none';
+                }
             });
 
-            async function enviarObs() {
-                let obsData = [];
+            btnCancel.addEventListener('click', () => {
+                input.value = originalValue;
+                container.style.display = 'none';
+            });
 
-                containersIds.forEach(containerId => {
-                    const container = document.getElementById(containerId);
-                    if (!container) return;
+            btnConfirm.addEventListener('click', () => {
+                const observacao = input.value;
+                const notaId = input.getAttribute('data-id');
+                const tipo = input.getAttribute('data-tipo');
 
-                    const obsInputs = container.querySelectorAll('input[name="observacao"]');
-                    obsData = obsData.concat(Array.from(obsInputs).map(input => {
-                        const parentRow = input.closest("tr");
-                        const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
-                        const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
-                        return {
-                            empresa: empresa,
-                            nota: nota,
-                            observacao: input.value
-                        };
-                    }));
-                });
-
-                try {
-                    await fetch('/salvar_obs_notas', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ obs_notas: obsData })
-                    });
-                    console.log('Observações enviadas com sucesso!');
-                } catch (error) {
-                    console.error('Erro ao enviar observações:', error);
-                }
-            }
-
-            // Enviar e limpar localStorage ao sair da página
-            window.addEventListener('beforeunload', function () {
-                let obsData = [];
-
-                containersIds.forEach(containerId => {
-                    const container = document.getElementById(containerId);
-                    if (!container) return;
-
-                    const obsInputs = container.querySelectorAll('input[name="observacao"]');
-                    obsData = obsData.concat(Array.from(obsInputs).map(input => {
-                        const parentRow = input.closest("tr");
-                        const empresa = parentRow.querySelector("td:nth-child(1)").textContent.trim();
-                        const nota = parentRow.querySelector("td:nth-child(4)").textContent.trim();
-                        return {
-                            empresa: empresa,
-                            nota: nota,
-                            observacao: input.value
-                        };
-                    }));
-                });
-
-                const blob = new Blob([JSON.stringify({ obs_notas: obsData })], {
-                    type: 'application/json'
-                });
-                navigator.sendBeacon('/salvar_obs_notas', blob);
-
-                // Remove todas as observações salvas no localStorage
-                Object.keys(localStorage).forEach(key => {
-                    if (key.startsWith("obs-")) {
-                        localStorage.removeItem(key);
-                    }
+                fetch('/salvar_obs_notas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: notaId, observacao: observacao, tipo: tipo })
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error('Erro ao salvar observação');
+                    return res.json();
+                })
+                .then(data => {
+                    originalValue = observacao;
+                    container.style.display = 'none';
+                })
+                .catch(err => {
+                    alert('Erro ao salvar observação');
+                    console.error(err);
                 });
             });
         });
-
 
         /*modal de observação dos atendimentos*/
         function toggleObservationForm() {
@@ -577,11 +564,6 @@
             input.addEventListener('input', () => {
                 submitButton.disabled = false;
             });
-        });
-        /*Carrega cobranças*/
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('DOM totalmente carregado, iniciando carregamento dos atendimentos...');
-            carregarAtendimentos();
         });
         /*Navegação e seleção de linhas na tabela*/
         document.addEventListener('DOMContentLoaded', function () {
