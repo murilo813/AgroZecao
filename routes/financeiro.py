@@ -59,307 +59,184 @@ def financeiro():
         nome = request.form.get('nome', '').strip()  
         cpf_selecionado = request.form.get('cpf_selecionado', '').strip() or request.args.get('cpf_cnpj', '').strip()
         data_hoje = date.today().strftime('%Y-%m-%d')
-        
+
         try:
             conexao = criar_conexao()
             cursor = conexao.cursor()
             atendimentos = []
 
-            if cpf_selecionado:
-                if len(cpf_selecionado) >= 11 and cpf_selecionado.isdigit():  
+            if not cpf_selecionado:
+                query = """
+                    SELECT cpf_cnpj, nome_cliente, responsavel
+                    FROM clientes 
+                    WHERE (nome_cliente ILIKE %s OR responsavel ILIKE %s) AND ativo = 'S'
+                """
+                cursor.execute(query, (f"%{nome}%", f"%{nome}%"))
+                clientes = cursor.fetchall()
+                return render_template('financeiro.html', notificacoes=session['notificacoes'], data_hoje=data_hoje, clientes=clientes)
+
+            else:
+                if len(cpf_selecionado) >= 11 and cpf_selecionado.isdigit():
                     query_cliente = """
-                        SELECT cpf_cnpj, nome_cliente, responsavel, bairro
-                        FROM clientes 
-                        WHERE cpf_cnpj = %s AND ativo = 'S' 
+                        SELECT responsavel
+                        FROM clientes
+                        WHERE cpf_cnpj = %s AND ativo = 'S'
                     """
                     cursor.execute(query_cliente, (cpf_selecionado,))
                     cliente = cursor.fetchone()
-                else:  
+                else:
                     query_cliente = """
-                        SELECT cpf_cnpj, nome_cliente, responsavel, bairro
+                        SELECT responsavel
                         FROM clientes
                         WHERE id_cliente = %s AND ativo = 'S'
                     """
-                    cursor.execute(query_cliente, (cpf_selecionado,))
+                    cursor.execute(query_cliente, (cpf_selecionado,))                    
                     cliente = cursor.fetchone()
 
-                    if cliente:
-                        cpf_selecionado = cliente[0]  
-
-            elif nome:  
-                query_cliente = """
-                    SELECT cpf_cnpj, nome_cliente, responsavel, bairro
+            if cliente:
+                query_clientes = """
+                    SELECT cpf_cnpj, nome_cliente, responsavel
                     FROM clientes
-                    WHERE cpf_cnpj = %s AND ativo = 'S'
+                    WHERE responsavel = %s AND ativo = 'S'
                 """
-                cursor.execute(query_cliente, (nome,))
-                cliente = cursor.fetchone()
-            if cpf_selecionado and not cpf_selecionado.isdigit():
-                cpf_selecionado = cliente[0] 
+                cursor.execute(query_clientes, (cliente,))
+                clientes = cursor.fetchall()
 
-            cpfs_relacionados = [cpf_selecionado] if cpf_selecionado else []
-            clientes_relacionados = []
+                lista_clientes_detalhes = []
+                data_hoje = date.today()
 
-            if cliente:  
-                cpfs_relacionados = [cliente[0]] 
+                cpfs = [c[0] for c in clientes]
+                atendimentos_combinados = carregar_atendimentos(cpfs)
 
-                query_dublos = """
-                    SELECT cpf_cnpj, nome_cliente, bairro
-                    FROM clientes
-                    WHERE nome_cliente = %s AND ativo = 'S' 
-                """
-                cursor.execute(query_dublos, (cliente[1],))
-                clientes_duplicados = cursor.fetchall()
-
-                if len(clientes_duplicados) > 1:  
-                    bairro_selecionado = cliente[3]  
-                    
-                    clientes_com_duplicata = []
-                    for rel_cliente in clientes_duplicados:
-                        if rel_cliente[0] != cliente[0]:  
-                            query_relacionados = """
-                                SELECT cpf_cnpj, nome_cliente, bairro
-                                FROM clientes
-                                WHERE responsavel = %s AND ativo = 'S'
-                            """
-                            cursor.execute(query_relacionados, (rel_cliente[0],))
-                            relacionados = cursor.fetchall()
-
-                            for relacionado in relacionados:
-                                if relacionado[1] in [cliente[1] for cliente in clientes_duplicados if cliente[0] != cliente[0]]:
-                                    clientes_com_duplicata.append(relacionado)
-
-                    if clientes_com_duplicata:
-                        clientes_relacionados = clientes_com_duplicata
-                    else:
-                        query_relacionados = """
-                            SELECT cpf_cnpj, nome_cliente, bairro
-                            FROM clientes
-                            WHERE responsavel = %s AND ativo = 'S'
-                        """
-                        cursor.execute(query_relacionados, (cliente[2],))
-                        clientes_relacionados = cursor.fetchall()
-
-                else:
-                    query_relacionados = """
-                        SELECT cpf_cnpj, nome_cliente, bairro
-                        FROM clientes
-                        WHERE responsavel = %s AND ativo = 'S'
-                    """
-                    cursor.execute(query_relacionados, (cliente[2],))
-                    clientes_relacionados = cursor.fetchall()
-                atendimentos_filtrados = carregar_atendimentos(cpf_selecionado, [cliente[0] for cliente in clientes_relacionados])
-
-                if cliente:  
-                    query_notas = """
-                        SELECT DISTINCT
-                            cr.id_empresa,
-                            cr.nota,
-                            cr.parcela,
-                            cr.data_venda,
-                            cr.data_vencimento,
-                            cr.valor_original,
-                            cr.saldo_devedor,
-                            cr.tipo
-                        FROM 
-                            contas_a_receber cr
-                        WHERE 
-                            cr.cpf_cnpj = %s
-                            AND cr.data_base = %s
-                    """
-
-                    cpf_cliente = cliente[0]  
-                    nome_cliente = cliente[1]  
+                for cliente in clientes:
+                    cpf_cliente = cliente[0]
+                    nome_cliente = cliente[1]
                     responsavel = cliente[2]
-                    bairro_cliente = cliente[3]  
 
-                    cliente_detalhes = {
-                        "cpf": cliente[0],
-                        "nome": cliente[1],
-                        "notas": [],
-                        "atendimentos": atendimentos_filtrados 
-                    }
-            
-                    atendimentos_combinados = []
-                    for cpf in cpfs_relacionados:
-                        atendimentos_cliente = [atendimento for atendimento in atendimentos if atendimento['cpf_cnpj'] == cpf]
-                        atendimentos_combinados.extend(atendimentos_cliente)
+                    query_notas = """
+                        SELECT
+                            id_empresa,
+                            nota,
+                            parcela,
+                            data_venda,
+                            data_vencimento,
+                            valor_original,
+                            saldo_devedor,
+                            obs
+                        FROM contas_a_receber 
+                        WHERE cpf_cnpj = %s
+                        ORDER BY data_vencimento
+                    """
 
-                    atendimentos_combinados = carregar_atendimentos(cpf_cliente, cpfs_relacionados)
-                    cliente_detalhes["atendimentos"] = atendimentos_combinados
+                    query_contratos = """
+                        SELECT 
+                            id_empresa,
+                            documento,
+                            data_geracao,
+                            data_vencimento,
+                            valor_original,
+                            saldo_devedor,
+                            tipo_contrato,
+                            obs
+                        FROM contratos
+                        WHERE cpf_cnpj = %s AND saldo_devedor <> 0.00 
+                        ORDER BY data_vencimento
+                    """
 
-                    atendimentos_deduplicados = list({f"{atd['cpf_cnpj']}_{atd['data_atendimento']}": atd for atd in atendimentos_combinados}.values())
+                    query_cheques = """
+                        SELECT
+                            id_empresa,
+                            documento,
+                            correntista,
+                            recebimento,
+                            bom_para,
+                            valor_original,
+                            saldo_devedor,
+                            obs
+                        FROM cheques
+                        WHERE cpf_cnpj = %s
+                        ORDER BY bom_para
+                    """
 
-                    cliente_detalhes["atendimentos"] = atendimentos_deduplicados
-
-                    cursor.execute(query_notas, (cpf_selecionado, data_hoje))
+                    cursor.execute(query_notas, (cpf_cliente,))
                     notas = cursor.fetchall()
-                    data_hoje = date.today()
+
+                    cursor.execute(query_contratos, (cpf_cliente,))
+                    contratos = cursor.fetchall()
+
+                    cursor.execute(query_cheques, (cpf_cliente,))
+                    cheques = cursor.fetchall()
+
+                    atendimentos_cliente = [
+                        a for a in atendimentos_combinados if a['cpf_cnpj'] == cpf_cliente
+                    ]
 
                     cliente_detalhes = {
                         "cpf": cpf_cliente,
                         "nome": nome_cliente,
-                        "notas": sorted( #Coloca na ordem da data vencimento
-                            [
-                                {
-                                    "empresa": nota[0],
-                                    "nota": nota[1],
-                                    "parcela": nota[2],
-                                    "data_venda": nota[3].strftime('%d/%m/%Y') if nota[3] else None,  
-                                    "data_vencimento": nota[4],  
-                                    "valor_original": float(nota[5]) if nota[5] else 0.0,
-                                    "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
-                                    "tipo": nota[7]
-                                }
-                                for nota in notas
-                            ],
-                            key=lambda x: (
-                                x["data_vencimento"].year if x["data_vencimento"] else 9999,  
-                                x["data_vencimento"].month if x["data_vencimento"] else 12,   
-                                x["data_vencimento"].day if x["data_vencimento"] else 31      #Os valores são considerados assim para garantir que as notas sem data de vencimento fiquem por último.
-                            )
-                        ),
+                        "responsavel": responsavel,
+                        "notas": [
+                            {
+                                "empresa": nota[0],
+                                "nota": nota[1],
+                                "parcela": nota[2],
+                                "data_venda": nota[3].strftime('%d/%m/%Y'),  
+                                "data_vencimento": nota[4],  
+                                "valor_original": float(nota[5]) if nota[5] else 0.0,
+                                "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
+                                "obs": nota[7] if nota[7] is not None else ""
+                            }
+                            for nota in notas
+                        ],
+                        "contratos": [
+                            {
+                                "empresa": contrato[0],
+                                "documento": contrato[1],
+                                "data_geracao": contrato[2].strftime('%d/%m/%Y'),
+                                "data_vencimento": contrato[3],
+                                "valor_original": float(contrato[4]) if contrato[4] else 0.0,
+                                "saldo_devedor": float(contrato[5]) if contrato[5] else 0.0,
+                                "tipo_contrato": contrato[6],
+                                "obs": contrato[7] if contrato[7] is not None else ""
+                            }
+                            for contrato in contratos
+                        ],
+                        "cheques": [
+                            {
+                                "empresa": cheque[0],
+                                "documento": cheque[1],
+                                "correntista": cheque[2],
+                                "recebimento": cheque[3].strftime('%d/%m/%Y'),
+                                "bom_para": cheque[4],
+                                "valor_original": float(cheque[5]) if cheque[5] else 0.0,
+                                "saldo_devedor": float(cheque[6]) if cheque[6] else 0.0,
+                                "obs": cheque[7] if cheque[7] is not None else ""
+                            }
+                            for cheque in cheques
+                        ],
+                        "atendimentos": atendimentos_cliente
                     }
-                    #Aqui trás tanto os clientes selecionados quanto os relacionados 
-                    clientes_relacionados_detalhes = []
-                    notas_relacionadas_geral = []
 
-                    for clientes_relacionado in clientes_relacionados:
-                        cpf_selecionado = clientes_relacionado[0]
-                        nome_relacionado = clientes_relacionado[1]
-
-                        cursor.execute(query_notas, (cpf_selecionado, data_hoje))
-                        notas_relacionadas = cursor.fetchall()
-
-                        clientes_relacionados_detalhes.append({
-                            "cpf": cpf_selecionado,
-                            "nome": nome_relacionado,
-                            "notas": [
-                                {
-                                    "empresa": nota[0],
-                                    "nota": nota[1],
-                                    "parcela": nota[2],
-                                    "data_venda": nota[3].strftime('%d/%m/%Y') if nota[3] else None,  
-                                    "data_vencimento": nota[4],  
-                                    "valor_original": float(nota[5]) if nota[5] else 0.0,
-                                    "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
-                                    "tipo": nota[7]
-                                }
-                                for nota in notas_relacionadas
-                            ],
-                        })
-
-                    notas_dos_relacionados = [
-                        (nota["empresa"], nota["nota"])
-                        for cliente in clientes_relacionados_detalhes
-                        for nota in cliente["notas"]
-                    ]
-                    if notas_dos_relacionados:
-                        cursor.execute("""
-                            SELECT empresa, nota, obs
-                            FROM obs_nota
-                            WHERE (empresa, nota) IN %s
-                        """, (tuple(notas_dos_relacionados),))
-
-                        obs_dict_relacionados = {(empresa, nota): obs for empresa, nota, obs in cursor.fetchall()}
-                        print(obs_dict_relacionados)
-                        for cliente in clientes_relacionados_detalhes:
-                            for nota in cliente["notas"]:
-                                nota["obs"] = obs_dict_relacionados.get((nota["empresa"], nota["nota"]), "")
-                    #É usado o saldo_devedor pois é com ele que é feito o cálculo de quanto o cliente ainda deve.
-                    total_a_receber = sum(
-                        nota["saldo_devedor"] for nota in cliente_detalhes["notas"] if nota["saldo_devedor"]
-                    )
-
-                    total_a_receber += sum(
-                        nota["saldo_devedor"]
-                        for cliente_relacionado in clientes_relacionados_detalhes
-                        if cliente_relacionado["cpf"] != cliente_detalhes["cpf"]  
-                        for nota in cliente_relacionado["notas"]
-                    )
-
-                    clientes_relacionados_detalhes = [
-                        cliente for cliente in clientes_relacionados_detalhes
-                        if cliente["cpf"] != cliente_detalhes["cpf"]
-                    ]
-
-                    cliente_detalhes['total_a_receber'] = f"R$ {total_a_receber:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
-
-                    clientes = [(cpf_cliente, nome_cliente)] + clientes_relacionados
-
-                    clientes_unicos = {}
-
-                    for c in clientes:
-                        cpf = c[0]
-                        if cpf not in clientes_unicos:
-                            clientes_unicos[cpf] = c
-
-                    clientes_unicos_lista = list(clientes_unicos.values())
-
-                    lista_contratos = []
-                    for cliente in clientes_unicos_lista:
-                        if cliente:
-                            query = """
-                                SELECT id_empresa,
-                                    nome_cliente, 
-                                    cpf_cnpj,
-                                    documento, 
-                                    data_geracao,
-                                    data_vencimento,
-                                    valor_original, 
-                                    saldo_devedor, 
-                                    tipo_contrato
-                                FROM contratos
-                                WHERE id_empresa = %s AND nome_cliente = %s
-                                ORDER BY saldo_devedor
-                            """.strip()
-
-                            cursor.execute(query, (id_empresa, cliente[1]))
-                            colunas = [desc[0] for desc in cursor.description]
-                            contratos = cursor.fetchall()
-
-                            for linha in contratos:
-                                linha_dict = dict(zip(colunas, linha))
-                                lista_contratos.append(linha_dict)
-                            
-                    cursor.close()
-
-                    return render_template(
-                        'financeiro.html',
-                        lista=lista_contratos,
-                        clientes=clientes,
-                        cliente_detalhes=cliente_detalhes,
-                        clientes_relacionados_detalhes=clientes_relacionados_detalhes,
-                        atendimentos=atendimentos_filtrados,
-                        data_hoje=data_hoje,
-                        notificacoes=session['notificacoes']
-                    )
-
-                    flash("Cliente não encontrado para o CPF selecionado.")
-                    return render_template('financeiro.html')
-
-            query = """
-                SELECT cpf_cnpj, nome_cliente, responsavel, bairro
-                FROM clientes 
-                WHERE (nome_cliente ILIKE %s OR responsavel ILIKE %s) AND ativo = 'S'
-            """
-            cursor.execute(query, (f"%{nome}%", f"%{nome}%"))
-            clientes = cursor.fetchall()
-
-            clientes_unicos = []
-            seen = set()
-
-            for cpf, nome, responsavel, bairro in clientes:
-                chave_cliente = (nome, bairro)
-                if chave_cliente not in seen:
-                    seen.add(chave_cliente)
-                    clientes_unicos.append((cpf, nome, responsavel, bairro))
+                    lista_clientes_detalhes.append(cliente_detalhes)
                     
-            if clientes_unicos:
-                return render_template('financeiro.html', notificacoes=session['notificacoes'], data_hoje=data_hoje, clientes=clientes_unicos, atendimentos=atendimentos)
+                    total_a_receber = 0.0
 
-            return render_template('financeiro.html', notificacoes=session['notificacoes'])
+                    for cliente in lista_clientes_detalhes:
+                        for nota in cliente["notas"]:
+                            total_a_receber += nota["saldo_devedor"]
+                        for contrato in cliente["contratos"]:
+                            total_a_receber += contrato["saldo_devedor"]
+                        for cheque in cliente["cheques"]:
+                            total_a_receber += cheque["saldo_devedor"]
 
+                return render_template(
+                    'financeiro.html',
+                    clientes=clientes,
+                    lista_clientes_detalhes=lista_clientes_detalhes,
+                    data_hoje=data_hoje,
+                    total_a_receber=total_a_receber,
+                    notficacoes=session['notificacoes']
+                )
         except Exception as e:
             print(f"Erro na consulta: {e}")
             flash("Ocorreu um erro na consulta.")
@@ -374,35 +251,46 @@ def financeiro():
 @financeiro_bp.route('/salvar_obs_notas', methods=['POST'])
 @login_required
 def salvar_obs_notas():
+    data = request.get_json()
+    obs_nota = data.get('observacao')
+    id = data.get('id')
+    tipo = data.get('tipo')
+
     try:
-        data = request.get_json()
-        obs_notas = data.get('obs_notas')  
-
         conexao = criar_conexao()
-        with conexao.cursor() as cursor:
-            for obs in obs_notas:
-                empresa = obs.get("empresa")
-                nota = obs.get("nota")
-                observacao = obs.get("observacao")
+        cursor = conexao.cursor()
 
-                if empresa and nota:
-                    if observacao.strip() != "":
-                        cursor.execute("""
-                            INSERT INTO obs_nota (empresa, nota, obs)
-                            VALUES (%s, %s, %s)
-                            ON CONFLICT (empresa, nota) DO UPDATE SET obs = EXCLUDED.obs
-                        """, (empresa, nota, observacao))
-                    else:
-                        cursor.execute("""
-                            DELETE FROM obs_nota
-                            WHERE empresa = %s AND nota = %s
-                        """, (empresa, nota))
+        if tipo == "nota":
+            query = """
+                UPDATE contas_a_receber
+                SET obs = %s
+                WHERE nota = %s
+            """
+            cursor.execute(query, (obs_nota, id))
 
-            conexao.commit()
+        elif tipo == "contrato":
+            query = """
+                UPDATE contratos
+                SET obs = %s
+                WHERE doc = %s
+            """
+            cursor.execute(query, (obs_nota, id))
+
+        else:
+            query = """
+                UPDATE cheques
+                SET obs = %s
+                WHERE documento = %s
+            """
+            cursor.execute(query, (obs_nota, id))
+
+        conexao.commit()
         return jsonify({"status": "ok"})
+
     except Exception as e:
         print("Erro ao salvar observações via sendBeacon:", e)
         return jsonify({"status": "erro"}), 500
+
     finally:
         if conexao:
             liberar_conexao(conexao)

@@ -47,20 +47,22 @@ def login_required(view_func):
         return view_func(*args, **kwargs)
     return wrapped_view
 
-def carregar_atendimentos(cpf_cliente, cpfs_relacionados):
+def carregar_atendimentos(cpfs):
     try:
         conexao = criar_conexao()
         cursor = conexao.cursor()
 
-        query_atendimentos = """
+        placeholders = ','.join(['%s'] * len(cpfs))
+
+        query_atendimentos = f"""
             SELECT a.nome_cliente, a.cpf_cnpj, a.data_atendimento, a.observacao, 
-                   u.nomeclatura  
+                u.nomeclatura  
             FROM atendimentos a
             LEFT JOIN usuarios u ON a.usuario = u.nome 
-            WHERE a.cpf_cnpj = %s OR a.cpf_cnpj = ANY(%s)
+            WHERE a.cpf_cnpj in ({placeholders})
             ORDER BY a.data_atendimento ASC
         """
-        cursor.execute(query_atendimentos, (cpf_cliente, cpfs_relacionados))
+        cursor.execute(query_atendimentos, cpfs)
         atendimentos = cursor.fetchall()
 
         atendimentos_dict = [
