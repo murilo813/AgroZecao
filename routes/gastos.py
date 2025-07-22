@@ -42,7 +42,7 @@ def registrargastos():
         data = request.form['dia']
         valor_total = request.form['valor'].replace('R$', '').replace('.', '').replace(',', '.').strip()
         desconto = request.form['desconto'].replace('R$', '').replace('.', '').replace(',', '.').strip()
-        if desconto == 'null':
+        if desconto == '':
             desconto = 0.0
         km = request.form['km'].replace('.', '').strip()
 
