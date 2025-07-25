@@ -121,8 +121,7 @@ def financeiro():
                             data_venda,
                             data_vencimento,
                             valor_original,
-                            saldo_devedor,
-                            obs
+                            saldo_devedor
                         FROM contas_a_receber 
                         WHERE cpf_cnpj = %s
                         ORDER BY data_vencimento
@@ -136,8 +135,7 @@ def financeiro():
                             data_vencimento,
                             valor_original,
                             saldo_devedor,
-                            tipo_contrato,
-                            obs
+                            tipo_contrato
                         FROM contratos
                         WHERE cpf_cnpj = %s AND saldo_devedor <> 0.00 
                         ORDER BY data_vencimento
@@ -151,11 +149,15 @@ def financeiro():
                             recebimento,
                             bom_para,
                             valor_original,
-                            saldo_devedor,
-                            obs
+                            saldo_devedor
                         FROM cheques
                         WHERE cpf_cnpj = %s
                         ORDER BY bom_para
+                    """
+
+                    query_obs = """
+                        SELECT obs, id, tipo
+                        FROM contas_obs
                     """
 
                     cursor.execute(query_notas, (cpf_cliente,))
@@ -166,6 +168,13 @@ def financeiro():
 
                     cursor.execute(query_cheques, (cpf_cliente,))
                     cheques = cursor.fetchall()
+
+                    cursor.execute(query_obs)
+                    observacoes = cursor.fetchall()
+
+                    obs_dict = {}
+                    for obs, id_ref, tipo in observacoes:
+                        obs_dict[(tipo, id_ref)] = obs
 
                     atendimentos_cliente = [
                         a for a in atendimentos_combinados if a['cpf_cnpj'] == cpf_cliente
@@ -184,7 +193,7 @@ def financeiro():
                                 "data_vencimento": nota[4],  
                                 "valor_original": float(nota[5]) if nota[5] else 0.0,
                                 "saldo_devedor": float(nota[6]) if nota[6] else 0.0,
-                                "obs": nota[7] if nota[7] is not None else ""
+                                "obs": obs_dict.get(("nota", nota[1]), "")
                             }
                             for nota in notas
                         ],
@@ -197,7 +206,7 @@ def financeiro():
                                 "valor_original": float(contrato[4]) if contrato[4] else 0.0,
                                 "saldo_devedor": float(contrato[5]) if contrato[5] else 0.0,
                                 "tipo_contrato": contrato[6],
-                                "obs": contrato[7] if contrato[7] is not None else ""
+                                "obs": obs_dict.get(("contrato", contrato[1]), "")
                             }
                             for contrato in contratos
                         ],
@@ -210,7 +219,7 @@ def financeiro():
                                 "bom_para": cheque[4],
                                 "valor_original": float(cheque[5]) if cheque[5] else 0.0,
                                 "saldo_devedor": float(cheque[6]) if cheque[6] else 0.0,
-                                "obs": cheque[7] if cheque[7] is not None else ""
+                                "obs": obs_dict.get(("cheque", cheque[1]), "")
                             }
                             for cheque in cheques
                         ],
@@ -260,29 +269,11 @@ def salvar_obs_notas():
         conexao = criar_conexao()
         cursor = conexao.cursor()
 
-        if tipo == "nota":
-            query = """
-                UPDATE contas_a_receber
-                SET obs = %s
-                WHERE nota = %s
-            """
-            cursor.execute(query, (obs_nota, id))
-
-        elif tipo == "contrato":
-            query = """
-                UPDATE contratos
-                SET obs = %s
-                WHERE doc = %s
-            """
-            cursor.execute(query, (obs_nota, id))
-
-        else:
-            query = """
-                UPDATE cheques
-                SET obs = %s
-                WHERE documento = %s
-            """
-            cursor.execute(query, (obs_nota, id))
+        query = """
+            INSERT INTO contas_obs (tipo, obs, id)
+            VALUES (%s, %s, %s)
+        """
+        cursor.execute(query, (tipo, obs_nota, id))
 
         conexao.commit()
         return jsonify({"status": "ok"})
