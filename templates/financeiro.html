@@ -182,7 +182,7 @@
                                             <td>{{ contrato.data_geracao }}</td>
                                             <td>
                                             <span style="color: {% if contrato.data_vencimento and contrato.data_vencimento < data_hoje %}red{% else %}black{% endif %};">
-                                                {{ contrato.data_vencimento if contrato.data_vencimento else 'N/A' }}
+                                                {{ contrato.data_vencimento.strftime('%d/%m/%Y') if contrato.data_vencimento else 'N/A' }}
                                             </span>
                                             </td>
                                             <td class="valor" style="color: {% if contrato.valor_original < 0 %}green{% else %}black{% endif %};">
