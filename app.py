@@ -29,6 +29,7 @@ def register_blueprints():
     from routes.addorcamento import addorcamento_bp
     from routes.base import base_bp
     from routes.contratos import contratos_bp
+    from routes.compras import compras_bp
 
     app.register_blueprint(login_bp)
     app.register_blueprint(home_bp)
@@ -39,6 +40,7 @@ def register_blueprints():
     app.register_blueprint(addorcamento_bp)
     app.register_blueprint(base_bp)
     app.register_blueprint(contratos_bp)
+    app.register_blueprint(compras_bp)
 
 register_blueprints()
 

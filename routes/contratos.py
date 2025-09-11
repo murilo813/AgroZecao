@@ -86,6 +86,7 @@ def salvarcontrato():
             data2 = None
         else:
             data2 = dados['data_vencimento']
+            
         valor = dados['valor_original'].replace('.', '').replace(',', '.').strip()
         saldo = dados['saldo_devedor'].replace('.', '').replace(',', '.').strip()
         id_empresa = session.get('id_empresa')

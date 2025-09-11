@@ -7,11 +7,11 @@ import psycopg2
 import json
 from functions import carregar_atendimentos, criar_conexao, obter_notificacoes, login_required, liberar_conexao
 
-financeiro_bp = Blueprint('financeiro', __name__)
+compras_bp = Blueprint('compras', __name__)
 
-@financeiro_bp.route('/financeiro', methods=['GET', 'POST'])
+@compras_bp.route('/compras', methods=['GET', 'POST'])
 @login_required
-def financeiro():
+def compras():
     usuario_logado = session['usuario']
     session['notificacoes'] = obter_notificacoes(usuario_logado)
     id_empresa = session.get('id_empresa')
@@ -31,11 +31,11 @@ def financeiro():
 
         cursor.execute("""
             SELECT 1 FROM acessos
-            WHERE usuario_id = %s AND (setor_id = 2 OR setor_id = 6)
+            WHERE usuario_id = %s AND setor_id = 7
         """, (usuario_id,))
 
         if not cursor.fetchone():  
-            return render_template('home.html', erro_financeiro=True)  
+            return render_template('home.html', erro_compras=True)  
 
         cpf_url = request.args.get('cpf_cnpj', '').strip() if request.method == 'GET' else None
 
@@ -64,7 +64,7 @@ def financeiro():
             conexao = criar_conexao()
             cursor = conexao.cursor()
             atendimentos = []
-
+            
             if not cpf_selecionado:
                 query = """
                     SELECT cpf_cnpj, nome_cliente, responsavel
@@ -73,8 +73,8 @@ def financeiro():
                 """
                 cursor.execute(query, (f"%{nome}%", f"%{nome}%"))
                 clientes = cursor.fetchall()
-                return render_template('financeiro.html', notificacoes=session['notificacoes'], data_hoje=data_hoje, clientes=clientes)
-
+                return render_template('compras.html', notificacoes=session['notificacoes'], data_hoje=data_hoje, clientes=clientes)
+            
             else:
                 if len(cpf_selecionado) >= 11 and cpf_selecionado.isdigit():
                     query_cliente = """
@@ -95,7 +95,7 @@ def financeiro():
 
             if cliente:
                 query_clientes = """
-                    SELECT cpf_cnpj, nome_cliente, responsavel, limite, saldo_limite, limite_calculado, saldo_limite_calculado
+                    SELECT cpf_cnpj, nome_cliente, responsavel
                     FROM clientes
                     WHERE responsavel = %s AND ativo = 'S'
                 """
@@ -239,7 +239,7 @@ def financeiro():
                             total_a_receber += cheque["saldo_devedor"]
 
                 return render_template(
-                    'financeiro.html',
+                    'compras.html',
                     clientes=clientes,
                     lista_clientes_detalhes=lista_clientes_detalhes,
                     data_hoje=data_hoje,
@@ -249,15 +249,15 @@ def financeiro():
         except Exception as e:
             print(f"Erro na consulta: {e}")
             flash("Ocorreu um erro na consulta.")
-            return render_template('financeiro.html')
+            return render_template('compras.html')
 
         finally:
             if 'conexao' in locals():
                 liberar_conexao(conexao)
 
-    return render_template('financeiro.html', notificacoes=session['notificacoes'])
+    return render_template('compras.html', notificacoes=session['notificacoes'])
 
-@financeiro_bp.route('/salvar_obs_notas', methods=['POST'])
+@compras_bp.route('/salvar_obs_notas', methods=['POST'])
 @login_required
 def salvar_obs_notas():
     data = request.get_json()
@@ -286,7 +286,7 @@ def salvar_obs_notas():
         if conexao:
             liberar_conexao(conexao)
 
-@financeiro_bp.route('/add_observation', methods=['POST'])
+@compras_bp.route('/add_observation', methods=['POST'])
 @login_required
 def adicionar_observacao():
     try:
