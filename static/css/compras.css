@@ -754,44 +754,6 @@ input {
 .tabela-detalhes td {
     font-size: 14px;
 }
-.money-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    margin-left: 5px;
-}
-.limit-popup {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 100%;
-    background: #fff;
-    border: 1px solid #ccc;
-    padding: 16px; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    z-index: 10;
-    font-size: 14px; 
-    min-width: 250px; 
-}
-
-.limit-popup table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.limit-popup td {
-    padding: 6px 12px; 
-    border-bottom: 1px solid #eee;
-}
-
-.limit-popup td:first-child {
-    font-weight: bold;
-}
-
-.limit-popup.show {
-    display: block;
-}
 /*CAIXA DE ATENDIMENTOS*/
 .caixa-atendimentos {
     width: 46%;
