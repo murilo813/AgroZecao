@@ -71,7 +71,7 @@
                                 <table class="tabela-detalhes">
                                     <thead>
                                         <tr>
-                                            <th>NOME</th>
+                                            <th>NOME</th>'
                                             <th>CPF</th>
                                         </tr>
                                     </thead>
@@ -351,8 +351,24 @@
         // limites
         function toggleLimite(btn) {
             const popup = btn.nextElementSibling;
+
+            document.querySelectorAll('.limit-popup.show').forEach(el => {
+                if (el !== popup) {
+                    el.classList.remove('show');
+                }
+            });
+
             popup.classList.toggle('show');
         }
+
+        document.addEventListener('click', function(event) {
+            const popups = document.querySelectorAll('.limit-popup.show');
+            popups.forEach(popup => {
+                if (!popup.contains(event.target) && !popup.previousElementSibling.contains(event.target)) {
+                    popup.classList.remove('show');
+                }
+            });
+        });
         // mensagem de sem atendimentos
         window.addEventListener('DOMContentLoaded', () => {
             const tabelas = document.querySelectorAll('#tabela-atendimentos tbody tr');
