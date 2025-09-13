@@ -27,7 +27,7 @@ def login():
             senha_hash = usuario[2]
 
             if check_password_hash(senha_hash, senha):
-                session.permanent = True if remember else False
+                session.permanent = bool(remember)
                 session['usuario'] = nome
                 session['usuario_id'] = usuario_id
                 session['id_empresa'] = id_empresa

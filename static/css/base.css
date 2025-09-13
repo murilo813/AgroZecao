@@ -27,7 +27,7 @@ nav .logo {
   display: flex;
   z-index: 10;
   align-items: center;
-  margin: 0 24px;
+  margin: 0;
 }
 .logo .menu-icon {
   color: #333;
