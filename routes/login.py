@@ -9,11 +9,14 @@ login_bp = Blueprint('login', __name__)
 def index():
     if 'usuario' in session:
         return redirect('/home')
-    return render_template('login.html')
+    return redirect(url_for('login.login'))
 
 @login_bp.route('/login', methods=['POST', 'GET'])
 @limiter.limit("5 per minute")
 def login():
+    if 'usuario' in session:
+        return redirect('/home')
+
     if request.method == 'POST':
         nome = request.form.get('username', '').strip()
         senha = request.form.get('password', '').strip()
@@ -34,12 +37,12 @@ def login():
                 return redirect('/home')
 
         flash('Nome de usuário ou senha incorretos. Por favor, tente novamente.')
-        return redirect('/login')
+        return redirect(url_for('login.login'))
 
     return render_template('login.html')
 
-
+# logout
 @login_bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login.index'))
+    return redirect(url_for('login.login'))
