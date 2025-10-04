@@ -30,24 +30,44 @@ def contratos():
 
         session['notificacoes'] = obter_notificacoes(usuario_logado)
 
-        query = """
-            SELECT id,
-                id_cliente,
-                nome_cliente, 
-                documento, 
-                TO_CHAR(data_geracao, 'DD/MM/YYYY') AS data_geracaof,
-                TO_CHAR(data_vencimento, 'DD/MM/YYYY') AS data_vencimentof,
-                valor_original, 
-                saldo_devedor, 
-                tipo_contrato
-            FROM contratos
-            WHERE id_empresa = %s
-            ORDER BY saldo_devedor
-        """.strip()
+        if usuario_logado == 'admin':
+            query = """
+                SELECT id,
+                    id_cliente,
+                    nome_cliente, 
+                    documento, 
+                    TO_CHAR(data_geracao, 'DD/MM/YYYY') AS data_geracaof,
+                    TO_CHAR(data_vencimento, 'DD/MM/YYYY') AS data_vencimentof,
+                    valor_original, 
+                    saldo_devedor, 
+                    tipo_contrato
+                FROM contratos
+                ORDER BY saldo_devedor
+            """.strip()
 
-        cursor.execute(query, (id_empresa,))
-        colunas = [desc[0] for desc in cursor.description]
-        contratos = cursor.fetchall()
+            cursor.execute(query, (id_empresa,))
+            colunas = [desc[0] for desc in cursor.description]
+            contratos = cursor.fetchall()
+        
+        else:
+            query = """
+                SELECT id,
+                    id_cliente,
+                    nome_cliente, 
+                    documento, 
+                    TO_CHAR(data_geracao, 'DD/MM/YYYY') AS data_geracaof,
+                    TO_CHAR(data_vencimento, 'DD/MM/YYYY') AS data_vencimentof,
+                    valor_original, 
+                    saldo_devedor, 
+                    tipo_contrato
+                FROM contratos
+                WHERE id_empresa = %s
+                ORDER BY saldo_devedor
+            """.strip()
+
+            cursor.execute(query, (id_empresa,))
+            colunas = [desc[0] for desc in cursor.description]
+            contratos = cursor.fetchall()
 
         lista = []
         for linha in contratos:
