@@ -96,6 +96,7 @@ def obter_notificacoes(usuario):
             SELECT nome_cliente, anotacao, data_agendamento, data, criador, id_not, cpf_cnpj
             FROM not_gerencia
             WHERE criador = %s AND data_agendamento <= %s AND estado = 'ativa'
+            ORDER BY data DESC
         """, (usuario, data_hoje))
         atendimentos = cursor.fetchall()
 
