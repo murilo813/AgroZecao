@@ -160,32 +160,6 @@
         });
       });
 
-      /*Ordena as notificacoes*/
-      document.addEventListener("DOMContentLoaded", function () {
-
-        const alertBox = document.querySelector("#alertModal .alert-box");
-        if (!alertBox) return;
-
-        const alerts = Array.from(alertBox.querySelectorAll(".alert"));
-        if (alerts.length === 0) return;
-
-        const parseDate = (str) => {
-          if (!str) return new Date(0); 
-          const parts = str.trim().split("/");
-          if (parts.length !== 3) return new Date(0);
-          const [dia, mes, ano] = parts;
-          return new Date(`${ano}-${mes}-${dia}`);
-        };
-
-        alerts.sort((a, b) => {
-          const dataA = parseDate(a.children[2]?.innerText || "");
-          const dataB = parseDate(b.children[2]?.innerText || "");
-          return dataB - dataA;
-        });
-
-        alerts.forEach(alert => alertBox.appendChild(alert));
-      });
-
       /*Icone de notificação*/
       document.addEventListener("DOMContentLoaded", function () {
         const notificationIcon = document.getElementById("notification-icon");
