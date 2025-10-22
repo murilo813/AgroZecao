@@ -60,7 +60,7 @@ def carregar_atendimentos(cpfs):
             FROM atendimentos a
             LEFT JOIN usuarios u ON a.usuario = u.nome 
             WHERE a.cpf_cnpj in ({placeholders})
-            ORDER BY a.data_atendimento ASC
+            ORDER BY a.data_atendimento DESC
         """
         cursor.execute(query_atendimentos, cpfs)
         atendimentos = cursor.fetchall()
