@@ -60,8 +60,10 @@ def registrargastos():
             id_empresa = 2
         elif empresa == 'Vila Nova':
             id_empresa = 3
-        else: 
+        elif empresa == 'Aurora': 
             id_empresa = 4
+        else:
+            empresa = 5
 
         conexao = criar_conexao()
         with conexao.cursor() as cursor:
