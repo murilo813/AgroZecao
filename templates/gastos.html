@@ -191,6 +191,66 @@
         </div>
     </div>
     <script>
+        // popup perguntando a empresa
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.querySelector('form[action="/registrargastos"]');
+
+            form.addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                const overlay = document.createElement("div");
+                overlay.style.position = "fixed";
+                overlay.style.top = 0;
+                overlay.style.left = 0;
+                overlay.style.width = "100%";
+                overlay.style.height = "100%";
+                overlay.style.background = "rgba(0,0,0,0.5)";
+                overlay.style.display = "flex";
+                overlay.style.alignItems = "center";
+                overlay.style.justifyContent = "center";
+                overlay.style.zIndex = "1000";
+
+                const box = document.createElement("div");
+                box.style.background = "white";
+                box.style.padding = "20px";
+                box.style.borderRadius = "10px";
+                box.style.textAlign = "center";
+                box.style.boxShadow = "0 0 10px rgba(0,0,0,0.3)";
+                box.innerHTML = `
+                    <h3>De qual empresa pertence este gasto?</h3>
+                    <select id="empresaSelect" style="padding: 5px; margin: 10px 0; width: 200px;">
+                        <option value="" disabled selected>Selecione...</option>
+                        <option value="Bela Vista">Bela Vista</option>
+                        <option value="Imbuia">Imbuia</option>
+                        <option value="Vila Nova">Vila Nova</option>
+                        <option value="Aurora">Aurora</option>
+                    </select><br>
+                    <button id="confirmarEmpresa" style="margin-top: 10px;">OK</button>
+                `;
+
+                overlay.appendChild(box);
+                document.body.appendChild(overlay);
+
+                document.getElementById("confirmarEmpresa").addEventListener("click", function() {
+                    const empresa = document.getElementById("empresaSelect").value;
+
+                    if (!empresa) {
+                        alert("Selecione uma empresa antes de continuar!");
+                        return;
+                    }
+
+                    const inputEmpresa = document.createElement("input");
+                    inputEmpresa.type = "hidden";
+                    inputEmpresa.name = "empresa";
+                    inputEmpresa.value = empresa;
+                    form.appendChild(inputEmpresa);
+
+                    document.body.removeChild(overlay);
+                    form.submit();
+                });
+            });
+        });
+
         // Aplica filtros
         function aplicarFiltros() {
             const filtroPlaca = document.getElementById('filtro-placa')?.value.toLowerCase().trim();

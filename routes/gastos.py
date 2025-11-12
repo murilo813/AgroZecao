@@ -51,6 +51,16 @@ def registrargastos():
         valores_unit = request.form.getlist('valor_unit[]')
         quantidades = request.form.getlist('quantidade[]')
         totais_produto = request.form.getlist('total[]')
+        empresa = request.form.get('empresa')
+
+        if empresa == 'Bela Vista':
+            id_empresa = 1
+        elif empresa == 'Imbuia':
+            id_empresa = 2
+        elif empresa == 'Vila Nova':
+            id_empresa = 3
+        else: 
+            id_empresa = 4
 
         conexao = criar_conexao()
         with conexao.cursor() as cursor:
@@ -65,8 +75,8 @@ def registrargastos():
                 cursor.execute("""
                     INSERT INTO gastos (
                         placa, responsavel, tipo_gasto, fornecedor, doc, data, valor_total, km,
-                        id_produto, produto, valor_produto, quantidade, total_produto, desconto, usuario
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        id_produto, produto, valor_produto, quantidade, total_produto, desconto, usuario, empresa
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     placa,
                     responsavel,
@@ -82,7 +92,8 @@ def registrargastos():
                     qtd,
                     total_prod,
                     desconto,
-                    usuario_logado
+                    usuario_logado,
+                    id_empresa
                 ))
 
             conexao.commit()
