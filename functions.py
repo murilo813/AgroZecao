@@ -185,6 +185,8 @@ def obter_gastos(usuario_logado):
                 doc AS documento,
                 TO_CHAR(data, 'DD/MM/YYYY') AS dia,
                 valor_total AS valor,
+                valor_total_bruto,
+                desconto,
                 km,
                 id_produto AS id_pro,
                 produto,
@@ -203,10 +205,30 @@ def obter_gastos(usuario_logado):
 
         for linha in registros:
             linha_dict = dict(zip(colunas, linha))
-            linha_dict = {k: ("" if v is None else v) for k, v in linha_dict.items()}
+            linha_dict = {k: (v if v is not None else None) for k, v in linha_dict.items()}
             doc_atual = linha_dict['documento']
             tipo_gasto_atual = linha_dict['gasto']  
             responsavel_atual = linha_dict['responsavel']  
+
+            valor_bruto = linha_dict.get('valor_total_bruto')
+            desconto = linha_dict.get('desconto')
+
+            # CALCULO VALOR TOTAL BRUTO COM DESCONTO
+            try:
+                bruto = float(valor_bruto) if valor_bruto not in (None, '', 0, '0') else None
+                desc = float(desconto or 0)
+
+                if bruto is not None and bruto > 0:
+                    valor_exibir_calc = bruto - desc
+                else:
+                    valor_exibir_calc = float(linha_dict['valor'] or 0)
+            except Exception:
+                valor_exibir_calc = linha_dict['valor'] or 0
+
+            try:
+                linha_dict['valor_exibir'] = f"R$ {float(valor_exibir_calc):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            except Exception:
+                linha_dict['valor_exibir'] = linha_dict['valor']
 
             if doc_atual == doc_anterior and tipo_gasto_atual == tipo_gasto_anterior and responsavel_atual == responsavel_anterior:
                 linha_dict['placa_exibir'] = ''
