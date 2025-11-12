@@ -252,9 +252,9 @@ button.visualizar-dados:focus {
   font-size: 14px;
   margin-right: 4px;
 }
-/*  */
+/* container de dados */
 .tabela-container {
-  max-height: 85%;       
+  max-height: 81%;       
   overflow-y: auto;       
   border: 1px solid #ccc;
   border-radius: 8px;
