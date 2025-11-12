@@ -81,6 +81,7 @@
                 <div class="form-group">
                     <label for="valor">Valor:</label>
                     <input type="text" id="valor" name="valor" placeholder="R$ 00,00" readonly>
+                    <input type="hidden" id="valor_bruto" name="valor_bruto">
                 </div>
 
                 <div class="form-group full-width">
@@ -382,9 +383,12 @@
                 desconto = parseFloat(inputDesconto.value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
             }
 
+            const valorBruto = soma;
             const valorFinal = soma - desconto;
 
             const inputValor = document.getElementById('valor');
+            const inputValorBruto = document.getElementById('valor_bruto');
+
             if (inputValor) {
                 inputValor.value = valorFinal.toLocaleString('pt-BR', {
                     style: 'currency',
@@ -392,6 +396,10 @@
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 });
+            }
+
+            if (inputValorBruto) {
+                inputValorBruto.value = valorBruto.toFixed(2); 
             }
         }
 

@@ -41,6 +41,7 @@ def registrargastos():
         doc = request.form['documento']
         data = request.form['dia']
         valor_total = request.form['valor'].replace('R$', '').replace('.', '').replace(',', '.').strip()
+        valor_bruto = request.form.get('valor_bruto', '').replace('R$', '').replace('.', '').replace(',', '.').strip()
         desconto = request.form['desconto'].replace('R$', '').replace('.', '').replace(',', '.').strip()
         if desconto == '':
             desconto = 0.0
@@ -75,8 +76,8 @@ def registrargastos():
                 cursor.execute("""
                     INSERT INTO gastos (
                         placa, responsavel, tipo_gasto, fornecedor, doc, data, valor_total, km,
-                        id_produto, produto, valor_produto, quantidade, total_produto, desconto, usuario, empresa
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        id_produto, produto, valor_produto, quantidade, total_produto, desconto, usuario, empresa, valor_total_bruto
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     placa,
                     responsavel,
@@ -93,7 +94,8 @@ def registrargastos():
                     total_prod,
                     desconto,
                     usuario_logado,
-                    id_empresa
+                    id_empresa,
+                    valor_bruto
                 ))
 
             conexao.commit()
