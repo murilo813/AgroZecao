@@ -473,6 +473,13 @@
                         shouldSort: false,
                         position: 'bottom',
                         searchPlaceholderValue: 'Pesquisar...',
+                        searchFields: ['label'],
+                        fuseOptions: {
+                            threshold: 0,
+                            ignoreLocation: false,
+                            distance: 0,
+                            minMatchCharLength: 1
+                        }
                     });
                 }
             });

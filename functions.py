@@ -171,7 +171,6 @@ def obter_gastos(usuario_logado):
             FROM clientes
             WHERE tipo_pessoa = 'J'
             AND perfil_for = true
-            AND nome_cliente ~ '^[^0-9]*[0-9]?[^0-9]*$'
         """)        
         fornecedor_tuplas = cursor.fetchall()
         fornecedor = [{'nome': f[0], 'cnpj': f[1]} for f in fornecedor_tuplas]
