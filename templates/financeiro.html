@@ -113,32 +113,33 @@
                             <div class="caixa-atendimentos">
                                 <h3 id="atendimentosrota">Atendimentos Realizados</h3> 
                                 <p id="msg-sem-atendimento">Nenhum atendimento encontrado.</p>
-                                {% for cliente in lista_clientes_detalhes %}
-                                    {% if cliente.atendimentos %}
-                                        <table id="tabela-atendimentos">
-                                            <thead>
+
+                                <table id="tabela-atendimentos">
+                                    <thead>
+                                        <tr>
+                                            <th>Usuário</th>
+                                            <th>Nome do Cliente</th>
+                                            <th>Data</th>
+                                            <th>Observação</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for cliente in lista_clientes_detalhes %}
+                                            {% for atendimento in cliente.atendimentos %}
                                                 <tr>
-                                                    <th>Usuário</th>
-                                                    <th>Nome do Cliente</th>
-                                                    <th>Data</th>
-                                                    <th>Observação</th>                                                    
+                                                    <td>{{ atendimento.usuario or 'N/A' }}</td>
+                                                    <td>{{ atendimento.nome_cliente or 'N/A' }}</td>
+                                                    <td>{{ atendimento.data_atendimento or 'N/A' }}</td>
+                                                    <td>{{ atendimento.observacao or 'Sem observação' }}</td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for atendimento in cliente.atendimentos %}
-                                                    <tr>
-                                                        <td>{{ atendimento.usuario or 'N/A' }}</td>
-                                                        <td>{{ atendimento.nome_cliente or 'N/A' }}</td>                                               
-                                                        <td>{{ atendimento.data_atendimento or 'N/A' }}</td>
-                                                        <td>{{ atendimento.observacao or 'Sem observação' }}</td>                                                                                  
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    {% endif %}
-                                {% endfor %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
                                 <button class="add-button" onclick="toggleObservationForm()">+</button>
-                            </div>                         
+                            </div>
                             <div id="observationForm" class="hidden">
                                 <form id="formObservation" method="POST" action="/add_observation">
                                     <label for="cliente">Selecionar Cliente:</label>
@@ -169,6 +170,7 @@
                             <div id="contratos-header" class="contratos-header" onclick="togglecontratos()">
                                 <span class="seta3">&#9650;</span> 
                                 <span class="titulo-contratos">Contratos em Aberto</span>
+                                <span class="total_contratos">Total: R$ {{ '{:,.2f}'.format(total_contratos|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</span>
                             </div>
                             <table class="contratos_a_receber">
                                 <thead>
@@ -227,6 +229,7 @@
                             <div id="cheques-header" class="cheques-header" onclick="togglecheques()">
                                 <span class="seta2">&#9650;</span> 
                                 <span class="titulo-cheques">Cheques em Aberto</span>
+                                <span class="total_cheques">Total: R$ {{ '{:,.2f}'.format(total_cheques|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</span>
                             </div>
                             <table class="cheques_a_receber">
                                 <thead>
@@ -284,7 +287,8 @@
                         <div class="notas-container minimized" id="notas-container">
                             <div id="notas-header" class="notas-header" onclick="toggleNotas()">
                                 <span class="seta">&#9650;</span> 
-                                <span class="titulo-notas">Notas em Aberto</span>
+                                <span class="titulo-notas">Notas em Aberto </span>
+                                <span class="total_notas">Total: R$ {{ '{:,.2f}'.format(total_notas|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</span>
                             </div>
                             <table class="contas_a_receber">
                                 <thead>

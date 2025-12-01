@@ -228,6 +228,11 @@ input {
 .notas-container.minimized table {
     display: none;
 }
+.total_notas {
+    width: 180px;
+    margin-left: auto;
+    text-align: left;
+}
 
 
 .notas-container {
@@ -397,6 +402,11 @@ input {
 .cheques-container.ativo .cheques-header {
     color: #00aaff; 
     font-weight: bold;
+}
+.total_cheques {
+    width: 180px;
+    margin-left: auto;
+    text-align: left;
 }
 
 .cheques-container {
@@ -571,6 +581,11 @@ input {
     color: #00aaff; 
     font-weight: bold;
 }
+.total_contratos {
+    width: 180px;
+    margin-left: auto;
+    text-align: left;
+}
 
 .contratos-container {
     top: 62%;
@@ -726,6 +741,9 @@ input {
 }
 .detalhes {
     width: 46%; 
+    max-height: 160px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .tabela-detalhes {
     width: 100%; 

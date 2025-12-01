@@ -229,14 +229,20 @@ def financeiro():
                     lista_clientes_detalhes.append(cliente_detalhes)
                     
                     total_a_receber = 0.0
+                    total_notas = 0.0
+                    total_contratos = 0.0
+                    total_cheques = 0.0
 
                     for cliente in lista_clientes_detalhes:
                         for nota in cliente["notas"]:
                             total_a_receber += nota["saldo_devedor"]
+                            total_notas += nota ["saldo_devedor"]
                         for contrato in cliente["contratos"]:
                             total_a_receber += contrato["saldo_devedor"]
+                            total_contratos += contrato['saldo_devedor']
                         for cheque in cliente["cheques"]:
                             total_a_receber += cheque["saldo_devedor"]
+                            total_cheques += cheque["saldo_devedor"]
 
                 return render_template(
                     'financeiro.html',
@@ -244,6 +250,9 @@ def financeiro():
                     lista_clientes_detalhes=lista_clientes_detalhes,
                     data_hoje=data_hoje,
                     total_a_receber=total_a_receber,
+                    total_notas=total_notas,
+                    total_contratos=total_contratos,
+                    total_cheques=total_cheques,
                     notficacoes=session['notificacoes']
                 )
         except Exception as e:
