@@ -95,7 +95,7 @@ def financeiro():
 
             if cliente:
                 query_clientes = """
-                    SELECT cpf_cnpj, nome_cliente, responsavel, limite, saldo_limite, limite_calculado, saldo_limite_calculado
+                    SELECT cpf_cnpj, nome_cliente, responsavel, limite, saldo_limite, limite_calculado, saldo_limite_calculado, maior_dias_atraso, pct_atraso_90, media_dias_atraso
                     FROM clientes
                     WHERE responsavel = %s AND ativo = 'S'
                 """

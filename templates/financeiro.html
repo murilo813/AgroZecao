@@ -71,7 +71,7 @@
                                 <table class="tabela-detalhes">
                                     <thead>
                                         <tr>
-                                            <th>NOME</th>'
+                                            <th>NOME</th>
                                             <th>CPF</th>
                                         </tr>
                                     </thead>
@@ -100,6 +100,19 @@
                                                             <tr>
                                                                 <td>Saldo Calculado:</td>
                                                                 <td>R$ {{ '{:,.2f}'.format(cliente[6]|float).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
+                                                            </tr>
+                                                            <tr><td colspan="2"><hr></td></tr> 
+                                                            <tr>
+                                                                <td>Maior atraso (dias):</td>
+                                                                <td>{{ cliente[7] }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>% atraso últimos 90 dias:</td>
+                                                                <td>{{ (cliente[8] * 100)|round(1) }}%</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Média dias atraso (dias):</td>
+                                                                <td>{{ cliente[9] }}</td>
                                                             </tr>
                                                         </table>
                                                     </div>
@@ -373,6 +386,17 @@
                 }
             });
         });
+
+        function toggleLimite(btn) {
+            const popup = btn.nextElementSibling;
+            const rect = btn.getBoundingClientRect();
+
+            popup.style.top = rect.bottom + 'px';
+            popup.style.left = rect.left + 'px';
+
+            popup.classList.toggle('show');
+        }
+        
         // mensagem de sem atendimentos
         window.addEventListener('DOMContentLoaded', () => {
             const tabelas = document.querySelectorAll('#tabela-atendimentos tbody tr');
